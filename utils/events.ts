@@ -1,4 +1,5 @@
-import * as EventEmitter from "../abis/EventEmitter.json";
+import { Log } from "@ethersproject/abstract-provider";
+import { LogDescription } from "ethers/lib/utils";
 
 export type KeyValueEventData = {
   getUint: (key: string, defaultValue?: any) => bigint;
@@ -17,19 +18,18 @@ export type KeyValueEventData = {
   getStringArray: (key: string, defaultValue?: any) => string[];
 };
 
-export function parseLog(log: Log) {
-  const decodedArgs = decodeEventEmitterLog(log);
-  const kv = getKeyValueEventData(decodedArgs);
+export function parseLog(log: LogDescription) {
+  // const decodedArgs = decodeEventEmitterLog(log);
+  // const kv = getKeyValueEventData(decodedArgs);
 
-  return { decodedArgs, kv };
+  // return { decodedArgs, kv };
+  return getKeyValueEventData(log);
 }
 
-export function getKeyValueEventData(
-  args: ReturnType<typeof decodeEventEmitterLog>
-): KeyValueEventData {
+export function getKeyValueEventData(log: LogDescription): KeyValueEventData {
   // for some reason ethers doesn't create keys for eventName, eventData, etc.
   // eventData is the last field of event
-  const eventData = args.eventData || args[(args as any).length - 1];
+  const eventData = log.args[(log.args as any).length - 1];
 
   const ret: any = {};
   for (const typeKey of [
@@ -85,34 +85,4 @@ export function getKeyValueEventData(
     getBytesArray: getter("bytesItems", "arrayItems"),
     getStringArray: getter("stringItems", "arrayItems"),
   };
-}
-
-type EventLogArg =
-  | ReturnType<typeof EventEmitter.events.EventLog.decode>
-  | ReturnType<typeof EventEmitter.events.EventLog1.decode>
-  | ReturnType<typeof EventEmitter.events.EventLog2.decode>;
-
-const _cache: WeakMap<Log, EventLogArg> = new WeakMap();
-
-// export const decodeStats = {
-//   count: 0,
-//   cumTime: 0n, // nanoseconds
-// };
-
-export function decodeEventEmitterLog(log: Log): EventLogArg {
-  let decoded = _cache.get(log);
-
-  if (!decoded) {
-    decoded = decodeEventLog({
-      abi: EventEmitterAbi,
-      topics: log.topics,
-      data: log.data,
-    } as any).args as EventLogArg;
-
-    // decodeStats.cumTime += process.hrtime.bigint() - start;
-    // decodeStats.count++;
-    _cache.set(log, decoded as any);
-  }
-
-  return decoded;
 }

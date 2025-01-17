@@ -7,7 +7,9 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import hre from "hardhat";
 import { before } from "mocha";
-const { ethers, deployments, w3f } = hre;
+import DataStore from "../abis/DataStore.json";
+
+const { deployments, w3f } = hre;
 
 describe("OraclePriceUpdate Tests", function () {
   this.timeout(0);
@@ -22,18 +24,21 @@ describe("OraclePriceUpdate Tests", function () {
 
     [owner] = await hre.ethers.getSigners();
 
-    // oracle = await ethers.getContract("SimpleCounter");
     testW3f = w3f.get("test-function");
 
-    userArgs = {};
+    userArgs = {
+      uintKey:
+        "0x1234567890123456789012345678901234567890123456789012345678901234",
+    };
   });
 
-  it("canExec: true - First execution", async () => {
+  it("canExec == true", async () => {
     let { result } = await testW3f.run("onRun", { userArgs });
     result = result as Web3FunctionResultV2;
 
     expect(result.canExec).to.equal(true);
-    if (!result.canExec) throw new Error("!result.canExec");
+
+    if (!result.canExec) throw new Error("canExec == false");
 
     const callData = result.callData[0];
 
@@ -41,5 +46,13 @@ describe("OraclePriceUpdate Tests", function () {
       to: callData.to,
       data: callData.data,
     });
+
+    const dataStoreInterface = new hre.ethers.utils.Interface(DataStore.abi);
+    const decodedData = dataStoreInterface.decodeFunctionData(
+      "setUint",
+      callData.data
+    );
+    expect(decodedData.key).to.equal(userArgs.uintKey);
+    expect(decodedData.value.toString()).to.equal("381065622573740");
   });
 });

@@ -23,60 +23,114 @@
         "prettier"
       ],
       "rules": {
-        "prettier/prettier": "error",
+        "no-constant-condition": "off",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        // note you must disable the base rule as it can report incorrect errors
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": ["error", { "functions": false }],
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-var-requires": "warn",
+        "no-cond-assign": ["error", "always"],
+        "no-console": "error",
+        "no-debugger": "error",
+        "no-dupe-args": "error",
+        "no-dupe-keys": "error",
+        "no-duplicate-case": "error",
+        "no-empty-character-class": "error",
+        "no-ex-assign": "error",
+        "no-extra-semi": "error",
+        "no-func-assign": "error",
+        "no-inner-declarations": "error",
+        "no-invalid-regexp": "error",
+        "no-irregular-whitespace": "error",
+        "no-unsafe-negation": "error",
+        "no-obj-calls": "error",
+        "no-sparse-arrays": "error",
+        "no-unexpected-multiline": "error",
+        "no-unreachable": "error",
+        "no-unsafe-finally": "error",
+        "use-isnan": "error",
+        "valid-typeof": "error",
+        "no-empty-pattern": "error",
+        "no-class-assign": "error",
+        "no-const-assign": "error",
+        "no-useless-constructor": "off",
+        "prefer-arrow-callback": ["error", { "allowNamedFunctions": true }],
+        "prefer-const": ["error", { "destructuring": "all" }],
+        "prefer-rest-params": "error",
+        "prefer-spread": "error",
+        "rest-spread-spacing": ["error", "never"],
+        "template-curly-spacing": ["error", "never"],
+        "yield-star-spacing": ["error", "after"],
+        "array-callback-return": "error",
+        "block-scoped-var": "error",
+        "curly": "error",
+        "dot-location": ["error", "property"],
+        "dot-notation": "error",
+        "eqeqeq": "error",
+        "no-extend-native": "error",
+        "no-alert": "error",
+        "no-caller": "error",
+        "no-case-declarations": "error",
+        "no-eq-null": "error",
+        "no-eval": "error",
+        "no-extra-bind": "error",
+        "no-extra-label": "error",
+        "no-floating-decimal": "error",
+        "no-implicit-coercion": "error",
+        "no-implicit-globals": "error",
+        "no-implied-eval": "error",
+        "no-invalid-this": "error",
+        "no-iterator": "error",
+        "no-lone-blocks": "error",
+        "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
+        "no-multi-str": "error",
+        "no-global-assign": "error",
+        "no-new": "error",
+        "no-new-func": "error",
+        "no-octal": "error",
+        "no-octal-escape": "error",
+        "no-proto": "error",
+        "no-redeclare": "error",
+        "no-return-assign": ["error", "always"],
+        "no-self-assign": "error",
+        "no-self-compare": "error",
+        "no-sequences": "error",
+        "no-throw-literal": "error",
+        "no-unused-expressions": "error",
+        "no-unused-labels": "error",
+        "no-useless-call": "error",
+        "no-useless-concat": "error",
+        "no-void": "error",
+        "no-with": "error",
+        "radix": "error",
+        "wrap-iife": ["error", "inside"],
+        "yoda": ["error", "never"],
+    
+        // http://eslint.org/docs/rules/#strict-mode
+        "strict": ["error", "safe"],
+    
+        // http://eslint.org/docs/rules/#variables
+        "no-delete-var": "error",
+        "no-undef": "error",
+        "no-undef-init": "error",
+        "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": "error",
-        "@typescript-eslint/no-explicit-any": "warn",
-        "@typescript-eslint/naming-convention": [
-          "error",
-          {
-            "selector": "default",
-            "format": ["camelCase"]
-          },
-          {
-            "selector": "variable",
-            "format": ["camelCase", "UPPER_CASE"]
-          },
-          {
-            "selector": "parameter",
-            "format": ["camelCase"],
-            "leadingUnderscore": "allow"
-          },
-          {
-            "selector": ["objectLiteralProperty"],
-            "format": ["camelCase", "PascalCase"]
-          },
-          {
-            "selector": ["classProperty"],
-            "modifiers": ["private", "static"],
-            "format": ["PascalCase", "UPPER_CASE"]
-          },
-          {
-            "selector": ["classProperty", "classMethod"],
-            "modifiers": ["private"],
-            "format": ["camelCase"],
-            "leadingUnderscore": "require"
-          },
-          {
-            "selector": ["classProperty", "classMethod"],
-            "modifiers": ["protected"],
-            "format": ["camelCase"],
-            "leadingUnderscore": "require"
-          },
-          {
-            "selector": "typeLike",
-            "format": ["PascalCase"]
-          },
-          {
-            "selector": ["enumMember"],
-            "format": ["camelCase", "PascalCase"]
-          },
-          {
-            "selector": "variable",
-            "types": ["boolean"],
-            "format": ["PascalCase"],
-            "prefix": ["is", "should", "has", "can", "did", "will"]
-          }
-        ]
+        "@typescript-eslint/no-non-null-assertion": "off",
+    
+        // Non-ASCII characters are not allowed in identifiers for variables.
+        "id-match": ["error", "^[a-zA-Z0-9_$]*$", { "properties": true }],
+        // 'operator-linebreak': ['error', 'after'],
+        "quote-props": ["error", "as-needed"],
+        "unicode-bom": "error",
+    
+        "no-return-await": "error",
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error",
+    
+        "@typescript-eslint/ban-ts-comment": "off",
       }
     }
   ]

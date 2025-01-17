@@ -17,7 +17,7 @@
     "lint:sol": "solhint contracts/**/*.sol",
     "test": "npx hardhat test",
     "w3f:deploy": "npx w3f deploy web3-functions/test-function/index.ts",
-    "w3f:test": "npx w3f test src/web3-functions/test-function/index.ts --logs --chain-id=88153591557"
+    "w3f:test": "npx w3f test src/web3-functions/test-function/index.ts --logs"
   },
   "license": "ISC",
   "devDependencies": {
