@@ -19,10 +19,14 @@ const accounts: string[] = PRIVATE_KEY ? [PRIVATE_KEY] : [];
 
 // ================================= CONFIG =========================================
 const config: HardhatUserConfig = {
+  paths: {
+    tests: "./src/test",
+  },
+
   w3f: {
-    rootDir: "./web3-functions",
+    rootDir: "./src/web3-functions",
     debug: false,
-    networks: ["hardhat", "blueberry"], //(multiChainProvider) injects provider for these networks
+    networks: ["hardhat"],
   },
 
   namedAccounts: {

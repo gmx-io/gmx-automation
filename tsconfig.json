@@ -12,14 +12,7 @@
   },
   "files": ["hardhat.config.ts"],
   "include": [
-    "hardhat",
-    "deploy",
-    "scripts",
-    "src",
-    "test",
-    "_typechain",
-    "web3-functions",
-    "utils",
+    "src"
   ],
   "exclude": ["node_modules"]
 }
