@@ -1,16 +1,17 @@
 import { Log } from "@ethersproject/abstract-provider";
+import { BigNumber } from "ethers";
 import { LogDescription } from "ethers/lib/utils";
 
 export type KeyValueEventData = {
-  getUint: (key: string, defaultValue?: any) => bigint;
-  getInt: (key: string, defaultValue?: any) => bigint;
+  getUint: (key: string, defaultValue?: any) => BigNumber;
+  getInt: (key: string, defaultValue?: any) => BigNumber;
   getBool: (key: string, defaultValue?: any) => boolean;
   getAddress: (key: string, defaultValue?: any) => string;
   getBytes32: (key: string, defaultValue?: any) => string;
   getBytes: (key: string, defaultValue?: any) => string;
   getString: (key: string, defaultValue?: any) => string;
-  getUintArray: (key: string, defaultValue?: any) => bigint[];
-  getIntArray: (key: string, defaultValue?: any) => bigint[];
+  getUintArray: (key: string, defaultValue?: any) => BigNumber[];
+  getIntArray: (key: string, defaultValue?: any) => BigNumber[];
   getBoolArray: (key: string, defaultValue?: any) => boolean[];
   getAddressArray: (key: string, defaultValue?: any) => string[];
   getBytes32Array: (key: string, defaultValue?: any) => string[];
