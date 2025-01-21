@@ -2,26 +2,26 @@ import { Contract } from "ethers";
 import { Market, MarketData } from "./marketUtils";
 import { getAddress } from "../../config/addresses";
 import { Storage } from "../../lib/gelato";
+import { Contracts, getContracts } from "../../lib/contracts";
+import { StaticJsonRpcProvider } from "@ethersproject/providers";
 
 export class MarketService {
-  _reader: Contract;
-  _multicall3: Contract;
-  _dataStore: Contract;
-  _chainId: number;
-  _storage: Storage;
+  private chainId: number;
+  private storage: Storage;
+  private contracts: Contracts;
 
-  constructor(p: {
+  constructor({
+    chainId,
+    provider,
+    storage,
+  }: {
     chainId: number;
-    reader: Contract;
-    multicall3: Contract;
-    dataStore: Contract;
     storage: Storage;
+    provider: StaticJsonRpcProvider;
   }) {
-    this._reader = p.reader;
-    this._dataStore = p.dataStore;
-    this._multicall3 = p.multicall3;
-    this._chainId = p.chainId;
-    this._storage = p.storage;
+    this.chainId = chainId;
+    this.storage = storage;
+    this.contracts = getContracts(chainId, provider);
   }
 
   async getMarketsData(
@@ -67,15 +67,19 @@ export class MarketService {
     p: { requiredMarkets?: string[]; skipCache?: true } = {}
   ): Promise<Market[]> {
     console.time("getMarkets");
-    const dataStoreAddress = getAddress(this._chainId, "dataStore");
-    const markets = await this._reader.getMarkets(dataStoreAddress, 0, 1000);
+    const dataStoreAddress = getAddress(this.chainId, "dataStore");
+    const markets = await this.contracts.reader.getMarkets(
+      dataStoreAddress,
+      0,
+      1000
+    );
 
     console.timeEnd("getMarkets");
     return markets;
   }
 
   async _getMarketsDataFromStorage(): Promise<MarketData[] | undefined> {
-    const cacheValue = await this._storage.get("markets");
+    const cacheValue = await this.storage.get("markets");
     if (cacheValue) {
       const data = JSON.parse(cacheValue);
       return data.map((m: any) => ({
@@ -89,7 +93,7 @@ export class MarketService {
   }
 
   async _saveMarketsToStorage(markets: MarketData[]): Promise<void> {
-    await this._storage.set(
+    await this.storage.set(
       "markets",
       JSON.stringify(
         markets.map((m) => [
@@ -111,3 +115,21 @@ export class MarketService {
     return markets.map(() => false);
   }
 }
+
+let marketService: MarketService;
+
+export const getMarketService = (p: {
+  chainId: number;
+  storage: Storage;
+  provider: StaticJsonRpcProvider;
+}) => {
+  if (!marketService) {
+    marketService = new MarketService(p);
+  }
+  return marketService;
+};
+
+// for testing only
+export const setMarketService = (mock: MarketService) => {
+  marketService = mock;
+};

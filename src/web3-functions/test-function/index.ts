@@ -2,13 +2,23 @@ import {
   Web3Function,
   Web3FunctionEventContext,
 } from "@gelatonetwork/web3-functions-sdk";
-import { BytesLike } from "ethers/lib/utils";
 import { getOraclePriceUpdateEventData } from "../../domain/oracle/oracleUtils";
 import { getContracts } from "../../lib/contracts";
 import { parseLog } from "../../lib/events";
+import { getMarketService } from "../../domain/market/marketService";
 
 Web3Function.onRun(async (context: Web3FunctionEventContext) => {
   const { log, multiChainProvider, userArgs, gelatoArgs } = context;
+
+  const marketService = getMarketService({
+    chainId: gelatoArgs.chainId,
+    storage: context.storage,
+    provider: multiChainProvider.default(),
+  });
+
+  const markets = await marketService.getMarketsData();
+
+  console.log(markets);
 
   const contracts = getContracts(
     gelatoArgs.chainId,
@@ -20,12 +30,11 @@ Web3Function.onRun(async (context: Web3FunctionEventContext) => {
 
   return {
     canExec: true,
-    message: "Test",
     callData: [
       {
         to: contracts.dataStore.address,
         data: contracts.dataStore.interface.encodeFunctionData("setUint", [
-          userArgs.uintKey as BytesLike, // otherwise it infers incorrect function
+          userArgs.uintKey as string,
           oraclePriceUpdateEventData.minPrice,
         ]),
       },

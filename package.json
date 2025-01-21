@@ -1,24 +1,12 @@
 {
-  "name": "gelato-web3-functions-hardhat-template",
+  "name": "gmx-automation",
   "version": "1.0.0",
-  "description": "Gelato Web3 Functions Hardhat Template",
-  "repository": "https://github.com/gelatodigital/web3-functions-hardhat-template",
-  "private": false,
+  "private": true,
   "scripts": {
     "dev:update-typechain": "cp -r ../gmx-synthetics/typechain-types/* ./typechain/; for f in $(find ./typechain -name '*.ts'); do echo $f; if [ -f $f ]; then echo \"// @ts-nocheck\n $(cat $f)\" > $f; fi; done",
     "dev:update-abi": "cp $(find ../gmx-synthetics/artifacts/contracts -name '*.json' | grep -v '.dbg.') src/abi",
-    "build": "yarn clean && yarn install && yarn compile && npx tsc",
-    "compile": "npx hardhat compile --force",
-    "clean": "rm -rf dist",
-    "deploy": "npx hardhat deploy",
-    "format": "prettier --write */**/*.*{js,sol,json,md,ts}",
-    "format:check": "prettier --check */**/*.*{js,sol,json,md,ts}",
-    "lint": "eslint --cache . && yarn lint:sol",
-    "lint:ts": "eslint -c .eslintrc.json --ext \"**/*.ts\" \"**/*.test.ts\"",
-    "lint:sol": "solhint contracts/**/*.sol",
     "test": "npx hardhat test"
   },
-  "license": "ISC",
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "1.0.6",
     "@nomicfoundation/hardhat-network-helpers": "1.0.8",
@@ -46,20 +34,20 @@
     "lint-staged": "13.1.2",
     "prettier": "2.8.4",
     "prettier-plugin-solidity": "1.1.2",
-    "solhint": "3.4.0",
-    "solhint-plugin-prettier": "0.0.5",
     "ts-generator": "0.1.1",
     "ts-node": "10.9.1",
     "typechain": "8.1.1",
     "typescript": "4.9.5"
   },
   "lint-staged": {
-    "*.*{js,sol,json,md,ts,yml,yaml}": "prettier --write",
+    "*.*{js,json,md,ts,yml,yaml}": "prettier --write",
     "*.*{ts,js}": "eslint -c .eslintrc.json"
   },
   "dependencies": {
     "@gelatonetwork/automate-sdk": "^3.0.2",
     "@gelatonetwork/web3-functions-sdk": "2.3.0",
-    "ky": "^0.33.2"
+    "ky": "^0.33.2",
+    "sinon": "^19.0.2",
+    "ts-mock-imports": "^1.3.16"
   }
 }

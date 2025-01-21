@@ -8,33 +8,49 @@ import { expect } from "chai";
 import hre from "hardhat";
 import { before } from "mocha";
 import DataStore from "../abi/DataStore.json";
+import { getRandomHash } from "../lib/random";
+import { ethers } from "ethers";
+import {
+  MarketService,
+  setMarketService,
+} from "../domain/market/marketService";
+import { HARDHAT } from "../config/chains";
+import { JsonRpcProvider } from "@ethersproject/providers";
+import { MockedJsonRpcProvider } from "../lib/MockedJsonRpcProvider";
 
 const { deployments, w3f } = hre;
 
-describe("OraclePriceUpdate Tests", function () {
+describe("TestFunction Tests", function () {
   this.timeout(0);
 
   let owner: SignerWithAddress;
-
   let testW3f: Web3FunctionHardhat;
   let userArgs: Web3FunctionUserArgs;
 
   before(async function () {
+    setMarketService(
+      new MarketService({
+        chainId: HARDHAT,
+        provider: new MockedJsonRpcProvider(),
+        storage: {
+          delete: () => Promise.resolve(),
+          get: () => Promise.resolve(""),
+          set: () => Promise.resolve(),
+        },
+      })
+    );
     await deployments.fixture();
-
     [owner] = await hre.ethers.getSigners();
-
     testW3f = w3f.get("test-function");
-
     userArgs = {
-      uintKey:
-        "0x1234567890123456789012345678901234567890123456789012345678901234",
+      uintKey: getRandomHash(),
     };
   });
 
   it("canExec == true", async () => {
     let { result } = await testW3f.run("onRun", { userArgs });
-    result = result as Web3FunctionResultV2;
+
+    result = result as Web3FunctionResultV2 & { message: string };
 
     expect(result.canExec).to.equal(true);
 

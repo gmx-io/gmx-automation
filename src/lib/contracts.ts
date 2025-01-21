@@ -17,7 +17,6 @@ import {
   Reader,
 } from "../typechain";
 
-// Add imports for all ABIs
 import { abi as ConfigAbi } from "../abi/Config.json";
 import { abi as ConfigSyncerAbi } from "../abi/ConfigSyncer.json";
 import { abi as DataStoreAbi } from "../abi/DataStore.json";
@@ -43,6 +42,8 @@ function getContract<T = Contract>({
   const address = getAddress(chainId, name);
   return new ethers.Contract(address, abi, provider) as unknown as T;
 }
+
+export type Contracts = ReturnType<typeof getContracts>;
 
 export function getContracts(chainId: number, provider: StaticJsonRpcProvider) {
   if (!isSupportedChainId(chainId)) {
