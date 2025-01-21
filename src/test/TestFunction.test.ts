@@ -7,7 +7,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import hre from "hardhat";
 import { before } from "mocha";
-import DataStore from "../abis/DataStore.json";
+import DataStore from "../abi/DataStore.json";
 
 const { deployments, w3f } = hre;
 

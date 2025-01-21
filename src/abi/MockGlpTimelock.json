@@ -1,0 +1,49 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "MockGlpTimelock",
+  "sourceName": "contracts/mock/MockGlpTimelock.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "setSwapFees",
+      "outputs": [],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b5060ce8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063da76231614602d575b600080fd5b604060383660046042565b505050505050565b005b60008060008060008060c08789031215605a57600080fd5b86356001600160a01b0381168114607057600080fd5b9860208801359850604088013597606081013597506080810135965060a0013594509250505056fea2646970667358221220556a967f884333263dfbbf980a1292b34044bbc54e4f02851f8e88eae6ce176d64736f6c63430008120033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c8063da76231614602d575b600080fd5b604060383660046042565b505050505050565b005b60008060008060008060c08789031215605a57600080fd5b86356001600160a01b0381168114607057600080fd5b9860208801359850604088013597606081013597506080810135965060a0013594509250505056fea2646970667358221220556a967f884333263dfbbf980a1292b34044bbc54e4f02851f8e88eae6ce176d64736f6c63430008120033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -2,25 +2,19 @@ import {
   Web3Function,
   Web3FunctionEventContext,
 } from "@gelatonetwork/web3-functions-sdk";
-import { Interface } from "ethers/lib/utils";
-import EventEmitter from "../../abis/EventEmitter.json";
-import DataStore from "../../abis/DataStore.json";
-import { Contract } from "ethers";
-import { parseLog } from "../../lib/events";
+import { BytesLike } from "ethers/lib/utils";
 import { getOraclePriceUpdateEventData } from "../../domain/oracle/oracleUtils";
-import { getAddress } from "../../config/addresses";
+import { getContracts } from "../../lib/contracts";
+import { parseLog } from "../../lib/events";
 
 Web3Function.onRun(async (context: Web3FunctionEventContext) => {
   const { log, multiChainProvider, userArgs, gelatoArgs } = context;
 
-  const provider = multiChainProvider.default();
-  const eventEmitterInterface = new Interface(EventEmitter.abi);
-
-  const dataStoreAddress = getAddress(gelatoArgs.chainId, "dataStore");
-
-  const dataStore = new Contract(dataStoreAddress, DataStore.abi, provider);
-  const event = eventEmitterInterface.parseLog(log);
-
+  const contracts = getContracts(
+    gelatoArgs.chainId,
+    multiChainProvider.default()
+  );
+  const event = contracts.eventEmitter.interface.parseLog(log);
   const parsedLog = parseLog(event);
   const oraclePriceUpdateEventData = getOraclePriceUpdateEventData(parsedLog);
 
@@ -29,10 +23,9 @@ Web3Function.onRun(async (context: Web3FunctionEventContext) => {
     message: "Test",
     callData: [
       {
-        to: dataStoreAddress,
-        data: dataStore.interface.encodeFunctionData("setUint", [
-          // TODO use keys
-          userArgs.uintKey,
+        to: contracts.dataStore.address,
+        data: contracts.dataStore.interface.encodeFunctionData("setUint", [
+          userArgs.uintKey as BytesLike, // otherwise it infers incorrect function
           oraclePriceUpdateEventData.minPrice,
         ]),
       },

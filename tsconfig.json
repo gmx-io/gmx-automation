@@ -8,7 +8,11 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "typeRoots": ["./node_modules/@types"],
-    "outDir": "dist"
+    "outDir": "dist",
+    "target": "ES2020",
+    "module": "CommonJS",
+    "types": ["node"],
+    "lib": ["ES2020"]
   },
   "files": ["hardhat.config.ts"],
   "include": [

@@ -6,6 +6,7 @@
   "private": false,
   "scripts": {
     "dev:update-typechain": "cp -r ../gmx-synthetics/typechain-types/* ./typechain/; for f in $(find ./typechain -name '*.ts'); do echo $f; if [ -f $f ]; then echo \"// @ts-nocheck\n $(cat $f)\" > $f; fi; done",
+    "dev:update-abi": "cp $(find ../gmx-synthetics/artifacts/contracts -name '*.json' | grep -v '.dbg.') src/abi",
     "build": "yarn clean && yarn install && yarn compile && npx tsc",
     "compile": "npx hardhat compile --force",
     "clean": "rm -rf dist",
