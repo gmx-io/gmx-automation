@@ -129,7 +129,6 @@ export const getMarketService = (p: {
   return marketService;
 };
 
-// for testing only
-export const setMarketService = (mock: MarketService) => {
-  marketService = mock;
+export const setMarketServiceForTesting = (service: any) => {
+  marketService = service;
 };
