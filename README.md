@@ -1,4 +1,4 @@
-## Setting Up a New Web3 Function
+# Setting Up a New Web3 Function
 
 ### 1. Create Function Directory Structure
 
@@ -140,3 +140,74 @@ Key testing points:
 - Mock any external services your function depends on
 - Test both successful and failed execution paths
 - Verify the generated callData matches expected contract interactions
+
+# Library Directory (`src/lib`)
+
+The `lib` directory contains essential utilities and helpers for Web3 function development:
+
+### Core Utilities
+
+**MockedJsonRpcProvider.ts**
+
+- Mock implementation of JsonRpcProvider for testing
+- Overrides standard provider methods to throw errors
+- Useful for ensuring real RPC calls aren't made during tests
+
+**contracts.ts**
+
+- Handles contract instantiation and management
+- Provides `getContracts` function for creating contract instances
+- Includes typed contract interfaces
+
+**events.ts**
+
+- Utilities for parsing and handling (mainly) gmx events
+- Defines `KeyValueEventData` type
+
+**gelato.ts**
+
+- Utilities for Gelato's automation system
+- Defines interfaces for secrets management
+- Provides storage interface
+- Includes helper functions for secrets
+
+### Data Handling
+
+**hashing.ts**
+
+- Cryptographic hashing utilities
+- `hashData` function for arbitrary data types
+- `hashString` for simple string hashing
+
+**keys/index.ts** and **keys/keys.ts**
+
+- System-wide constants
+- Key generation functions
+- Hash-based key generators
+- Exports common constants
+
+### Testing Tools
+
+**mock.ts**
+
+- Testing utilities for mocked contexts
+- `createMockedContext` and `createMockedEventContext` functions
+- Simulates Web3Function execution environment
+
+### Number & Data Utilities
+
+**number.ts**
+
+- Comprehensive number handling
+- BigNumber type utilities
+- Common numerical constants
+- Decimal handling and math operations
+- Type conversion functions
+
+**random.ts**
+
+- Random blockchain value generation
+- Address generation
+- Hash generation
+- Wallet creation for testing
+- Seeded random generation
