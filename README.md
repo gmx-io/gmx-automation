@@ -15,7 +15,7 @@ src/web3-functions/your-function-name/
 
 Create `schema.json` to define your function's configuration:
 
-```json
+```js
 {
   "web3FunctionVersion": "2.0.0",
   "runtime": "js-1.0",
