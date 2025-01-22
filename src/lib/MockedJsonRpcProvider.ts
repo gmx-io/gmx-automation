@@ -11,55 +11,35 @@ import { Deferrable } from "ethers/lib/utils";
 import { HARDHAT } from "../config/chains";
 
 export class MockedJsonRpcProvider extends JsonRpcProvider {
-  private responses: { [key: string]: any } = {};
   async send(method: string, params: Array<any>): Promise<any> {
-    if (this.responses[method]) {
-      return this.responses[method];
-    }
-
-    if (method === "eth_chainId") {
-      return HARDHAT;
-    }
-
-    throw new Error(`Method ${method} not mocked`);
+    throw new Error("JsonRpcRpcProvider has been called");
   }
 
   estimateGas(transaction: Deferrable<TransactionRequest>): Promise<BigNumber> {
-    console.log("estimateGas:", { transaction });
-    return Promise.resolve(BigNumber.from(0));
+    throw new Error("JsonRpcRpcProvider has been called");
   }
 
   getBlockNumber(): Promise<number> {
-    console.log("getBlockNumber called");
-    return Promise.resolve(0);
+    throw new Error("JsonRpcRpcProvider has been called");
   }
 
   getBlock(blockHashOrBlockNumber: BlockTag): Promise<Block> {
-    console.log("getBlock:", { blockHashOrBlockNumber });
-    return Promise.resolve({} as Block);
+    throw new Error("JsonRpcRpcProvider has been called");
   }
 
   getTransactionReceipt(transactionHash: string): Promise<TransactionReceipt> {
-    console.log("getTransactionReceipt:", { transactionHash });
-    return Promise.resolve({} as TransactionReceipt);
+    throw new Error("JsonRpcRpcProvider has been called");
   }
 
   getTransaction(transactionHash: string): Promise<TransactionResponse> {
-    console.log("getTransaction:", { transactionHash });
-    return Promise.resolve({} as TransactionResponse);
+    throw new Error("JsonRpcRpcProvider has been called");
   }
 
   getTransactionCount(address: string, blockTag?: BlockTag): Promise<number> {
-    console.log("getTransactionCount:", { address, blockTag });
-    return Promise.resolve(0);
+    throw new Error("JsonRpcRpcProvider has been called");
   }
 
   getBalance(address: string, blockTag?: BlockTag): Promise<BigNumber> {
-    console.log("getBalance:", { address, blockTag });
-    return Promise.resolve(BigNumber.from(0));
-  }
-
-  mockResponse(method: string, response: any) {
-    this.responses[method] = response;
+    throw new Error("JsonRpcRpcProvider has been called");
   }
 }
