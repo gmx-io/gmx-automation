@@ -1,5 +1,7 @@
 import { BigNumber } from "ethers";
-import { KeyValueEventData } from "../../lib/events";
+import { KeyValueEventData, parseLogToEventData } from "../../lib/events";
+import { Log } from "hardhat-deploy/dist/types";
+import { EventEmitter } from "../../typechain";
 
 export type OraclePriceUpdateEventData = {
   token: string;
@@ -10,8 +12,11 @@ export type OraclePriceUpdateEventData = {
 };
 
 export const getOraclePriceUpdateEventData = (
-  eventData: KeyValueEventData
+  log: Log,
+  eventEmitter: EventEmitter
 ): OraclePriceUpdateEventData => {
+  const event = eventEmitter.interface.parseLog(log);
+  const eventData = parseLogToEventData(event);
   return {
     token: eventData.getAddress("token"),
     provider: eventData.getString("provider", null),

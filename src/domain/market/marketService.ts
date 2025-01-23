@@ -128,7 +128,3 @@ export const getMarketService = (p: {
   }
   return marketService;
 };
-
-export const setMarketServiceForTesting = (service: any) => {
-  marketService = service;
-};

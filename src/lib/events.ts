@@ -19,11 +19,7 @@ export type KeyValueEventData = {
   getStringArray: (key: string, defaultValue?: any) => string[];
 };
 
-export function parseLog(log: LogDescription) {
-  // const decodedArgs = decodeEventEmitterLog(log);
-  // const kv = getKeyValueEventData(decodedArgs);
-
-  // return { decodedArgs, kv };
+export function parseLogToEventData(log: LogDescription) {
   return getKeyValueEventData(log);
 }
 

@@ -7,6 +7,13 @@ import { BigNumber } from "ethers";
 import { MockedJsonRpcProvider } from "./MockedJsonRpcProvider";
 import { Log } from "@ethersproject/abstract-provider";
 import { HARDHAT } from "../config/chains";
+import { getContracts } from "./contracts";
+import { Context } from "./gelato";
+import {
+  getMarketService,
+  MarketService,
+} from "../domain/market/marketService";
+import sinon from "sinon";
 
 export const createMockedContext = ({
   userArgs,
@@ -55,4 +62,25 @@ export const createMockedEventContext = ({
     log,
   };
   return eventContext;
+};
+
+export const wrapMockContext = <GelatoContext extends Web3FunctionContext>(
+  gelatoContext: GelatoContext
+): Context<GelatoContext> => {
+  const marketService = new MarketService({
+    chainId: gelatoContext.gelatoArgs.chainId,
+    provider: gelatoContext.multiChainProvider.default(),
+    storage: gelatoContext.storage,
+  });
+
+  return {
+    ...gelatoContext,
+    contracts: getContracts(
+      gelatoContext.gelatoArgs.chainId,
+      gelatoContext.multiChainProvider.default()
+    ),
+    services: {
+      marketService,
+    },
+  };
 };

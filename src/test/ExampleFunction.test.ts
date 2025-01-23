@@ -2,21 +2,17 @@ import { Web3FunctionResultCallData } from "@gelatonetwork/web3-functions-sdk";
 import { expect } from "chai";
 import hre from "hardhat";
 import DataStore from "../abi/DataStore.json";
-import { setMarketServiceForTesting } from "../domain/market/marketService";
-import { createMockedEventContext } from "../lib/mock";
+import { createMockedEventContext, wrapMockContext } from "../lib/mock";
 import { getRandomHash } from "../lib/random";
-import { testFunction } from "../web3-functions/test-function/testFunction";
+import { exampleFunction } from "../web3-functions/example-function/exampleFunction";
+import sinon from "sinon";
 
-describe("TestFunction Tests", function () {
+describe("ExampleFunction Tests", function () {
   this.timeout(0);
 
   it("canExec == true, ", async () => {
     const uintKey = getRandomHash();
-    setMarketServiceForTesting({
-      getMarketsData: () => Promise.resolve([]),
-    });
-
-    const context = createMockedEventContext({
+    const gelatoContext = createMockedEventContext({
       log: {
         blockNumber: 48758053,
         blockHash:
@@ -38,8 +34,13 @@ describe("TestFunction Tests", function () {
         uintKey,
       },
     });
+    const context = wrapMockContext(gelatoContext);
 
-    const result = await testFunction(context);
+    sinon
+      .stub(context.services.marketService, "getMarketsData")
+      .returns(Promise.resolve([]));
+
+    const result = await exampleFunction(context);
 
     expect(result.canExec).to.equal(true);
 
