@@ -9,11 +9,11 @@ import {
 
 export const RPC_PROVIDERS: Record<SupportedChainId, string[]> = {
   [ARBITRUM]: [
-    "https://arb1.arbitrum.io/rpc",
-    "https://arbitrum-one-rpc.publicnode.com",
-    "https://1rpc.io/arb",
+    // "https://arb1.arbitrum.io/rpc",
+    // "https://arbitrum-one-rpc.publicnode.com",
+    // "https://1rpc.io/arb",
     "https://arbitrum-one.public.blastapi.io",
-    "https://rpc.ankr.com/arbitrum",
+    // "https://rpc.ankr.com/arbitrum",
   ],
   [AVALANCHE]: [
     "https://api.avax.network/ext/bc/C/rpc",

@@ -10,17 +10,16 @@ UINT_KEY=0xb090a2b4b1460d089313317d9c8dde87144d93e949a91730da157796e1a45cee \
 ```
 */
 
+import { Log } from "@ethersproject/providers";
 import { Web3FunctionEventContext } from "@gelatonetwork/web3-functions-sdk";
-import { Web3FunctionResult } from "@gelatonetwork/web3-functions-sdk";
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import assert from "node:assert";
-import { Context, wrapContext } from "../src/lib/gelato";
-import { Log } from "@ethersproject/providers";
 import { isSupportedChainId, SupportedChainId } from "../src/config/chains";
-import { BigNumber } from "ethers";
-import { exampleFunction } from "../src/web3-functions/example-function/exampleFunction";
 import { getRpcProviderUrl } from "../src/config/providers";
 import { getContracts } from "../src/lib/contracts";
+import { Context, wrapContext } from "../src/lib/gelato";
+import { exampleFunction } from "../src/web3-functions/example-function/exampleFunction";
 
 const txHash = process.env.TX;
 const logIndex =
@@ -88,7 +87,8 @@ const main = async () => {
       );
 
       const decoded = dataStore.interface.decodeFunctionResult("setUint", res);
-      console.log("decoded response ->", decoded);
+      // should never be called actually as we won't set CONTROLLER role to the gelato msg sender
+      console.log("decoded response:", decoded);
     }
   }
 };
