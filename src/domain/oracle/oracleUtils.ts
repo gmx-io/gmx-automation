@@ -14,7 +14,7 @@ export type OraclePriceUpdateEventData = {
 export const getOraclePriceUpdateEventData = (
   log: Log,
   eventEmitter: EventEmitter
-): OraclePriceUpdateEventData | null => {
+): OraclePriceUpdateEventData => {
   const event = eventEmitter.interface.parseLog(log);
   const eventData = parseLogToEventData(event);
 
