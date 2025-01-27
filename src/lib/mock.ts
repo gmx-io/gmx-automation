@@ -13,7 +13,8 @@ import {
   getMarketService,
   MarketService,
 } from "../domain/market/marketService";
-import sinon from "sinon";
+import { jest } from "@jest/globals";
+import { MarketData } from "../domain/market/marketUtils";
 
 export const createMockedContext = ({
   userArgs,
@@ -21,7 +22,7 @@ export const createMockedContext = ({
   userArgs: Web3FunctionUserArgs;
 }) => {
   const provider = new MockedJsonRpcProvider();
-  const context: Web3FunctionContext = {
+  const context = {
     gelatoArgs: {
       chainId: HARDHAT,
       gasPrice: BigNumber.from(0),
@@ -37,14 +38,14 @@ export const createMockedContext = ({
       },
     },
     storage: {
-      get: () => Promise.resolve(""),
-      set: () => Promise.resolve(),
-      delete: () => Promise.resolve(),
-      getKeys: () => Promise.resolve([]),
-      getSize: () => Promise.resolve(0),
+      get: jest.fn<() => Promise<string | undefined>>().mockResolvedValue(""),
+      set: jest.fn<() => Promise<void>>(),
+      delete: jest.fn<() => Promise<void>>(),
+      getKeys: jest.fn<() => Promise<string[]>>().mockResolvedValue([]),
+      getSize: jest.fn<() => Promise<number>>().mockResolvedValue(0),
     },
     userArgs,
-  };
+  } satisfies Web3FunctionContext;
 
   return context;
 };
@@ -66,12 +67,12 @@ export const createMockedEventContext = ({
 
 export const wrapMockContext = <GelatoContext extends Web3FunctionContext>(
   gelatoContext: GelatoContext
-): Context<GelatoContext> => {
-  const marketService = new MarketService({
-    chainId: gelatoContext.gelatoArgs.chainId,
-    provider: gelatoContext.multiChainProvider.default(),
-    storage: gelatoContext.storage,
-  });
+) => {
+  const marketService = {
+    getMarketsData: jest
+      .fn<() => Promise<MarketData[]>>()
+      .mockResolvedValue([]),
+  } as unknown as MarketService;
 
   return {
     ...gelatoContext,
@@ -82,5 +83,5 @@ export const wrapMockContext = <GelatoContext extends Web3FunctionContext>(
     services: {
       marketService,
     },
-  };
+  } satisfies Context<GelatoContext>;
 };
