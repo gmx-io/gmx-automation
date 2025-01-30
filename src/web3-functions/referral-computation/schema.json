@@ -3,5 +3,9 @@
   "runtime": "js-1.0",
   "memory": 128,
   "timeout": 30,
-  "userArgs": { "network": "string" }
+  "userArgs": {
+    "network": "string",
+    "initialFromTimestamp": "string",
+    "uintKey": "string"
+  }
 }

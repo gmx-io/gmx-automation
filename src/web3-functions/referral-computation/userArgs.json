@@ -1,1 +1,5 @@
-{ "network": "arbitrum" }
+{
+  "network": "arbitrum",
+  "initialFromTimestamp": "1000",
+  "uintKey": ""
+}
