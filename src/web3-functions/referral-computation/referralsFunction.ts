@@ -30,21 +30,39 @@ const USD_DECIMALS = 30;
 const GMX_DECIMALS = 18;
 const REWARD_THRESHOLD = expandDecimals(1, 28); // 1 cent
 const ESGMX_REWARDS_THRESHOLD = expandDecimals(1, 16); // 0.01 esGMX
+const VAULT_ADDRESS = "0x489ee077994B6658eAfA855C308275EAd8097C4A";
+const VAULT_ABI = [
+  "function getMinPrice(address) external view returns (uint256)",
+];
+const UNISWAP_POOL_ADDRESS = "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E";
+const UNISWAP_POOL_ABI = [
+  "function slot0() external view returns (uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, uint8 feeProtocol, bool unlocked)",
+];
+const WETH_ADDRESS = "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1";
 
 export const referralsFunction = async (
   context: Context<Web3FunctionEventContext>
 ): Promise<Web3FunctionResult> => {
   const { userArgs, storage, multiChainProvider } = context;
   const provider = multiChainProvider.default();
-  const network = userArgs.network;
-  const distributeReferralRewards = false; // logic to parse log from event to be added
+  const distributeReferralRewards; // logic to parse log from event to be added
   if (!distributeReferralRewards) {
     const fromTimestamp = (await storage.get("fromTimestamp")) || userArgs.initialFromTimestamp;
     const toTimestamp = await provider.getBlock("latest").timestamp;
-    const gmxPrice = "20"; //placeholder, will retrieve on-chain
-    const esgmxRewards = "5000"; //perhaps retrieving from dataStore is more appropriate
+
+    const arbitrumProvider = multiChainProvider.chainId(42161);
+    const vault = new Contract(VAULT_ADDRESS, VAULT_ABI, arbitrumProvider);
+    const uniswapPool = new Contract(UNISWAP_POOL_ADDRESS, UNISWAP_POOL_ABI, arbitrumProvider);
+    const ethMinPrice = await vault.getMinPrice(WETH_ADDRESS);
+    const ethPrice = ethMinPrice / 10 ** 30;
+    const [sqrtPriceX96] = await uniswapPool.slot0();
+    const gmxEthPrice = (Number(sqrtPriceX96) / 2 ** 96) ** 2;
+    
+    const gmxPrice = (ethPrice / gmxEthPrice).toString();
+    const esgmxRewards = contracts.dataStore.getUint(userArgs.esGmxRewardsKey);
+    
     const totalRebateUsd = await getDistributionData(
-      network,
+      userArgs.network,
       fromTimestamp,
       toTimestamp,
       gmxPrice,
@@ -60,14 +78,14 @@ export const referralsFunction = async (
         {
           to: contracts.dataStore.address,
           data: contracts.dataStore.interface.encodeFunctionData("setUint", [
-            userArgs.uintKey as string,
+            userArgs.referralRewardsAmountKey as string,
             totalRebateUsd,
           ]),
         },
         { //call to FeeDistributor.distribute() to be added below
           to: contracts.dataStore.address,
           data: contracts.dataStore.interface.encodeFunctionData("setUint", [
-            userArgs.uintKey as string,
+            userArgs.referralRewardsAmountKey as string,
             totalRebateUsd,
           ]),
         },
@@ -75,7 +93,6 @@ export const referralsFunction = async (
     };
   }
   
-
   const referralDistributionCallData; //logic to be added
 
   return {
