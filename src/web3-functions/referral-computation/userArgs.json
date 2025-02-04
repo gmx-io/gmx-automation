@@ -1,6 +1,9 @@
 {
-  "network": "arbitrum",
-  "initialFromTimestamp": "1000",
-  "referralRewardsAmountKey": "",
-  "esGmxRewardsKey": ""
+  "network": "",
+  "initialFromTimestamp": "",
+  "referralRewardsAmountNativeTokenKey": "",
+  "referralRewardsAmountEsGmxKey": "",
+  "esGmxRewardsKey": "",
+  "nativeToken": "",
+  "esGmx": ""
 }

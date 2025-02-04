@@ -59,14 +59,14 @@ export const referralsFunction = async (
     const gmxEthPrice = (Number(sqrtPriceX96) / 2 ** 96) ** 2;
     
     const gmxPrice = (ethPrice / gmxEthPrice).toString();
-    const esgmxRewards = contracts.dataStore.getUint(userArgs.esGmxRewardsKey);
+    const esGmxRewards = contracts.dataStore.getUint(userArgs.esGmxRewardsKey);
     
-    const totalRebateUsd = await getDistributionData(
+    const [totalRebateUsd, esgmxRewardsTotal] = await getDistributionData(
       userArgs.network,
       fromTimestamp,
       toTimestamp,
       gmxPrice,
-      esgmxRewards
+      esGmxRewards
     );
 
     const nextFromTimestamp = toTimestamp + 1;
@@ -78,8 +78,15 @@ export const referralsFunction = async (
         {
           to: contracts.dataStore.address,
           data: contracts.dataStore.interface.encodeFunctionData("setUint", [
-            userArgs.referralRewardsAmountKey as string,
+            userArgs.referralRewardsAmountNativeTokenKey as string,
             totalRebateUsd,
+          ]),
+        },
+        {
+          to: contracts.dataStore.address,
+          data: contracts.dataStore.interface.encodeFunctionData("setUint", [
+            userArgs.referralRewardsAmountEsGmxKey as string,
+            esgmxRewardsTotal,
           ]),
         },
         { //call to FeeDistributor.distribute() to be added below
@@ -285,6 +292,7 @@ async function getDistributionData(
   let allAffiliatesRebateUsd = BigNumber.from(0);
   let totalReferralVolume = BigNumber.from(0);
   let totalRebateUsd = BigNumber.from(0);
+  let esgmxRewardsTotal = BigNumber.from(0);
 
   interface IAffiliateData {
     rebateUsd: ethers.BigNumber;
@@ -377,13 +385,17 @@ async function getDistributionData(
         .mul(expandDecimals(1, USD_DECIMALS))
         .div(_gmxPrice)
         .div(expandDecimals(1, 12));
+      
       esgmxRewardsUsdTotal = esgmxRewardsUsdTotal.add(data.esgmxRewardsUsd);
+      esgmxRewardsTotal = esgmxRewardsTotal.add(data.esgmxRewards);
     });
 
     if (esgmxRewardsUsdTotal.gt(esgmxRewardsUsdLimit)) {
       const denominator = esgmxRewardsUsdTotal
         .mul(USD_DECIMALS)
         .div(esgmxRewardsUsdLimit);
+      
+      esgmxRewardsTotal = BigNumber.from(0);
       Object.values(affiliatesRebatesData).forEach((data) => {
         if (!data.esgmxRewardsUsd) return;
         data.esgmxRewardsUsd = data.esgmxRewardsUsd
@@ -393,6 +405,7 @@ async function getDistributionData(
           .mul(expandDecimals(1, USD_DECIMALS))
           .div(_gmxPrice)
           .div(expandDecimals(1, 12));
+        esgmxRewardsTotal = esgmxRewardsTotal.add(data.esgmxRewards);
       });
     }
   }
@@ -572,7 +585,7 @@ async function getDistributionData(
 
   await storage.set("distributionData", JSON.stringify(output, null, 4));
 
-  return output.totalRebateUsd;
+  return [output.totalRebateUsd, esgmxRewardsTotal];
 }
 
 interface EsGMXReferralRewardsDataParams {

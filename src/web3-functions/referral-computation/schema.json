@@ -6,7 +6,10 @@
   "userArgs": {
     "network": "string",
     "initialFromTimestamp": "string",
-    "referralRewardsAmountKey": "string",
-    "esGmxRewardsKey": "string"
+    "referralRewardsAmountNativeTokenKey": "string",
+    "referralRewardsAmountEsGmxKey": "string",
+    "esGmxRewardsKey": "string",
+    "nativeToken": "string",
+    "esGmx": "string"
   }
 }
