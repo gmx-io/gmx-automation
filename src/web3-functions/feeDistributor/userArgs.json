@@ -1,0 +1,13 @@
+{
+  "network": "",
+  "initialFromTimestamp": "",
+  "referralRewardsAmountNativeTokenKey": "",
+  "referralRewardsAmountEsGmxKey": "",
+  "feeAmountUsdV1Key": "",
+  "feeAmountUsdV2Key": "",
+  "esGmxRewardsKey": "",
+  "nativeToken": "",
+  "esGmx": "",
+  "skipSendNativeToken": "",
+  "shouldSendTxn": ""
+}
