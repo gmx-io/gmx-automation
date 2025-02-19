@@ -50,7 +50,7 @@ const WNT_ADDRESS: Record<string, string> = {
   avalanche: "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
 };
 
-export const feeDistributor = async (
+export const feeDistribution = async (
   context: Context<Web3FunctionEventContext>
 ): Promise<Web3FunctionResult> => {
   const { log, userArgs, storage, services, contracts, multiChainProvider } = context;
@@ -74,7 +74,7 @@ export const feeDistributor = async (
   const distributeReferralRewards; // logic to parse log from event to be added
   if (!distributeReferralRewards) {
     await storage.delete("distributionData");
-    
+
     const fromTimestamp = Number(
       (await storage.get("fromTimestamp")) ?? userArgs.initialFromTimestamp
     );
@@ -138,25 +138,30 @@ export const feeDistributor = async (
     };
   }
   
+  let referralValues;
+  if (network === "arbitrum") {
+    referralValues = await getArbValues(provider);
+  } else if (network === "avalanche") {
+    referralValues = await getAvaxValues(provider);
+  } else {
+    throw new Error(`Unsupported network: ${network}`);
+  }
+
   const shouldSendTxn = userArgs.shouldSendTxn;
 
-  const referralDistributionSigner = "0x..." // Need to confirm address
-  const referralDistributionSender = "0x..." // Need to confirm address
-  const inputValues = "abcxyz" // Need to determine values
-
-  const referralDistributionCalls = await referralRewardsCalls({
+  const referralRewardsCalls = await referralRewardsCalls({
     skipSendNativeToken: userArgs.skipSendNativeToken,
-    referralDistributionSigner,
-    referralDistributionSender,
+    provider,
+    userArgs.keeperAddress,
     shouldSendTxn: shouldSendTxn,
     nativeToken: { address: WNT_ADDRESS[network], name: "WNT" },
     nativeTokenPrice: wntPrice,
     gmxPrice,
-    inputValues,
+    referralValues,
     network,
   });
 
-  const referralDistributionCallData = referralDistributionCalls.map((c) => ({
+  const referralDistributionCallData = referralRewardsCalls.map((c) => ({
     to: c.to,
     data: c.data,
   }));
@@ -934,12 +939,13 @@ async function sendTxn(
 async function contractAt(
   name: string,
   address: string,
-  providerOrSigner: ethers.providers.Provider | ethers.Signer
+  provider?: ethers.providers.Provider
 ): Promise<ethers.Contract> {
-  const contractFactory = await ethers.getContractFactory(
-    name,
-    providerOrSigner
-  );
+  const contractFactory = await ethers.getContractFactory(name);
+  if (provider) {
+    const connectedFactory = contractFactory.connect(provider);
+    return connectedFactory.attach(address);
+  }
   return contractFactory.attach(address);
 }
 
@@ -983,52 +989,48 @@ async function processBatch<T>(
   }
 }
 
-async function getArbValues(referralSender: any): Promise<any> {
+async function getArbValues(readOnlyProvider: ethers.providers.Provider): Promise<any> {
   const vester = await contractAt(
     "Vester",
     "0x7c100c0F55A15221A4c1C5a25Db8C98A81df49B2",
-    referralSender
+    readOnlyProvider
   );
   const timelock = await contractAt(
     "Timelock",
-    await vester.gov(),
-    referralSender
+    await vester.gov()
   );
   const batchSender = await contractAt(
     "BatchSender",
-    "0x1070f775e8eb466154BBa8FA0076C4Adc7FE17e8",
-    referralSender
+    "0x1070f775e8eb466154BBa8FA0076C4Adc7FE17e8"
   );
   const esGmx = await contractAt(
     "Token",
     "0xf42Ae1D54fd613C9bb14810b0588FaAa09a426cA",
-    referralSender
+    readOnlyProvider
   );
   const data = await storage.get("distributionData");
 
   return { vester, timelock, batchSender, esGmx, data };
 }
 
-async function getAvaxValues(referralSender: any): Promise<any> {
+async function getAvaxValues(readOnlyProvider: ethers.providers.Provider): Promise<any> {
   const vester = await contractAt(
     "Vester",
     "0x754eC029EF9926184b4CFDeA7756FbBAE7f326f7",
-    referralSender
+    readOnlyProvider
   );
   const timelock = await contractAt(
     "Timelock",
-    await vester.gov(),
-    referralSender
+    await vester.gov()
   );
   const batchSender = await contractAt(
     "BatchSender",
-    "0xF0f929162751DD723fBa5b86A9B3C88Dc1D4957b",
-    referralSender
+    "0xF0f929162751DD723fBa5b86A9B3C88Dc1D4957b"
   );
   const esGmx = await contractAt(
     "Token",
     "0xFf1489227BbAAC61a9209A08929E4c2a526DdD17",
-    referralSender
+    readOnlyProvider
   );
   const data = await storage.get("distributionData");
 
@@ -1037,8 +1039,8 @@ async function getAvaxValues(referralSender: any): Promise<any> {
 
 interface ReferralRewardsCallsParams {
   skipSendNativeToken: boolean;
-  signer: any;
-  referralSender: any;
+  readOnlyProvider: ethers.providers.Provider;
+  keeperAddress: string;
   shouldSendTxn: boolean;
   nativeToken: { address: string; name: string };
   nativeTokenPrice: ethers.BigNumber;
@@ -1049,8 +1051,8 @@ interface ReferralRewardsCallsParams {
 
 async function referralRewardsCalls({
   skipSendNativeToken,
-  signer,
-  referralSender,
+  readOnlyProvider,
+  keeperAddress,
   shouldSendTxn,
   nativeToken,
   nativeTokenPrice,
@@ -1060,12 +1062,10 @@ async function referralRewardsCalls({
 }: ReferralRewardsCallsParams): Promise<Array<{ to: string; data: string }>> {
   const calls: Array<{ to: string; data: string }> = [];
 
-  const wallet = { address: "0x5F799f365Fa8A2B60ac0429C48B153cA5a6f0Cf8" };
   const { vester, timelock, batchSender, esGmx, data } = values;
   const nativeTokenContract = await contractAt(
     "Token",
-    nativeToken.address,
-    referralSender
+    nativeToken.address
   );
 
   const affiliatesData = data.affiliates;
@@ -1145,12 +1145,12 @@ async function referralRewardsCalls({
 
   const batchSize = 150;
 
-  const nativeTokenForSigner = await contractAt(
+  const nativeTokenForBalanceCheck = await contractAt(
     "Token",
     nativeToken.address,
-    signer
+    readOnlyProvider
   );
-  const balance = await nativeTokenForSigner.balanceOf(signer.address);
+  const balance = await nativeTokenForBalanceCheck.balanceOf(keeperAddress);
   if (!skipSendNativeToken) {
     if (balance.lt(totalNativeAmount)) {
       throw new Error(
@@ -1158,7 +1158,7 @@ async function referralRewardsCalls({
       );
     }
   }
-  const esGmxBalance = await esGmx.balanceOf(referralSender.address);
+  const esGmxBalance = await esGmx.balanceOf(keeperAddress);
   if (esGmxBalance.lt(totalEsGmxAmount)) {
     throw new Error(
       `Insufficient esGmx balance, required: ${totalEsGmxAmount.toString()}, available: ${esGmxBalance.toString()}`
@@ -1170,14 +1170,6 @@ async function referralRewardsCalls({
   }
 
   if (!skipSendNativeToken) {
-    calls.push({
-      to: nativeTokenForSigner.address,
-      data: nativeTokenForSigner.interface.encodeFunctionData("transfer", [
-        wallet.address,
-        totalNativeAmount,
-      ]),
-    });
-
     calls.push({
       to: nativeTokenContract.address,
       data: nativeTokenContract.interface.encodeFunctionData("approve", [

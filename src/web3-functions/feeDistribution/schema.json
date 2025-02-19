@@ -4,12 +4,17 @@
   "memory": 128,
   "timeout": 30,
   "userArgs": {
+    "keeperAddress": "string",
     "network": "string",
     "initialFromTimestamp": "string",
     "referralRewardsAmountNativeTokenKey": "string",
     "referralRewardsAmountEsGmxKey": "string",
+    "feeAmountUsdV1Key": "string",
+    "feeAmountUsdV2Key": "string",
     "esGmxRewardsKey": "string",
     "nativeToken": "string",
-    "esGmx": "string"
+    "esGmx": "string",
+    "skipSendNativeToken": "boolean",
+    "shouldSendTxn": "boolean"
   }
 }
