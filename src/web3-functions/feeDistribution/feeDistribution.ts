@@ -1,74 +1,55 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { subWeeks, addWeeks } from "date-fns";
 import { ethers } from "ethers";
-import { RequestInfo, RequestInit } from "node-fetch";
 import {
   Web3FunctionEventContext,
   Web3FunctionResult,
 } from "@gelatonetwork/web3-functions-sdk/*";
 import { Context } from "../../lib/gelato";
-
-const fetch = (...args: [input: RequestInfo | URL, init?: RequestInit]) =>
-  import("node-fetch").then(({ default: f }) => f(...args));
-
-const ARBITRUM_SUBGRAPH_ENDPOINT =
-  "https://subgraph.satsuma-prod.com/3b2ced13c8d9/gmx/gmx-arbitrum-referrals/api";
-const AVALANCHE_SUBGRAPH_ENDPOINT =
-  "https://subgraph.satsuma-prod.com/3b2ced13c8d9/gmx/gmx-avalanche-referrals/api";
-
-const ES_GMX_TOKEN_ADDRESS: Record<string, string> = {
-  arbitrum: "0xf42ae1d54fd613c9bb14810b0588faaa09a426ca",
-  avalanche: "0xff1489227bbaac61a9209a08929e4c2a526ddd17",
-};
+import { 
+  stringToFixed, 
+  bigNumberify, 
+  expandDecimals, 
+  SHARE_DIVISOR, 
+  BONUS_TIER, 
+  USD_DECIMALS, 
+  GMX_DECIMALS, 
+  REWARD_THRESHOLD, 
+  ESGMX_REWARDS_THRESHOLD 
+} from "../../lib/number";
+import { SubgraphService } from "../../domain/subgraphService";
+import { 
+  ARBITRUM, 
+  AVALANCHE 
+} from "../../config/chains";
+import { 
+  dateToSeconds, 
+  getPeriod, 
+  getRecentWednesdayStartOfDay 
+} from "../../utils/date";
+import { getAddress } from "../../config/addresses";
 
 const BigNumber = ethers.BigNumber;
 const { formatUnits, parseUnits } = ethers.utils;
 const { AddressZero } = ethers.constants;
 
-const dayFormat = "dd.MM.yyyy";
-
-const SHARE_DIVISOR = BigNumber.from("1000000000"); // 1e9
-const BONUS_TIER = 2; // for EsGMX distributions
-const USD_DECIMALS = 30;
-const GMX_DECIMALS = 18;
-const REWARD_THRESHOLD = expandDecimals(1, 28); // 1 cent
-const ESGMX_REWARDS_THRESHOLD = expandDecimals(1, 16); // 0.01 esGMX
-const VAULT_ADDRESS: Record<string, string> = {
-  arbitrum: "0x489ee077994B6658eAfA855C308275EAd8097C4A",
-  avalanche: "0x9ab2De34A33fB459b538c43f251eB825645e8595",
-};
-const VAULT_ABI = [
-  "function getMaxPrice(address) external view returns (uint256)",
-];
-const UNISWAP_POOL_ADDRESS = "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E";
-const UNISWAP_POOL_ABI = [
-  "function slot0() external view returns (uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, uint8 feeProtocol, bool unlocked)",
-];
-const WNT_ADDRESS: Record<string, string> = {
-  arbitrum: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
-  avalanche: "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
-};
-
 export const feeDistribution = async (
   context: Context<Web3FunctionEventContext>
 ): Promise<Web3FunctionResult> => {
-  const { log, userArgs, storage, services, contracts, multiChainProvider } = context;
+  const { log, userArgs, storage, services, contracts, multiChainProvider, gelatoArgs } = context;
   const provider = multiChainProvider.default();
-  const network = userArgs.network;
   
-  const vault = new ethers.Contract(VAULT_ADDRESS[network], VAULT_ABI, provider);
   let wntPrice, gmxPrice;
-  if (network === "arbitrum") {
-    const uniswapPool = new ethers.Contract(UNISWAP_POOL_ADDRESS, UNISWAP_POOL_ABI, provider);
-    ({ ethPrice: wntPrice, gmxPrice } = await getPrices(vault, uniswapPool, WNT_ADDRESS.arbitrum));
+  if (gelatoArgs.chainId === ARBITRUM) {
+    ({ ethPrice: wntPrice, gmxPrice } = await getPrices(contracts.vault, contracts.uniswapGmxWethPool, getAddress(ARBITRUM, "wnt")));
   }
   else {
-    const arbitrumProvider = multiChainProvider.chainId(42161);
-    const arbitrumVault = new ethers.Contract(VAULT_ADDRESS.arbitrum, VAULT_ABI, arbitrumProvider);
-    const uniswapPool = new ethers.Contract(UNISWAP_POOL_ADDRESS, UNISWAP_POOL_ABI, arbitrumProvider);
-    ({ gmxPrice } = await getPrices(arbitrumVault, uniswapPool, WNT_ADDRESS.arbitrum));
-    wntPrice = await vault.getMaxPrice(WNT_ADDRESS[network]);
+    const arbitrumProvider = multiChainProvider.chainId(ARBITRUM);
+    const arbContracts = getContracts(ARBITRUM, arbitrumProvider);
+    [{ gmxPrice }, wntPrice] = await Promise.all([
+      getPrices(arbContracts.vault, arbContracts.uniswapGmxWethPool, getAddress(ARBITRUM, "wnt")),
+      arbContracts.vault.getMaxPrice(getAddress(ARBITRUM, "wnt")),
+    ])
   }
 
   const distributeReferralRewards; // logic to parse log from event to be added
@@ -78,15 +59,17 @@ export const feeDistribution = async (
     const fromTimestamp = Number(
       (await storage.get("fromTimestamp")) ?? userArgs.initialFromTimestamp
     );
-    const toTimestamp = await provider.getBlock("latest").timestamp;
 
-    const esGmxRewards = contracts.dataStore.getUint(userArgs.esGmxRewardsKey);
-
-    const feesV1Usd = await processPeriodV1('prev', network);
-    const feesV2Usd = await processPeriodV2('prev', network).mul(10).div(100);
+    const [latestBlock, esGmxRewards, feesV1Usd, feesV2Usd] = await Promise.all([
+      provider.getBlock("latest"),
+      contracts.dataStore.getUint(userArgs.esGmxRewardsKey),
+      processPeriodV1('prev', gelatoArgs.chainId),
+      processPeriodV2('prev', gelatoArgs.chainId).mul(10).div(100)
+    ])
+    const toTimestamp = latestBlock.timestamp;
     
     const [totalRebateUsd, esgmxRewardsTotal] = await getDistributionData(
-      network,
+      gelatoArgs.chainId,
       fromTimestamp,
       toTimestamp,
       gmxPrice,
@@ -100,38 +83,12 @@ export const feeDistribution = async (
       canExec: true,
       callData: [
         {
-          to: contracts.dataStore.address,
-          data: contracts.dataStore.interface.encodeFunctionData("setUint", [
-            userArgs.referralRewardsAmountNativeTokenKey as string,
+          to: contracts.feeDistributor.address,
+          data: contracts.feeDistributor.interface.encodeFunctionData("distribute", [
             totalRebateUsd,
-          ]),
-        },
-        {
-          to: contracts.dataStore.address,
-          data: contracts.dataStore.interface.encodeFunctionData("setUint", [
-            userArgs.referralRewardsAmountEsGmxKey as string,
             esgmxRewardsTotal,
-          ]),
-        },
-        {
-          to: contracts.dataStore.address,
-          data: contracts.dataStore.interface.encodeFunctionData("setUint", [
-            userArgs.feeAmountUsdV1Key as string,
             feesV1Usd,
-          ]),
-        },
-        {
-          to: contracts.dataStore.address,
-          data: contracts.dataStore.interface.encodeFunctionData("setUint", [
-            userArgs.feeAmountUsdV2Key as string,
             feesV2Usd,
-          ]),
-        },
-        { //call to FeeDistributor.distribute() to be added below
-          to: contracts.dataStore.address,
-          data: contracts.dataStore.interface.encodeFunctionData("setUint", [
-            userArgs.referralRewardsAmountKey as string,
-            totalRebateUsd,
           ]),
         },
       ],
@@ -139,12 +96,12 @@ export const feeDistribution = async (
   }
   
   let referralValues;
-  if (network === "arbitrum") {
+  if (gelatoArgs.chainId === ARBITRUM) {
     referralValues = await getArbValues(provider);
-  } else if (network === "avalanche") {
+  } else if (gelatoArgs.chainId === AVALANCHE) {
     referralValues = await getAvaxValues(provider);
   } else {
-    throw new Error(`Unsupported network: ${network}`);
+    throw new Error(`Unsupported network: ${gelatoArgs.chainId}`);
   }
 
   const shouldSendTxn = userArgs.shouldSendTxn;
@@ -152,13 +109,13 @@ export const feeDistribution = async (
   const referralRewardsCalls = await referralRewardsCalls({
     skipSendNativeToken: userArgs.skipSendNativeToken,
     provider,
-    userArgs.keeperAddress,
+    getAddress(gelatoArgs.chainId, "feeDistributorVault"),
     shouldSendTxn: shouldSendTxn,
-    nativeToken: { address: WNT_ADDRESS[network], name: "WNT" },
+    nativeToken: { address: getAddress(gelatoArgs.chainId, "wnt"), name: "WNT" },
     nativeTokenPrice: wntPrice,
     gmxPrice,
     referralValues,
-    network,
+    gelatoArgs.chainId,
   });
 
   const referralDistributionCallData = referralRewardsCalls.map((c) => ({
@@ -174,7 +131,7 @@ export const feeDistribution = async (
     canExec: shouldSendTxn,
     callData: referralDistributionCallData,
   };
-});
+};
 
 async function getPrices(
   vault: ethers.Contract,
@@ -193,85 +150,37 @@ async function getPrices(
   return { ethPrice, gmxPrice };
 }
 
-function stringToFixed(s: string | number, n: number): string {
-  return Number(s).toFixed(n);
-}
-
-function bigNumberify(n: number | string): ethers.BigNumber {
-  return ethers.BigNumber.from(n);
-}
-
-function expandDecimals(
-  n: number | string,
-  decimals: number
-): ethers.BigNumber {
-  return bigNumberify(n).mul(bigNumberify(10).pow(decimals));
-}
-
 // functions used to retrieve and calculate referral rewards
 
-function getSubgraphEndpoint(network: string): string {
-  return {
-    avalanche: AVALANCHE_SUBGRAPH_ENDPOINT,
-    arbitrum: ARBITRUM_SUBGRAPH_ENDPOINT,
-  }[network];
-}
-
-async function requestSubgraph(network: string, query: string): Promise<any> {
-  const subgraphEndpoint = getSubgraphEndpoint(network);
-
-  if (!subgraphEndpoint) {
-    throw new Error("Unknown network " + network);
-  }
-
-  const payload = JSON.stringify({ query });
-  const res = await fetch(subgraphEndpoint, {
-    method: "POST",
-    body: payload,
-    headers: { "Content-Type": "application/json" },
-  });
-
-  const j = await res.json();
-  if (j.errors) {
-    throw new Error(JSON.stringify(j));
-  }
-
-  return j.data;
-}
-
-async function getAffiliatesTiers(
-  network: string
-): Promise<Record<string, number>> {
-  const data = await requestSubgraph(
-    network,
-    `{
+async function getAffiliatesTiers(chainId: number): Promise<Record<string, number>> {
+  const subgraphService = new SubgraphService({ chainId });
+  
+  const query = `{
       affiliates(first: 1000, where: { tierId_in: ["2", "1"]}) {
         id,
         tierId
       }
-    }`
-  );
-
+    }`;
+  
+  const data = await subgraphService.querySubgraph("referrals", query);
+  
   if (data.affiliates.length === 1000) {
     throw new Error("Affiliates should be paginated");
   }
-
-  return data.affiliates.reduce(
-    (memo: Record<string, number>, item: { id: string; tierId: string }) => {
-      memo[item.id] = parseInt(item.tierId);
-      return memo;
-    },
-    {}
-  );
+  
+  return data.affiliates.reduce((memo: Record<string, number>, item: { id: string; tierId: string }) => {
+    memo[item.id] = parseInt(item.tierId);
+    return memo;
+  }, {} as Record<string, number>);
 }
 
 async function getDistributionData(
-  network: string,
+  chainId: number,
   fromTimestamp: number,
   toTimestamp: number,
   gmxPrice: ethers.BigNumber,
   esgmxRewards: ethers.BigNumber
-): Promise<void> {
+): Promise<[ethers.BigNumber, ethers.BigNumber]> {
   let affiliateCondition = "";
   let referralCondition = "";
 
@@ -332,9 +241,10 @@ async function getDistributionData(
     referralStats5: ${getReferralStatsQuery(50000)}
   }`;
 
+  const subgraphService = new SubgraphService({ chainId });
   const [data, affiliatesTiers] = await Promise.all([
-    requestSubgraph(network, query),
-    getAffiliatesTiers(network),
+    subgraphService.querySubgraph("referrals", query),
+    getAffiliatesTiers(chainId),
   ]);
 
   const affiliateStats = [
@@ -425,7 +335,7 @@ async function getDistributionData(
   );
 
   if (allAffiliatesRebateUsd.eq(0)) {
-    console.warn("No rebates on %s", network);
+    console.warn("No rebates on %s", chainId);
     return;
   }
 
@@ -485,7 +395,7 @@ async function getDistributionData(
   const output: any = {
     fromTimestamp,
     toTimestamp,
-    network,
+    chainId,
     totalReferralVolume: totalReferralVolume.toString(),
     totalRebateUsd: totalRebateUsd.toString(),
     shareDivisor: SHARE_DIVISOR.toString(),
@@ -661,21 +571,21 @@ async function getDistributionData(
 }
 
 interface EsGMXReferralRewardsDataParams {
-  network: string;
+  chainId: number;
   from: number;
   to: number;
   account?: string;
 }
 
 export async function getEsGMXReferralRewardsData({
-  network,
+  chainId,
   from,
   to,
   account,
 }: EsGMXReferralRewardsDataParams): Promise<
   Array<{ account: string; amount: string }>
 > {
-  const esGmxTokenAddress = ES_GMX_TOKEN_ADDRESS[network];
+  const esGmxTokenAddress = getAddress(chainId, esGmx);
 
   let accountCondition = "";
   if (account) {
@@ -710,7 +620,8 @@ export async function getEsGMXReferralRewardsData({
     esGmxDistribution5: ${getEsGmxDistributionQuery(50000)}
   }`;
 
-  const data = await requestSubgraph(network, query);
+  const subgraphService = new SubgraphService({ chainId });
+  const data = await subgraphService.querySubgraph("referrals", query);
 
   const esGmxDistributions = [
     ...data.esGmxDistribution0,
@@ -765,18 +676,9 @@ export async function getEsGMXReferralRewardsData({
 
 // functions used to retrieve v1Fees v2Fees and prevPeriod used to retrieve for the correct period
 
-async function fetchGql(url: string, gql: string): Promise<Response> {
-  return fetch(`https://subgraph.satsuma-prod.com/3b2ced13c8d9/gmx/${url}/api`, {
-    method: "POST",
-    body: JSON.stringify({ query: gql }),
-  });
-}
-
-type RelativePeriodName = "prev" | "current";
-
 async function processPeriodV1(
   relativePeriodName: RelativePeriodName,
-  chainName: string
+  chainId: number
 ): Promise<ethers.BigNumber> {
   const [start, end] = getPeriod(relativePeriodName) ?? [];
   if (!start || !end) {
@@ -797,21 +699,9 @@ async function processPeriodV1(
     }
   `;
 
-  const response = await fetchGql(`gmx-${chainName}-stats`, gql);
-  const json = (await response.json()) as {
-    data: {
-      feeStats: Array<{
-        id: string;
-        marginAndLiquidation: string;
-        swap: string;
-        mint: string;
-        burn: string;
-        period: string;
-      }>;
-    };
-  };
-
-  const stats = json.data.feeStats;
+  const subgraphService = new SubgraphService({ chainId });
+  const data = await subgraphService.querySubgraph("stats", gql);
+  const stats = data.feeStats;
 
   const total = stats.reduce((acc, { marginAndLiquidation, swap, mint, burn }) => {
     return (
@@ -828,7 +718,7 @@ async function processPeriodV1(
 
 async function processPeriodV2(
   relativePeriodName: RelativePeriodName,
-  chainName: string
+  chainId: number
 ): Promise<ethers.BigNumber> {
   const [start, end] = getPeriod(relativePeriodName) ?? [];
   if (!start || !end) {
@@ -849,22 +739,11 @@ async function processPeriodV2(
     }
   `;
 
-  const response = await fetchGql(`synthetics-${chainName}-stats`, gql);
-  const json = (await response.json()) as {
-    data: {
-      position: Array<{
-        totalBorrowingFeeUsd: string;
-        totalPositionFeeUsd: string;
-      }>;
-      swap: Array<{
-        totalFeeReceiverUsd: string;
-        totalFeeUsdForPool: string;
-      }>;
-    };
-  };
+  const subgraphService = new SubgraphService({ chainId });
+  const data = await subgraphService.querySubgraph("stats", gql);
 
-  const positionStats = json.data.position;
-  const swapStats = json.data.swap;
+  const positionStats = data.position;
+  const swapStats = data.swap;
 
   const positionFees = positionStats.reduce((acc, stat) => {
     return acc + BigInt(stat.totalBorrowingFeeUsd) + BigInt(stat.totalPositionFeeUsd);
@@ -877,64 +756,7 @@ async function processPeriodV2(
   return bigNumberify(positionFees + swapFees);
 }
 
-function dateToSeconds(date: Date): number {
-  return Math.floor(date.getTime() / 1000);
-}
-
-function getPeriod(
-  relativePeriodName: RelativePeriodName
-): [Date, Date] | undefined {
-  const recentWednesday = getRecentWednesdayStartOfDay();
-  const prevWednesday = subWeeks(recentWednesday, 1);
-  const nextWednesday = addWeeks(recentWednesday, 1);
-
-  switch (relativePeriodName) {
-    case "prev":
-      return [prevWednesday, recentWednesday];
-    case "current":
-      return [recentWednesday, nextWednesday];
-    default:
-      return undefined;
-  }
-}
-
-function getRecentWednesdayStartOfDay(): Date {
-  const now = new Date();
-  const dayOfWeek = now.getUTCDay();
-  const daysSinceWednesday = (dayOfWeek + 4) % 7;
-
-  return new Date(
-    Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate() - daysSinceWednesday,
-      0,
-      0,
-      0
-    )
-  );
-}
-
 // send referral rewards function and related helper functions
-
-async function sendTxn(
-  txnPromise: Promise<ethers.providers.TransactionResponse>,
-  label: string,
-  network: string
-): Promise<ethers.providers.TransactionResponse> {
-  console.info(`Processing ${label}:`);
-  const txn = await txnPromise;
-  console.info(`Sending ${label}...`);
-
-  if (network === "arbitrum") {
-    await txn.wait(1);
-  } else {
-    await txn.wait(2);
-  }
-
-  console.info(`... Sent! ${txn.hash}`);
-  return txn;
-}
 
 async function contractAt(
   name: string,
@@ -1040,25 +862,25 @@ async function getAvaxValues(readOnlyProvider: ethers.providers.Provider): Promi
 interface ReferralRewardsCallsParams {
   skipSendNativeToken: boolean;
   readOnlyProvider: ethers.providers.Provider;
-  keeperAddress: string;
+  feeDistributorVault: string;
   shouldSendTxn: boolean;
   nativeToken: { address: string; name: string };
   nativeTokenPrice: ethers.BigNumber;
   gmxPrice: ethers.BigNumber;
   values: any;
-  network: string;
+  chainId: number;
 }
 
 async function referralRewardsCalls({
   skipSendNativeToken,
   readOnlyProvider,
-  keeperAddress,
+  feeDistributorVault,
   shouldSendTxn,
   nativeToken,
   nativeTokenPrice,
   gmxPrice,
   values,
-  network,
+  chainId,
 }: ReferralRewardsCallsParams): Promise<Array<{ to: string; data: string }>> {
   const calls: Array<{ to: string; data: string }> = [];
 
@@ -1082,11 +904,11 @@ async function referralRewardsCalls({
   let allDiscountUsd = bigNumberify(0);
   let totalEsGmxAmount = bigNumberify(0);
   const affiliateAccounts: string[] = [];
-  const affiliateAmounts: any[] = [];
+  const affiliateAmounts: BigNumber[] = [];
   const discountAccounts: string[] = [];
-  const discountAmounts: any[] = [];
+  const discountAmounts: BigNumber[] = [];
   const esGmxAccounts: string[] = [];
-  const esGmxAmounts: any[] = [];
+  const esGmxAmounts: BigNumber[] = [];
 
   for (let i = 0; i < affiliatesData.length; i++) {
     const { account, rebateUsd, esgmxRewardsUsd } = affiliatesData[i];
@@ -1150,7 +972,7 @@ async function referralRewardsCalls({
     nativeToken.address,
     readOnlyProvider
   );
-  const balance = await nativeTokenForBalanceCheck.balanceOf(keeperAddress);
+  const balance = await nativeTokenForBalanceCheck.balanceOf(feeDistributorVault);
   if (!skipSendNativeToken) {
     if (balance.lt(totalNativeAmount)) {
       throw new Error(
@@ -1158,7 +980,7 @@ async function referralRewardsCalls({
       );
     }
   }
-  const esGmxBalance = await esGmx.balanceOf(keeperAddress);
+  const esGmxBalance = await esGmx.balanceOf(feeDistributorVault);
   if (esGmxBalance.lt(totalEsGmxAmount)) {
     throw new Error(
       `Insufficient esGmx balance, required: ${totalEsGmxAmount.toString()}, available: ${esGmxBalance.toString()}`

@@ -5,7 +5,6 @@
   "timeout": 30,
   "userArgs": {
     "keeperAddress": "string",
-    "network": "string",
     "initialFromTimestamp": "string",
     "referralRewardsAmountNativeTokenKey": "string",
     "referralRewardsAmountEsGmxKey": "string",

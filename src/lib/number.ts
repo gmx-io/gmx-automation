@@ -18,6 +18,17 @@ export const FLOAT_PRECISION = 30;
 
 export const BASIS_POINTS = 10000;
 
+export const SHARE_DIVISOR = BigNumber.from("1000000000"); // 1e9
+export const BONUS_TIER = 2; // for EsGMX distributions
+export const USD_DECIMALS = 30;
+export const GMX_DECIMALS = 18;
+export const REWARD_THRESHOLD = expandDecimals(1, 28); // 1 cent
+export const ESGMX_REWARDS_THRESHOLD = expandDecimals(1, 16); // 0.01 esGMX
+
+export function stringToFixed(s: string | number, n: number): string {
+  return Number(s).toFixed(n);
+}
+
 export function bigNumberify(n: BigNumberish) {
   if (n === undefined) {
     throw new Error("bigNumberify: n is undefined");

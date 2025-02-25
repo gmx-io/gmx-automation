@@ -19,7 +19,12 @@ export type SupportedContractName =
   | "multicall3"
   | "orderHandler"
   | "reader"
-  | "wnt";
+  | "wnt"
+  | "esGmx"
+  | "vault"
+  | "uniswapGmxWethPool"
+  | "feeDistributor"
+  | "feeDistributorVault";
 
 export const isSupportedContractName = (
   contractName: string
@@ -36,6 +41,11 @@ export const isSupportedContractName = (
     "orderHandler",
     "reader",
     "wnt",
+    "esGmx",
+    "vault",
+    "uniswapGmxWethPool",
+    "feeDistributor",
+    "feeDistributorVault",
   ].includes(contractName);
 };
 
@@ -55,6 +65,11 @@ const addresses: Record<
     orderHandler: "0x0000000000000000000000000000000000000000",
     reader: "0x0000000000000000000000000000000000000000",
     wnt: "0x0000000000000000000000000000000000000000",
+    esGmx: "0x0000000000000000000000000000000000000000",
+    vault: "0x0000000000000000000000000000000000000000",
+    uniswapGmxWethPool: "0x0000000000000000000000000000000000000000",
+    feeDistributor: "0x0000000000000000000000000000000000000000",
+    feeDistributorVault: "0x0000000000000000000000000000000000000000",
   },
   [ARBITRUM]: {
     config: "0xD1781719eDbED8940534511ac671027989e724b9",
@@ -68,6 +83,11 @@ const addresses: Record<
     orderHandler: "0xe68CAAACdf6439628DFD2fe624847602991A31eB",
     reader: "0x0537C767cDAC0726c76Bb89e92904fe28fd02fE1",
     wnt: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+    esGmx: "0xf42ae1d54fd613c9bb14810b0588faaa09a426ca",
+    vault: "0x489ee077994B6658eAfA855C308275EAd8097C4A",
+    uniswapGmxWethPool: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
+    feeDistributor: "0x0000000000000000000000000000000000000000",
+    feeDistributorVault: "0x0000000000000000000000000000000000000000",
   },
   [AVALANCHE]: {
     config: "0xEb376626D44c638Fd0C41170a40fd23a1A0622b7",
@@ -81,6 +101,11 @@ const addresses: Record<
     orderHandler: "0x088711C3d2FA992188125e009E65c726bA090AD6",
     reader: "0x618fCEe30D9A26e8533C3B244CAd2D6486AFf655",
     wnt: "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+    esGmx: "0xff1489227bbaac61a9209a08929e4c2a526ddd17",
+    vault: "0x9ab2De34A33fB459b538c43f251eB825645e8595",
+    uniswapGmxWethPool: "0x0000000000000000000000000000000000000000",
+    feeDistributor: "0x0000000000000000000000000000000000000000",
+    feeDistributorVault: "0x0000000000000000000000000000000000000000",
   },
   [AVALANCHE_FUJI]: {
     config: "0x1518ab348e7187d9CDCAB6Ba4ea3e37E187eB8D7",
@@ -94,6 +119,11 @@ const addresses: Record<
     glvHandler: "0x0ce2C878c02ddA303DE5ba5776FcDF055bC52237",
     wnt: "0x1D308089a2D1Ced3f1Ce36B1FcaF815b07217be3",
     feeHandler: "0x0000000000000000000000000000000000000000",
+    esGmx: "0x0000000000000000000000000000000000000000",
+    vault: "0x0000000000000000000000000000000000000000",
+    uniswapGmxWethPool: "0x0000000000000000000000000000000000000000",
+    feeDistributor: "0x0000000000000000000000000000000000000000",
+    feeDistributorVault: "0x0000000000000000000000000000000000000000",
   },
 };
 

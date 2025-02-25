@@ -15,6 +15,10 @@ import {
   Multicall3,
   OrderHandler,
   Reader,
+  esGmx,
+  vault,
+  uniswapGmxWethPool,
+  feeDistributor,
 } from "../typechain";
 
 import { abi as ConfigAbi } from "../abi/Config.json";
@@ -27,6 +31,10 @@ import { abi as GlvReaderAbi } from "../abi/GlvReader.json";
 import { abi as Multicall3Abi } from "../abi/Multicall3.json";
 import { abi as OrderHandlerAbi } from "../abi/OrderHandler.json";
 import { abi as ReaderAbi } from "../abi/Reader.json";
+import { abi as EsGmxAbi } from "../abi/EsGmx.json";
+import { abi as VaultAbi } from "../abi/Vault.json";
+import { abi as UniswapPoolAbi } from "../abi/UniswapPool.json";
+import { abi as FeeDistributorAbi } from "../abi/FeeDistributor.json";
 
 function getContract<T = Contract>({
   chainId,
@@ -117,6 +125,30 @@ export function getContracts(chainId: number, provider: StaticJsonRpcProvider) {
     provider,
     abi: ConfigAbi,
   });
+  const esGmx = getContract<EsGmx>({
+    chainId,
+    name: "esGmx",
+    provider,
+    abi: EsGmxAbi,
+  });
+  const vault = getContract<Vault>({
+    chainId,
+    name: "vault",
+    provider,
+    abi: VaultAbi,
+  });
+  const uniswapGmxWethPool = getContract<UniswapPool>({
+    chainId,
+    name: "uniswapGmxWethPool",
+    provider,
+    abi: UniswapPoolAbi,
+  });
+  const feeDistributor = getContract<FeeDistributor>({
+    chainId,
+    name: "feeDistributor",
+    provider,
+    abi: FeeDistributorAbi,
+  });
   const contracts = {
     dataStore,
     config,
@@ -128,6 +160,10 @@ export function getContracts(chainId: number, provider: StaticJsonRpcProvider) {
     multicall3,
     orderHandler,
     reader,
+    esGmx,
+    vault,
+    uniswapGmxWethPool,
+    feeDistributor,
   };
 
   return contracts;
