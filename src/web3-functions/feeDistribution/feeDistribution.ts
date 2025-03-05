@@ -6,7 +6,9 @@ import {
   Web3FunctionResult,
 } from "@gelatonetwork/web3-functions-sdk/*";
 import { Context } from "../../lib/gelato";
+import { getContracts } from "../../lib/contracts";
 import { 
+  formatAmount,
   stringToFixed, 
   bigNumberify, 
   expandDecimals, 
@@ -29,8 +31,51 @@ import {
 } from "../../utils/date";
 import { getAddress } from "../../config/addresses";
 
-const BigNumber = ethers.BigNumber;
-const { formatUnits, parseUnits } = ethers.utils;
+type AffiliateData {
+  rebateUsd: ethers.BigNumber;
+  totalRebateUsd: ethers.BigNumber;
+  volume: ethers.BigNumber;
+  v2TotalRebateUsd: ethers.BigNumber;
+  tradesCount: number;
+  tierId: number;
+  esgmxRewards?: ethers.BigNumber;
+  esgmxRewardsUsd?: ethers.BigNumber;
+  allAffiliatesRebateUsd?: ethers.BigNumber;
+  account?: string;
+  share?: ethers.BigNumber;
+}
+
+type EsGMXReferralRewardsDataParams {
+  chainId: number;
+  from: number;
+  to: number;
+  account?: string;
+}
+
+type ReferralRewardsCallsParams {
+  skipSendNativeToken: boolean;
+  readOnlyProvider: ethers.providers.Provider;
+  feeDistributorVault: string;
+  shouldSendTxn: boolean;
+  wntPrice: ethers.BigNumber;
+  gmxPrice: ethers.BigNumber;
+  values: any;
+  chainId: number;
+}
+
+type OutputData {
+  fromTimestamp: number;
+  toTimestamp: number;
+  chainId: number;
+  totalReferralVolume: string;
+  totalRebateUsd: string;
+  shareDivisor: string;
+  affiliates: any;
+  referrals: any;
+  gmxPrice: ethers.BigNumber;
+  esgmxRewards: ethers.BigNumber;
+}
+
 const { AddressZero } = ethers.constants;
 
 export const feeDistribution = async (
@@ -38,23 +83,29 @@ export const feeDistribution = async (
 ): Promise<Web3FunctionResult> => {
   const { log, userArgs, storage, services, contracts, multiChainProvider, gelatoArgs } = context;
   const provider = multiChainProvider.default();
-  
-  let wntPrice, gmxPrice;
-  if (gelatoArgs.chainId === ARBITRUM) {
-    ({ ethPrice: wntPrice, gmxPrice } = await getPrices(contracts.vault, contracts.uniswapGmxWethPool, getAddress(ARBITRUM, "wnt")));
-  }
-  else {
+
+  const eventName = getFeeDistributorEventName(
+    log,
+    contracts.eventEmitter
+  );
+
+  let wntPrice: ethers.BigNumber, gmxPrice: ethers.BigNumber;
+  if (eventName === "FeeDistributionDataReceived") {
+    await storage.delete("distributionData");
+    await storage.delete("wntPrice");
+    await storage.delete("gmxPrice");
+
+    const feeDistributionDataReceivedEventData = getFeeDistributionDataReceivedEventData(
+        log,
+        contracts.eventEmitter
+    );
+    wntPrice = feeDistributionDataReceivedEventData.wntPrice;
+    await storage.set("wntPrice", wntPrice.toString());
+
     const arbitrumProvider = multiChainProvider.chainId(ARBITRUM);
     const arbContracts = getContracts(ARBITRUM, arbitrumProvider);
-    [{ gmxPrice }, wntPrice] = await Promise.all([
-      getPrices(arbContracts.vault, arbContracts.uniswapGmxWethPool, getAddress(ARBITRUM, "wnt")),
-      arbContracts.vault.getMaxPrice(getAddress(ARBITRUM, "wnt")),
-    ])
-  }
-
-  const distributeReferralRewards; // logic to parse log from event to be added
-  if (!distributeReferralRewards) {
-    await storage.delete("distributionData");
+    gmxPrice = getGmxPrice(arbContracts.vault, arbContracts.uniswapGmxWethPool, getAddress(ARBITRUM, "wnt")),
+    await storage.set("gmxPrice", gmxPrice.toString());
 
     const fromTimestamp = Number(
       (await storage.get("fromTimestamp")) ?? userArgs.initialFromTimestamp
@@ -93,61 +144,63 @@ export const feeDistribution = async (
         },
       ],
     };
-  }
+  } else if (eventName === "FeeDistributionCompleted") {
   
-  let referralValues;
-  if (gelatoArgs.chainId === ARBITRUM) {
-    referralValues = await getArbValues(provider);
-  } else if (gelatoArgs.chainId === AVALANCHE) {
-    referralValues = await getAvaxValues(provider);
-  } else {
-    throw new Error(`Unsupported network: ${gelatoArgs.chainId}`);
+    const wntPriceStr = await storage.get("wntPrice");
+    wntPrice = bigNumberify(wntPriceStr);
+    const gmxPriceStr = await storage.get("gmxPrice");
+    gmxPrice = bigNumberify(gmxPriceStr);
+    let referralValues;
+    if (gelatoArgs.chainId === ARBITRUM) {
+      referralValues = await getArbValues(provider);
+    } else if (gelatoArgs.chainId === AVALANCHE) {
+      referralValues = await getAvaxValues(provider);
+    } else {
+      throw new Error(`Unsupported network: ${gelatoArgs.chainId}`);
+    }
+
+    const shouldSendTxn = userArgs.shouldSendTxn;
+
+    const referralRewardsCalls = await referralRewardsCalls({
+      skipSendNativeToken: userArgs.skipSendNativeToken,
+      provider,
+      getAddress(gelatoArgs.chainId, "feeDistributorVault"),
+      shouldSendTxn,
+      wntPrice,
+      gmxPrice,
+      referralValues,
+      gelatoArgs.chainId,
+    });
+
+    const referralDistributionCallData = referralRewardsCalls.map((c) => ({
+      to: c.to,
+      data: c.data,
+    }));
+
+    if (!shouldSendTxn) {
+      console.log("Referral Rewards Not sent"); // potentially simulate calls here for testing
+    }
+
+    return {
+      canExec: shouldSendTxn,
+      callData: referralDistributionCallData,
+    };
   }
-
-  const shouldSendTxn = userArgs.shouldSendTxn;
-
-  const referralRewardsCalls = await referralRewardsCalls({
-    skipSendNativeToken: userArgs.skipSendNativeToken,
-    provider,
-    getAddress(gelatoArgs.chainId, "feeDistributorVault"),
-    shouldSendTxn: shouldSendTxn,
-    nativeToken: { address: getAddress(gelatoArgs.chainId, "wnt"), name: "WNT" },
-    nativeTokenPrice: wntPrice,
-    gmxPrice,
-    referralValues,
-    gelatoArgs.chainId,
-  });
-
-  const referralDistributionCallData = referralRewardsCalls.map((c) => ({
-    to: c.to,
-    data: c.data,
-  }));
-
-  if (!shouldSendTxn) {
-    console.log("Referral Rewards Not sent"); // potentially simulate calls here for testing
-  }
-
-  return {
-    canExec: shouldSendTxn,
-    callData: referralDistributionCallData,
-  };
 };
 
-async function getPrices(
+async function getGmxPrice(
   vault: ethers.Contract,
   uniswapPool: ethers.Contract,
   WETH_ADDRESS: string
 ) {
   const [sqrtPriceX96] = await uniswapPool.slot0();
-  const SCALE_1e30 = ethers.BigNumber.from("10").pow("30");
+  const SCALE_1e30 = bigNumberify(10).pow(30);
   const ratioSq = sqrtPriceX96.mul(sqrtPriceX96);
-  const ratioScaled = ratioSq.mul(SCALE_1e30).div(
-    ethers.BigNumber.from(2).pow(192)
-  );
+  const ratioScaled = ratioSq.mul(SCALE_1e30).div(bigNumberify(2).pow(192));
 
   const ethPrice = await vault.getMaxPrice(WETH_ADDRESS);
   const gmxPrice = ethPrice.mul(ratioScaled).div(SCALE_1e30);
-  return { ethPrice, gmxPrice };
+  return gmxPrice;
 }
 
 // functions used to retrieve and calculate referral rewards
@@ -273,62 +326,37 @@ async function getDistributionData(
     throw new Error("Affiliates stats should be paginated");
   }
 
-  let allAffiliatesRebateUsd = BigNumber.from(0);
-  let totalReferralVolume = BigNumber.from(0);
-  let totalRebateUsd = BigNumber.from(0);
-  let esgmxRewardsTotal = BigNumber.from(0);
-
-  interface IAffiliateData {
-    rebateUsd: ethers.BigNumber;
-    totalRebateUsd: ethers.BigNumber;
-    volume: ethers.BigNumber;
-    v2TotalRebateUsd: ethers.BigNumber;
-    tradesCount: number;
-    tierId: number;
-    esgmxRewards?: ethers.BigNumber;
-    esgmxRewardsUsd?: ethers.BigNumber;
-    allAffiliatesRebateUsd?: ethers.BigNumber;
-    account?: string;
-    share?: ethers.BigNumber;
-  }
+  let allAffiliatesRebateUsd = bigNumberify(0);
+  let totalReferralVolume = bigNumberify(0);
+  let totalRebateUsd = bigNumberify(0);
+  let esgmxRewardsTotal = bigNumberify(0);
 
   const affiliatesRebatesData = affiliateStats.reduce(
-    (memo: Record<string, IAffiliateData>, item: any) => {
+    (memo: Record<string, AffiliateData>, item: any) => {
+      const affiliateItem = memo[item.affiliate]
       const tierId = affiliatesTiers[item.affiliate] || 0;
-      if (!memo[item.affiliate]) {
-        memo[item.affiliate] = {
-          rebateUsd: BigNumber.from(0),
-          totalRebateUsd: BigNumber.from(0),
-          volume: BigNumber.from(0),
-          v2TotalRebateUsd: BigNumber.from(0),
+      if (!affiliateItem) {
+        affiliateItem = {
+          rebateUsd: bigNumberify(0),
+          totalRebateUsd: bigNumberify(0),
+          volume: bigNumberify(0),
+          v2TotalRebateUsd: bigNumberify(0),
           tradesCount: 0,
           tierId,
         };
       }
 
-      const affiliateRebatesUsd = BigNumber.from(
-        item.v1Data.totalRebateUsd
-      ).sub(BigNumber.from(item.v1Data.discountUsd));
+      const affiliateRebatesUsd = bigNumberify(item.v1Data.totalRebateUsd).sub(bigNumberify(item.v1Data.discountUsd));
       allAffiliatesRebateUsd = allAffiliatesRebateUsd.add(affiliateRebatesUsd);
-      memo[item.affiliate].rebateUsd =
-        memo[item.affiliate].rebateUsd.add(affiliateRebatesUsd);
-      memo[item.affiliate].totalRebateUsd = memo[
-        item.affiliate
-      ].totalRebateUsd.add(BigNumber.from(item.v1Data.totalRebateUsd));
-      memo[item.affiliate].volume = memo[item.affiliate].volume.add(
-        BigNumber.from(item.v1Data.volume)
-      );
-      memo[item.affiliate].v2TotalRebateUsd = memo[
-        item.affiliate
-      ].v2TotalRebateUsd.add(BigNumber.from(item.v2Data.totalRebateUsd));
-      memo[item.affiliate].tradesCount += Number(item.v1Data.trades);
+      affiliateItem.rebateUsd =
+      affiliateItem.rebateUsd.add(affiliateRebatesUsd);
+      affiliateItem.totalRebateUsd = affiliateItem.totalRebateUsd.add(bigNumberify(item.v1Data.totalRebateUsd));
+      affiliateItem.volume = affiliateItem.volume.add(bigNumberify(item.v1Data.volume));
+      affiliateItem.v2TotalRebateUsd = affiliateItem.v2TotalRebateUsd.add(bigNumberify(item.v2Data.totalRebateUsd));
+      affiliateItem.tradesCount += Number(item.v1Data.trades);
 
-      totalRebateUsd = totalRebateUsd.add(
-        BigNumber.from(item.v1Data.totalRebateUsd)
-      );
-      totalReferralVolume = totalReferralVolume.add(
-        BigNumber.from(item.v1Data.volume)
-      );
+      totalRebateUsd = totalRebateUsd.add(bigNumberify(item.v1Data.totalRebateUsd));
+      totalReferralVolume = totalReferralVolume.add(bigNumberify(item.v1Data.volume));
       return memo;
     },
     {}
@@ -348,7 +376,7 @@ async function getDistributionData(
   const esgmxRewardsUsdLimit = esgmxRewards
     .mul(gmxPrice)
     .div(expandDecimals(1, GMX_DECIMALS));
-  let esgmxRewardsUsdTotal = BigNumber.from(0);
+  let esgmxRewardsTotalUsd = bigNumberify(0);
 
   Object.values(affiliatesRebatesData).forEach((data) => {
     if (data.tierId !== BONUS_TIER) {
@@ -369,16 +397,16 @@ async function getDistributionData(
       .div(gmxPrice)
       .div(expandDecimals(1, 12));
     
-    esgmxRewardsUsdTotal = esgmxRewardsUsdTotal.add(data.esgmxRewardsUsd);
+    esgmxRewardsTotalUsd = esgmxRewardsTotalUsd.add(data.esgmxRewardsUsd);
     esgmxRewardsTotal = esgmxRewardsTotal.add(data.esgmxRewards);
   });
 
-  if (esgmxRewardsUsdTotal.gt(esgmxRewardsUsdLimit)) {
-    const denominator = esgmxRewardsUsdTotal
+  if (esgmxRewardsTotalUsd.gt(esgmxRewardsUsdLimit)) {
+    const denominator = esgmxRewardsTotalUsd
       .mul(USD_DECIMALS)
       .div(esgmxRewardsUsdLimit);
     
-    esgmxRewardsTotal = BigNumber.from(0);
+    esgmxRewardsTotal = bigNumberify(0);
     Object.values(affiliatesRebatesData).forEach((data) => {
       if (!data.esgmxRewardsUsd) return;
       data.esgmxRewardsUsd = data.esgmxRewardsUsd
@@ -392,7 +420,7 @@ async function getDistributionData(
     });
   }
 
-  const output: any = {
+  const output: OutputData = {
     fromTimestamp,
     toTimestamp,
     chainId,
@@ -408,24 +436,24 @@ async function getDistributionData(
   console.log(
     "\nTotal referral volume: %s ($%s)",
     totalReferralVolume.toString(),
-    Number(formatUnits(totalReferralVolume, USD_DECIMALS)).toFixed(4)
+    formatAmount(totalReferralVolume, USD_DECIMALS, 4)
   );
   console.log(
     "Total fees collected from referral traders: %s ($%s)",
     totalReferralVolume.div(1000).toString(),
-    Number(formatUnits(totalReferralVolume.div(1000), USD_DECIMALS)).toFixed(4)
+    formatAmount(totalReferralVolume.div(1000), USD_DECIMALS, 4)
   );
   console.log(
     "Total rebates (for Affiliates + Traders): %s ($%s)",
     totalRebateUsd.toString(),
-    Number(formatUnits(totalRebateUsd, USD_DECIMALS)).toFixed(4)
+    formatAmount(totalRebateUsd, USD_DECIMALS, 4)
   );
 
   console.log("\nAffiliates (Affiliates):");
   console.log(
     "Rebates sum: %s ($%s)",
     allAffiliatesRebateUsd.toString(),
-    Number(formatUnits(allAffiliatesRebateUsd, USD_DECIMALS)).toFixed(4)
+    formatAmount(allAffiliatesRebateUsd, USD_DECIMALS, 4)
   );
 
   let consoleData: any[] = [];
@@ -439,19 +467,16 @@ async function getDistributionData(
 
     consoleData.push({
       affiliate: data.account,
-      "share, %": stringToFixed(formatUnits(data.share || 0, 7), 4),
-      "volume, $": stringToFixed(formatUnits(data.volume, USD_DECIMALS), 4),
-      "rebateUsd, $": stringToFixed(
-        formatUnits(data.rebateUsd, USD_DECIMALS),
-        4
-      ),
+      "share, %": formatAmount(data.share || 0, 7, 4),
+      "volume, $": formatAmount(data.volume, USD_DECIMALS, 4),
+      "rebateUsd, $": formatAmount(data.rebateUsd, USD_DECIMALS, 4),
       trades: data.tradesCount,
       tierId: data.tierId,
       "esgmxRewards, $": data.esgmxRewardsUsd
-        ? formatUnits(data.esgmxRewardsUsd, USD_DECIMALS)
+        ? formatAmount(data.esgmxRewardsUsd, USD_DECIMALS, USD_DECIMALS)
         : null,
       esgmxRewards: data.esgmxRewards
-        ? formatUnits(data.esgmxRewards, GMX_DECIMALS)
+        ? formatAmount(data.esgmxRewards, GMX_DECIMALS, GMX_DECIMALS)
         : null,
       tooSmall,
     });
@@ -461,8 +486,8 @@ async function getDistributionData(
       console.log(
         "skip affiliate %s small rewards %s and esGMX %s",
         data.account,
-        stringToFixed(formatUnits(data.rebateUsd, USD_DECIMALS), 2),
-        stringToFixed(formatUnits(data.esgmxRewards || 0, 18), 2)
+        formatAmount(data.rebateUsd, USD_DECIMALS, 2),
+        formatAmount(data.esgmxRewards || 0, 18, 2)
       );
       continue;
     }
@@ -485,28 +510,22 @@ async function getDistributionData(
     "Filter %s of %s affiliates with rebate < $%s",
     filteredAffiliatesCount,
     output.affiliates.length + filteredAffiliatesCount,
-    formatUnits(REWARD_THRESHOLD, USD_DECIMALS)
+    formatAmount(REWARD_THRESHOLD, USD_DECIMALS, USD_DECIMALS)
   );
   console.table(consoleData);
 
-  let allReferralsDiscountUsd = BigNumber.from(0);
+  let allReferralsDiscountUsd = bigNumberify(0);
   const referralDiscountData = referralStats.reduce(
     (memo: Record<string, any>, item: any) => {
       if (!memo[item.referral]) {
         memo[item.referral] = {
-          discountUsd: BigNumber.from(0),
-          volume: BigNumber.from(0),
+          discountUsd: bigNumberify(0),
+          volume: bigNumberify(0),
         };
       }
-      memo[item.referral].discountUsd = memo[item.referral].discountUsd.add(
-        BigNumber.from(item.v1Data.discountUsd)
-      );
-      memo[item.referral].volume = memo[item.referral].volume.add(
-        BigNumber.from(item.v1Data.volume)
-      );
-      allReferralsDiscountUsd = allReferralsDiscountUsd.add(
-        BigNumber.from(item.v1Data.discountUsd)
-      );
+      memo[item.referral].discountUsd = memo[item.referral].discountUsd.add(bigNumberify(item.v1Data.discountUsd));
+      memo[item.referral].volume = memo[item.referral].volume.add(bigNumberify(item.v1Data.volume));
+      allReferralsDiscountUsd = allReferralsDiscountUsd.add(bigNumberify(item.v1Data.discountUsd));
       return memo;
     },
     {}
@@ -524,7 +543,7 @@ async function getDistributionData(
   console.log(
     "Discount sum: %s ($%s)",
     allReferralsDiscountUsd.toString(),
-    Number(formatUnits(allReferralsDiscountUsd, USD_DECIMALS)).toFixed(4)
+    formatAmount(allReferralsDiscountUsd, USD_DECIMALS, 4)
   );
 
   consoleData = [];
@@ -537,12 +556,9 @@ async function getDistributionData(
     const tooSmall = data.discountUsd.lt(REWARD_THRESHOLD);
     consoleData.push({
       referral: data.account,
-      "share, %": stringToFixed(formatUnits(data.share, 7), 4),
-      "volume, $": stringToFixed(formatUnits(data.volume, USD_DECIMALS), 4),
-      "discountUsd, $": stringToFixed(
-        formatUnits(data.discountUsd, USD_DECIMALS),
-        4
-      ),
+      "share, %": formatAmount(data.share, 7, 4),
+      "volume, $": formatAmount(data.volume, USD_DECIMALS, 4),
+      "discountUsd, $": formatAmount(data.discountUsd, USD_DECIMALS, 4),
       tooSmall,
     });
     if (tooSmall) {
@@ -561,20 +577,13 @@ async function getDistributionData(
     "Filter %s of %s with discount < $%s",
     filteredTradersCount,
     filteredTradersCount + output.referrals.length,
-    formatUnits(REWARD_THRESHOLD, USD_DECIMALS)
+    formatAmount(REWARD_THRESHOLD, USD_DECIMALS, USD_DECIMALS)
   );
   console.table(consoleData);
 
   await storage.set("distributionData", JSON.stringify(output, null, 4));
 
   return [output.totalRebateUsd, esgmxRewardsTotal];
-}
-
-interface EsGMXReferralRewardsDataParams {
-  chainId: number;
-  from: number;
-  to: number;
-  account?: string;
 }
 
 export async function getEsGMXReferralRewardsData({
@@ -758,19 +767,6 @@ async function processPeriodV2(
 
 // send referral rewards function and related helper functions
 
-async function contractAt(
-  name: string,
-  address: string,
-  provider?: ethers.providers.Provider
-): Promise<ethers.Contract> {
-  const contractFactory = await ethers.getContractFactory(name);
-  if (provider) {
-    const connectedFactory = contractFactory.connect(provider);
-    return connectedFactory.attach(address);
-  }
-  return contractFactory.attach(address);
-}
-
 async function processBatch<T>(
   batchLists: T[][],
   batchSize: number,
@@ -811,64 +807,26 @@ async function processBatch<T>(
   }
 }
 
-async function getArbValues(readOnlyProvider: ethers.providers.Provider): Promise<any> {
-  const vester = await contractAt(
-    "Vester",
-    "0x7c100c0F55A15221A4c1C5a25Db8C98A81df49B2",
-    readOnlyProvider
-  );
-  const timelock = await contractAt(
-    "Timelock",
-    await vester.gov()
-  );
-  const batchSender = await contractAt(
-    "BatchSender",
-    "0x1070f775e8eb466154BBa8FA0076C4Adc7FE17e8"
-  );
-  const esGmx = await contractAt(
-    "Token",
-    "0xf42Ae1D54fd613C9bb14810b0588FaAa09a426cA",
-    readOnlyProvider
-  );
+async function getArbValues(provider: ethers.providers.Provider): Promise<any> {
+  const contracts = getContracts(ARBITRUM, provider);
+  
+  const feeDistributor = contracts.feeDistributor;
+  const wnt = contracts.wnt;
+  const esGmx = contracts.esGmx;
   const data = await storage.get("distributionData");
 
-  return { vester, timelock, batchSender, esGmx, data };
+  return { feeDistributor, wnt, esGmx, data };
 }
 
-async function getAvaxValues(readOnlyProvider: ethers.providers.Provider): Promise<any> {
-  const vester = await contractAt(
-    "Vester",
-    "0x754eC029EF9926184b4CFDeA7756FbBAE7f326f7",
-    readOnlyProvider
-  );
-  const timelock = await contractAt(
-    "Timelock",
-    await vester.gov()
-  );
-  const batchSender = await contractAt(
-    "BatchSender",
-    "0xF0f929162751DD723fBa5b86A9B3C88Dc1D4957b"
-  );
-  const esGmx = await contractAt(
-    "Token",
-    "0xFf1489227BbAAC61a9209A08929E4c2a526DdD17",
-    readOnlyProvider
-  );
+async function getAvaxValues(provider: ethers.providers.Provider): Promise<any> {
+  const contracts = getContracts(AVALANCHE, provider);
+  
+  const feeDistributor = contracts.feeDistributor;
+  const wnt = contracts.wnt;
+  const esGmx = contracts.esGmx;
   const data = await storage.get("distributionData");
 
-  return { vester, timelock, batchSender, esGmx, data };
-}
-
-interface ReferralRewardsCallsParams {
-  skipSendNativeToken: boolean;
-  readOnlyProvider: ethers.providers.Provider;
-  feeDistributorVault: string;
-  shouldSendTxn: boolean;
-  nativeToken: { address: string; name: string };
-  nativeTokenPrice: ethers.BigNumber;
-  gmxPrice: ethers.BigNumber;
-  values: any;
-  chainId: number;
+  return { feeDistributor, wnt, esGmx, data };
 }
 
 async function referralRewardsCalls({
@@ -876,19 +834,14 @@ async function referralRewardsCalls({
   readOnlyProvider,
   feeDistributorVault,
   shouldSendTxn,
-  nativeToken,
-  nativeTokenPrice,
+  wntPrice,
   gmxPrice,
   values,
   chainId,
-}: ReferralRewardsCallsParams): Promise<Array<{ to: string; data: string }>> {
+}: ReferralRewardsCallsParams): Promise<{ to: string; data: string }[]> {
   const calls: Array<{ to: string; data: string }> = [];
 
-  const { vester, timelock, batchSender, esGmx, data } = values;
-  const nativeTokenContract = await contractAt(
-    "Token",
-    nativeToken.address
-  );
+  const { wnt, feeDistributor, esGmx, data } = values;
 
   const affiliatesData = data.affiliates;
   const discountsData = data.referrals;
@@ -904,11 +857,11 @@ async function referralRewardsCalls({
   let allDiscountUsd = bigNumberify(0);
   let totalEsGmxAmount = bigNumberify(0);
   const affiliateAccounts: string[] = [];
-  const affiliateAmounts: BigNumber[] = [];
+  const affiliateAmounts: ethers.BigNumber[] = [];
   const discountAccounts: string[] = [];
-  const discountAmounts: BigNumber[] = [];
+  const discountAmounts: ethers.BigNumber[] = [];
   const esGmxAccounts: string[] = [];
-  const esGmxAmounts: BigNumber[] = [];
+  const esGmxAmounts: ethers.BigNumber[] = [];
 
   for (let i = 0; i < affiliatesData.length; i++) {
     const { account, rebateUsd, esgmxRewardsUsd } = affiliatesData[i];
@@ -920,7 +873,7 @@ async function referralRewardsCalls({
 
     const amount = bigNumberify(rebateUsd)
       .mul(expandDecimals(1, 18))
-      .div(nativeTokenPrice);
+      .div(wntPrice);
     affiliateAccounts.push(account);
     affiliateAmounts.push(amount);
     totalAffiliateAmount = totalAffiliateAmount.add(amount);
@@ -945,7 +898,7 @@ async function referralRewardsCalls({
 
     const amount = bigNumberify(discountUsd)
       .mul(expandDecimals(1, 18))
-      .div(nativeTokenPrice);
+      .div(wntPrice);
     discountAccounts.push(account);
     discountAmounts.push(amount);
     totalDiscountAmount = totalDiscountAmount.add(amount);
@@ -967,12 +920,7 @@ async function referralRewardsCalls({
 
   const batchSize = 150;
 
-  const nativeTokenForBalanceCheck = await contractAt(
-    "Token",
-    nativeToken.address,
-    readOnlyProvider
-  );
-  const balance = await nativeTokenForBalanceCheck.balanceOf(feeDistributorVault);
+  const balance = await wnt.balanceOf(feeDistributorVault);
   if (!skipSendNativeToken) {
     if (balance.lt(totalNativeAmount)) {
       throw new Error(
@@ -992,14 +940,6 @@ async function referralRewardsCalls({
   }
 
   if (!skipSendNativeToken) {
-    calls.push({
-      to: nativeTokenContract.address,
-      data: nativeTokenContract.interface.encodeFunctionData("approve", [
-        batchSender.address,
-        totalNativeAmount,
-      ]),
-    });
-
     await processBatch(
       [affiliateAccounts, affiliateAmounts],
       batchSize,
@@ -1007,13 +947,12 @@ async function referralRewardsCalls({
         const accounts = currentBatch.map((item) => item[0]);
         const amounts = currentBatch.map((item) => item[1]);
 
-        const callData = batchSender.interface.encodeFunctionData("sendAndEmit", [
-          nativeToken.address,
+        const callData = feeDistributor.interface.encodeFunctionData("sendWnt", [
           accounts,
           amounts,
-          affiliateRewardsTypeId,
+          batchSize,
         ]);
-        calls.push({ to: batchSender.address, data: callData });
+        calls.push({ to: feeDistributor.address, data: callData });
       }
     );
 
@@ -1024,21 +963,15 @@ async function referralRewardsCalls({
         const accounts = currentBatch.map((item) => item[0]);
         const amounts = currentBatch.map((item) => item[1]);
 
-        const callData = batchSender.interface.encodeFunctionData("sendAndEmit", [
-          nativeToken.address,
+        const callData = feeDistributor.interface.encodeFunctionData("sendWnt", [
           accounts,
           amounts,
-          traderDiscountsTypeId,
+          batchSize,
         ]);
-        calls.push({ to: batchSender.address, data: callData });
+        calls.push({ to: feeDistributor.address, data: callData });
       }
     );
   }
-
-  calls.push({
-    to: esGmx.address,
-    data: esGmx.interface.encodeFunctionData("approve", [batchSender.address, totalEsGmxAmount]),
-  });
 
   await processBatch(
     [esGmxAccounts, esGmxAmounts],
@@ -1048,21 +981,11 @@ async function referralRewardsCalls({
       const amounts = currentBatch.map((item) => item[1]);
 
       calls.push({
-        to: batchSender.address,
-        data: batchSender.interface.encodeFunctionData("sendAndEmit", [
-          esGmx.address,
+        to: feeDistributor.address,
+        data: feeDistributor.interface.encodeFunctionData("sendEsGmxAndIncreaseBonusRewards", [
           accounts,
           amounts,
-          affiliateRewardsTypeId,
-        ]),
-      });
-
-      calls.push({
-        to: timelock.address,
-        data: timelock.interface.encodeFunctionData("batchIncreaseBonusRewards", [
-          vester.address,
-          accounts,
-          amounts,
+          batchSize,
         ]),
       });
     }

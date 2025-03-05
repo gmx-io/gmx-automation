@@ -23,6 +23,10 @@ export function parseLogToEventData(log: LogDescription) {
   return getKeyValueEventData(log);
 }
 
+export function parseLogToEventNameHash(log: LogDescription) {
+  return getKeyValueEventNameHash(log);
+}
+
 export function getKeyValueEventData(log: LogDescription): KeyValueEventData {
   // for some reason ethers doesn't create keys for eventName, eventData, etc.
   // eventData is the last field of event
@@ -47,6 +51,12 @@ export function getKeyValueEventData(log: LogDescription): KeyValueEventData {
       }
     }
   }
+
+  export function getKeyValueEventNameHash(log: LogDescription): string {
+    // for some reason ethers doesn't create keys for eventName, eventData, etc.
+    // eventNameHash is the second field of event
+    const eventNameHash: string = log.args[(log.args as any).1];
+    }
 
   function getter(typeKey: string, listKey: string) {
     return (key: string, defaultValue?: any) => {

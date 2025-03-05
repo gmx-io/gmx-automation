@@ -25,6 +25,31 @@ export const GMX_DECIMALS = 18;
 export const REWARD_THRESHOLD = expandDecimals(1, 28); // 1 cent
 export const ESGMX_REWARDS_THRESHOLD = expandDecimals(1, 16); // 0.01 esGMX
 
+export function formatAmount(
+  amount: BigNumberish,
+  decimals = 30,
+  displayDecimals = 2,
+  useCommas = false
+): string {
+  // passed displayDecimals can be greater than decimals
+  const adjustedDisplayDecimals = Math.min(displayDecimals, decimals);
+  const result = bigNumberify(amount).div(
+    expandDecimals(1, decimals - adjustedDisplayDecimals)
+  );
+
+  const ret = (Number(result) / 10 ** adjustedDisplayDecimals).toFixed(
+    displayDecimals
+  );
+
+  if (!useCommas) {
+    return ret;
+  }
+
+  const parts = ret.toString().split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return parts.join(".");
+}
+
 export function stringToFixed(s: string | number, n: number): string {
   return Number(s).toFixed(n);
 }
