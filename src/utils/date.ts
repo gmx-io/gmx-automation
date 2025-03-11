@@ -1,6 +1,6 @@
 import { subWeeks, addWeeks } from "date-fns";
 
-type RelativePeriodName = "prev" | "current";
+export type RelativePeriodName = "prev" | "current";
 
 export function dateToSeconds(date: Date): number {
   return Math.floor(date.getTime() / 1000);

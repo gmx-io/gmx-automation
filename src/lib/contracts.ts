@@ -15,10 +15,10 @@ import {
   Multicall3,
   OrderHandler,
   Reader,
-  esGmx,
-  vault,
-  uniswapGmxWethPool,
-  feeDistributor,
+  WNT,
+  EsGmx,
+  FeeDistributor,
+  FeeDistributorVault,
 } from "../typechain";
 
 import { abi as ConfigAbi } from "../abi/Config.json";
@@ -31,10 +31,10 @@ import { abi as GlvReaderAbi } from "../abi/GlvReader.json";
 import { abi as Multicall3Abi } from "../abi/Multicall3.json";
 import { abi as OrderHandlerAbi } from "../abi/OrderHandler.json";
 import { abi as ReaderAbi } from "../abi/Reader.json";
+import { abi as WntAbi } from "../abi/WNT.json";
 import { abi as EsGmxAbi } from "../abi/EsGmx.json";
-import { abi as VaultAbi } from "../abi/Vault.json";
-import { abi as UniswapPoolAbi } from "../abi/UniswapPool.json";
 import { abi as FeeDistributorAbi } from "../abi/FeeDistributor.json";
+import { abi as FeeDistributorVaultAbi } from "../abi/FeeDistributorVault.json";
 
 function getContract<T = Contract>({
   chainId,
@@ -125,29 +125,29 @@ export function getContracts(chainId: number, provider: StaticJsonRpcProvider) {
     provider,
     abi: ConfigAbi,
   });
+  const wnt = getContract<WNT>({
+    chainId,
+    name: "wnt",
+    provider,
+    abi: WntAbi,
+  });
   const esGmx = getContract<EsGmx>({
     chainId,
     name: "esGmx",
     provider,
     abi: EsGmxAbi,
   });
-  const vault = getContract<Vault>({
-    chainId,
-    name: "vault",
-    provider,
-    abi: VaultAbi,
-  });
-  const uniswapGmxWethPool = getContract<UniswapPool>({
-    chainId,
-    name: "uniswapGmxWethPool",
-    provider,
-    abi: UniswapPoolAbi,
-  });
   const feeDistributor = getContract<FeeDistributor>({
     chainId,
     name: "feeDistributor",
     provider,
     abi: FeeDistributorAbi,
+  });
+  const feeDistributorVault = getContract<FeeDistributorVault>({
+    chainId,
+    name: "feeDistributorVault",
+    provider,
+    abi: FeeDistributorVaultAbi,
   });
   const contracts = {
     dataStore,
@@ -160,10 +160,10 @@ export function getContracts(chainId: number, provider: StaticJsonRpcProvider) {
     multicall3,
     orderHandler,
     reader,
+    wnt,
     esGmx,
-    vault,
-    uniswapGmxWethPool,
     feeDistributor,
+    feeDistributorVault,
   };
 
   return contracts;

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import { ethers } from "ethers";
 import {
   Web3FunctionEventContext,
@@ -9,7 +7,6 @@ import { Context } from "../../lib/gelato";
 import { getContracts } from "../../lib/contracts";
 import { 
   formatAmount,
-  stringToFixed, 
   bigNumberify, 
   expandDecimals, 
   SHARE_DIVISOR, 
@@ -20,18 +17,14 @@ import {
   ESGMX_REWARDS_THRESHOLD 
 } from "../../lib/number";
 import { SubgraphService } from "../../domain/subgraphService";
-import { 
-  ARBITRUM, 
-  AVALANCHE 
-} from "../../config/chains";
+import { getFeeDistributionDataReceivedEventData, getFeeDistributorEventName } from "../../domain/fee/feeDistributionUtils";
 import { 
   dateToSeconds, 
-  getPeriod, 
-  getRecentWednesdayStartOfDay 
+  getPeriod,
+  RelativePeriodName
 } from "../../utils/date";
-import { getAddress } from "../../config/addresses";
 
-type AffiliateData {
+type AffiliateData = {
   rebateUsd: ethers.BigNumber;
   totalRebateUsd: ethers.BigNumber;
   volume: ethers.BigNumber;
@@ -43,27 +36,22 @@ type AffiliateData {
   allAffiliatesRebateUsd?: ethers.BigNumber;
   account?: string;
   share?: ethers.BigNumber;
-}
+};
 
-type EsGMXReferralRewardsDataParams {
-  chainId: number;
-  from: number;
-  to: number;
-  account?: string;
-}
-
-type ReferralRewardsCallsParams {
+type ReferralRewardsCallsParams = {
   skipSendNativeToken: boolean;
-  readOnlyProvider: ethers.providers.Provider;
   feeDistributorVault: string;
   shouldSendTxn: boolean;
   wntPrice: ethers.BigNumber;
   gmxPrice: ethers.BigNumber;
-  values: any;
+  feeDistributor: ethers.Contract;
+  wnt: ethers.Contract;
+  esGmx: ethers.Contract;
+  dataStr: string;
   chainId: number;
-}
+};
 
-type OutputData {
+type OutputData = {
   fromTimestamp: number;
   toTimestamp: number;
   chainId: number;
@@ -74,7 +62,7 @@ type OutputData {
   referrals: any;
   gmxPrice: ethers.BigNumber;
   esgmxRewards: ethers.BigNumber;
-}
+};
 
 const { AddressZero } = ethers.constants;
 
@@ -102,9 +90,7 @@ export const feeDistribution = async (
     wntPrice = feeDistributionDataReceivedEventData.wntPrice;
     await storage.set("wntPrice", wntPrice.toString());
 
-    const arbitrumProvider = multiChainProvider.chainId(ARBITRUM);
-    const arbContracts = getContracts(ARBITRUM, arbitrumProvider);
-    gmxPrice = getGmxPrice(arbContracts.vault, arbContracts.uniswapGmxWethPool, getAddress(ARBITRUM, "wnt")),
+    gmxPrice = feeDistributionDataReceivedEventData.gmxPrice;
     await storage.set("gmxPrice", gmxPrice.toString());
 
     const fromTimestamp = Number(
@@ -150,25 +136,18 @@ export const feeDistribution = async (
     wntPrice = bigNumberify(wntPriceStr);
     const gmxPriceStr = await storage.get("gmxPrice");
     gmxPrice = bigNumberify(gmxPriceStr);
-    let referralValues;
-    if (gelatoArgs.chainId === ARBITRUM) {
-      referralValues = await getArbValues(provider);
-    } else if (gelatoArgs.chainId === AVALANCHE) {
-      referralValues = await getAvaxValues(provider);
-    } else {
-      throw new Error(`Unsupported network: ${gelatoArgs.chainId}`);
-    }
-
-    const shouldSendTxn = userArgs.shouldSendTxn;
+    const dataStr = await storage.get("distributionData");
 
     const referralRewardsCalls = await referralRewardsCalls({
-      skipSendNativeToken: userArgs.skipSendNativeToken,
-      provider,
-      getAddress(gelatoArgs.chainId, "feeDistributorVault"),
-      shouldSendTxn,
+      userArgs.skipSendNativeToken,
+      contracts.feeDistributorVault.address,
+      userArgs.shouldSendTxn,
       wntPrice,
       gmxPrice,
-      referralValues,
+      contracts.feeDistributor,
+      contracts.wnt,
+      contracts.esGmx,
+      dataStr,
       gelatoArgs.chainId,
     });
 
@@ -177,31 +156,21 @@ export const feeDistribution = async (
       data: c.data,
     }));
 
-    if (!shouldSendTxn) {
+    if (!userArgs.shouldSendTxn) {
       console.log("Referral Rewards Not sent"); // potentially simulate calls here for testing
     }
 
     return {
-      canExec: shouldSendTxn,
+      canExec: userArgs.shouldSendTxn,
       callData: referralDistributionCallData,
+    };
+  } else {
+    return {
+      canExec: false,
+      message: `No relevant event found: ${eventName}`,
     };
   }
 };
-
-async function getGmxPrice(
-  vault: ethers.Contract,
-  uniswapPool: ethers.Contract,
-  WETH_ADDRESS: string
-) {
-  const [sqrtPriceX96] = await uniswapPool.slot0();
-  const SCALE_1e30 = bigNumberify(10).pow(30);
-  const ratioSq = sqrtPriceX96.mul(sqrtPriceX96);
-  const ratioScaled = ratioSq.mul(SCALE_1e30).div(bigNumberify(2).pow(192));
-
-  const ethPrice = await vault.getMaxPrice(WETH_ADDRESS);
-  const gmxPrice = ethPrice.mul(ratioScaled).div(SCALE_1e30);
-  return gmxPrice;
-}
 
 // functions used to retrieve and calculate referral rewards
 
@@ -364,7 +333,7 @@ async function getDistributionData(
 
   if (allAffiliatesRebateUsd.eq(0)) {
     console.warn("No rebates on %s", chainId);
-    return;
+    return [bigNumberify(0), bigNumberify(0)];
   }
 
   Object.entries(affiliatesRebatesData).forEach(([account, data]) => {
@@ -586,103 +555,6 @@ async function getDistributionData(
   return [output.totalRebateUsd, esgmxRewardsTotal];
 }
 
-export async function getEsGMXReferralRewardsData({
-  chainId,
-  from,
-  to,
-  account,
-}: EsGMXReferralRewardsDataParams): Promise<
-  Array<{ account: string; amount: string }>
-> {
-  const esGmxTokenAddress = getAddress(chainId, esGmx);
-
-  let accountCondition = "";
-  if (account) {
-    accountCondition = `, receiver: "${account}"`;
-  }
-
-  function getEsGmxDistributionQuery(skip: number) {
-    return `distributions(
-      where: {
-        typeId: "1",
-        tokens_contains: ["${esGmxTokenAddress}"]
-        timestamp_gte: ${from},
-        timestamp_lt: ${to}${accountCondition}
-      }
-      orderBy: timestamp
-      orderDirection: desc
-      first: 10000
-      skip: ${skip}
-    ) {
-      tokens
-      amounts
-      receiver
-    }`;
-  }
-
-  const query = `{
-    esGmxDistribution0: ${getEsGmxDistributionQuery(0)}
-    esGmxDistribution1: ${getEsGmxDistributionQuery(10000)}
-    esGmxDistribution2: ${getEsGmxDistributionQuery(20000)}
-    esGmxDistribution3: ${getEsGmxDistributionQuery(30000)}
-    esGmxDistribution4: ${getEsGmxDistributionQuery(40000)}
-    esGmxDistribution5: ${getEsGmxDistributionQuery(50000)}
-  }`;
-
-  const subgraphService = new SubgraphService({ chainId });
-  const data = await subgraphService.querySubgraph("referrals", query);
-
-  const esGmxDistributions = [
-    ...data.esGmxDistribution0,
-    ...data.esGmxDistribution1,
-    ...data.esGmxDistribution2,
-    ...data.esGmxDistribution3,
-    ...data.esGmxDistribution4,
-    ...data.esGmxDistribution5,
-  ];
-
-  if (esGmxDistributions.length === 60000) {
-    throw new Error("esGMX distributions should be paginated");
-  }
-
-  const aggregatedDistributionsByReceiver = esGmxDistributions.reduce(
-    (distribution: Record<string, ethers.BigNumber>, item: any) => {
-      const receiver = item.receiver;
-      const amountIndex = item.tokens.indexOf(esGmxTokenAddress);
-      if (amountIndex !== -1) {
-        const amount = ethers.BigNumber.from(item.amounts[amountIndex]);
-        if (!distribution[receiver]) {
-          distribution[receiver] = amount;
-        } else {
-          distribution[receiver] = distribution[receiver].add(amount);
-        }
-      }
-      return distribution;
-    },
-    {}
-  );
-
-  const nonZeroDistributionsByReceiver = Object.entries(
-    aggregatedDistributionsByReceiver
-  ).reduce((acc: Record<string, string>, [receiver, amount]) => {
-    if (!amount.isZero()) {
-      acc[receiver] = amount.toString();
-    }
-    return acc;
-  }, {});
-
-  console.table(nonZeroDistributionsByReceiver);
-
-  const list: Array<{ account: string; amount: string }> = [];
-  for (const [account, amount] of Object.entries(
-    nonZeroDistributionsByReceiver
-  )) {
-    list.push({ account, amount });
-  }
-
-  return list;
-}
-
 // functions used to retrieve v1Fees v2Fees and prevPeriod used to retrieve for the correct period
 
 async function processPeriodV1(
@@ -807,47 +679,23 @@ async function processBatch<T>(
   }
 }
 
-async function getArbValues(provider: ethers.providers.Provider): Promise<any> {
-  const contracts = getContracts(ARBITRUM, provider);
-  
-  const feeDistributor = contracts.feeDistributor;
-  const wnt = contracts.wnt;
-  const esGmx = contracts.esGmx;
-  const data = await storage.get("distributionData");
-
-  return { feeDistributor, wnt, esGmx, data };
-}
-
-async function getAvaxValues(provider: ethers.providers.Provider): Promise<any> {
-  const contracts = getContracts(AVALANCHE, provider);
-  
-  const feeDistributor = contracts.feeDistributor;
-  const wnt = contracts.wnt;
-  const esGmx = contracts.esGmx;
-  const data = await storage.get("distributionData");
-
-  return { feeDistributor, wnt, esGmx, data };
-}
-
 async function referralRewardsCalls({
   skipSendNativeToken,
-  readOnlyProvider,
   feeDistributorVault,
   shouldSendTxn,
   wntPrice,
   gmxPrice,
-  values,
+  feeDistributor,
+  wnt,
+  esGmx,
+  dataStr,
   chainId,
 }: ReferralRewardsCallsParams): Promise<{ to: string; data: string }[]> {
   const calls: Array<{ to: string; data: string }> = [];
 
-  const { wnt, feeDistributor, esGmx, data } = values;
-
+  const data = dataStr ? JSON.parse(dataStr) : {};
   const affiliatesData = data.affiliates;
   const discountsData = data.referrals;
-
-  const affiliateRewardsTypeId = 1;
-  const traderDiscountsTypeId = 2;
 
   let totalAffiliateAmount = bigNumberify(0);
   let totalAffiliateUsd = bigNumberify(0);
@@ -948,9 +796,9 @@ async function referralRewardsCalls({
         const amounts = currentBatch.map((item) => item[1]);
 
         const callData = feeDistributor.interface.encodeFunctionData("sendWnt", [
+          batchSize,
           accounts,
           amounts,
-          batchSize,
         ]);
         calls.push({ to: feeDistributor.address, data: callData });
       }
@@ -964,9 +812,9 @@ async function referralRewardsCalls({
         const amounts = currentBatch.map((item) => item[1]);
 
         const callData = feeDistributor.interface.encodeFunctionData("sendWnt", [
+          batchSize,
           accounts,
           amounts,
-          batchSize,
         ]);
         calls.push({ to: feeDistributor.address, data: callData });
       }
@@ -983,9 +831,9 @@ async function referralRewardsCalls({
       calls.push({
         to: feeDistributor.address,
         data: feeDistributor.interface.encodeFunctionData("sendEsGmxAndIncreaseBonusRewards", [
+          batchSize,
           accounts,
           amounts,
-          batchSize,
         ]),
       });
     }
