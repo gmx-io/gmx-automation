@@ -6,7 +6,7 @@ GELATO_MSG_SENDER=0x00D6ffb506167f4b704bB3a2023274f7793c90cc \
 LOG_INDEX=11 \
 TX=0x1fa3d337e5c306ce6b36fea85caf2126663e79f39ac0ae0f0282f0591e101091 \
 UINT_KEY=0xb090a2b4b1460d089313317d9c8dde87144d93e949a91730da157796e1a45cee \
-    npx hardhat run scripts/replayTx_exampleFunction.ts --network arbitrum
+    npx hardhat run scripts/simulateTx_exampleFunction.ts --network arbitrum
 ```
 */
 
