@@ -1,9 +1,6 @@
-import { ethers } from "ethers";
 import {
   ARBITRUM,
   AVALANCHE,
-  AVALANCHE_FUJI,
-  HARDHAT,
   isSupportedChainId,
   SupportedChainId,
 } from "./chains";

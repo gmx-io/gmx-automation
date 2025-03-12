@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import { KeyValueEventData, parseLogToEventData } from "../../lib/events";
+import { parseLogToEventData, parseLogToEventNameHash } from "../../lib/events";
 import { Log } from "hardhat-deploy/dist/types";
 import { EventEmitter } from "../../typechain";
 import { ethers } from "ethers";
@@ -34,7 +34,9 @@ export const getFeeDistributionDataReceivedEventData = (
 
   return {
     numberOfChainsReceivedData: eventData.getUint("numberOfChainsReceivedData"),
-    receivedDataTimestamp: eventData.getUint("receivedDataTimestamp").toNumber(),
+    receivedDataTimestamp: eventData
+      .getUint("receivedDataTimestamp")
+      .toNumber(),
     wntPriceInUsd: eventData.getUint("wntPriceInUsd"),
     receivedDataReadData: eventData.getBytes("receivedDataReadData"),
   };
@@ -69,5 +71,5 @@ export const getFeeDistributorEventName = (
   const event = eventEmitter.interface.parseLog(log);
   const eventNameHash = parseLogToEventNameHash(event);
 
-  return {ethers.utils.toUtf8String(hex)};
+  return ethers.utils.toUtf8String(eventNameHash);
 };
