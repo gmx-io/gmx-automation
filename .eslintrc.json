@@ -24,8 +24,6 @@
       ],
       "rules": {
         "no-constant-condition": "off",
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn",
         // note you must disable the base rule as it can report incorrect errors
         "no-use-before-define": "off",
         "@typescript-eslint/no-use-before-define": ["error", { "functions": false }],
@@ -127,10 +125,8 @@
         "unicode-bom": "error",
     
         "no-return-await": "error",
-        "react/jsx-uses-react": "error",
-        "react/jsx-uses-vars": "error",
     
-        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/ban-ts-comment": "off"
       }
     }
   ]

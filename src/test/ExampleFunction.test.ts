@@ -5,7 +5,7 @@ import { createMockedEventContext, wrapMockContext } from "../lib/mock";
 import { getRandomHash } from "../lib/random";
 import { exampleFunction } from "../web3-functions/example-function/exampleFunction";
 
-describe("ExampleFunction Tests", function () {
+describe("ExampleFunction Tests", () => {
   it("canExec == true, case 1", async () => {
     // e.x. 0xb090a2b4b1460d089313317d9c8dde87144d93e949a91730da157796e1a45cee
     const uintKey = getRandomHash();
@@ -34,7 +34,9 @@ describe("ExampleFunction Tests", function () {
     const context = wrapMockContext(gelatoContext);
     const result = await exampleFunction(context);
     expect(result.canExec).to.equal(true);
-    if (!result.canExec) throw new Error("canExec == false");
+    if (!result.canExec) {
+      throw new Error("canExec == false");
+    }
     const callData = result.callData[0] as Web3FunctionResultCallData;
     const contracts = getContracts(
       context.gelatoArgs.chainId,
@@ -74,7 +76,9 @@ describe("ExampleFunction Tests", function () {
     const context = wrapMockContext(gelatoContext);
     const result = await exampleFunction(context);
     expect(result.canExec).to.equal(true);
-    if (!result.canExec) throw new Error("canExec == false");
+    if (!result.canExec) {
+      throw new Error("canExec == false");
+    }
     const callData = result.callData[0] as Web3FunctionResultCallData;
     const contracts = getContracts(
       context.gelatoArgs.chainId,

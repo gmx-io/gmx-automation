@@ -1,4 +1,4 @@
-import { Contract } from "ethers";
+/* eslint-disable no-console */
 import { Market, MarketData } from "./marketUtils";
 import { getAddress } from "../../config/addresses";
 import { Storage } from "../../lib/gelato";
@@ -46,26 +46,20 @@ export class MarketService {
       }
     }
 
-    const markets = await this._getMarkets(p);
-    const isDisabled = await this._getIsDisabled(
-      markets,
-      p.requiredMarkets,
-      p.skipCache
-    );
+    const markets = await this._getMarkets();
+    const isDisabled = await this._getIsDisabled(markets);
 
     console.timeEnd("getMarketsData");
     marketsData = markets.map((market, i) => ({
       ...market,
-      isDisabled: isDisabled[i],
+      isDisabled: isDisabled[i] ?? false,
     }));
 
     await this._saveMarketsToStorage(marketsData);
     return marketsData;
   }
 
-  async _getMarkets(
-    p: { requiredMarkets?: string[]; skipCache?: true } = {}
-  ): Promise<Market[]> {
+  async _getMarkets(): Promise<Market[]> {
     console.time("getMarkets");
     const dataStoreAddress = getAddress(this.chainId, "dataStore");
     const markets = await this.contracts.reader.getMarkets(
@@ -107,11 +101,7 @@ export class MarketService {
     );
   }
 
-  async _getIsDisabled(
-    markets: Market[],
-    requiredMarkets?: string[],
-    skipCache?: true
-  ) {
+  async _getIsDisabled(markets: Market[]) {
     return markets.map(() => false);
   }
 }
