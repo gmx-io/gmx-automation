@@ -6,5 +6,5 @@ import { feeDistribution } from "./feeDistribution";
 import { wrapContext } from "../../lib/gelato";
 
 Web3Function.onRun((gelatoContext: Web3FunctionEventContext) => {
-  return feeDistribution(wrapContext(gelatoContext));
+  return feeDistribution(wrapContext(true, gelatoContext));
 });

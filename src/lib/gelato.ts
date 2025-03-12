@@ -36,9 +36,11 @@ export type Context<GelatoContext extends Web3FunctionContext> =
     };
     contracts: ReturnType<typeof getContracts>;
     logger: Logger;
+    isGelatoEnvironment: boolean;
   };
 
 export const wrapContext = <GelatoContext extends Web3FunctionContext>(
+  isGelatoEnvironment: boolean,
   gelatoContext: GelatoContext
 ): Context<GelatoContext> => {
   return {
@@ -54,6 +56,7 @@ export const wrapContext = <GelatoContext extends Web3FunctionContext>(
         provider: gelatoContext.multiChainProvider.default(),
       }),
     },
-    logger: getLogger(),
+    logger: getLogger(isGelatoEnvironment),
+    isGelatoEnvironment,
   };
 };

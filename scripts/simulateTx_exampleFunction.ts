@@ -65,7 +65,7 @@ const main = async () => {
       },
       chainId
     );
-    const context = wrapContext(gelatoContext);
+    const context = wrapContext(false, gelatoContext);
     const result = await exampleFunction(context);
 
     if (!result.canExec) {
@@ -103,7 +103,7 @@ function createEventContext(
     chainId
   );
 
-  return wrapContext({
+  return wrapContext(false, {
     log,
     userArgs,
     gelatoArgs: {

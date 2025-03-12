@@ -55,8 +55,8 @@ class GelatoLogger {
 
 export type Logger = DebugLogger | GelatoLogger;
 
-export const getLogger = () => {
-  if (process.env.NODE_ENV === "production") {
+export const getLogger = (isGelatoEnvironment: boolean) => {
+  if (isGelatoEnvironment) {
     return new GelatoLogger();
   }
 
