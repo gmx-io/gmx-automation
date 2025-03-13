@@ -1,4 +1,3 @@
-import { Log } from "@ethersproject/abstract-provider";
 import { BigNumber } from "ethers";
 import { LogDescription } from "ethers/lib/utils";
 
@@ -52,12 +51,6 @@ export function getKeyValueEventData(log: LogDescription): KeyValueEventData {
     }
   }
 
-  export function getKeyValueEventNameHash(log: LogDescription): string {
-    // for some reason ethers doesn't create keys for eventName, eventData, etc.
-    // eventNameHash is the second field of event
-    const eventNameHash: string = log.args[(log.args as any).1];
-    }
-
   function getter(typeKey: string, listKey: string) {
     return (key: string, defaultValue?: any) => {
       const value = ret[typeKey][listKey][key];
@@ -92,4 +85,12 @@ export function getKeyValueEventData(log: LogDescription): KeyValueEventData {
     getBytesArray: getter("bytesItems", "arrayItems"),
     getStringArray: getter("stringItems", "arrayItems"),
   };
+}
+
+export function getKeyValueEventNameHash(log: LogDescription): string {
+  // for some reason ethers doesn't create keys for eventName, eventData, etc.
+  // eventNameHash is the second field of event
+  const eventNameHash: string = (log.args as any)[1];
+
+  return eventNameHash;
 }

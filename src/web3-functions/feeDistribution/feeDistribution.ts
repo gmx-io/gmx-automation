@@ -63,7 +63,11 @@ type OutputData = {
 
 const { AddressZero } = ethers.constants;
 
-const;
+const logger = {
+  log: (...args: any[]) => {
+    console.log(...args); // eslint-disable-line no-console
+  },
+};
 
 export const feeDistribution = async (
   context: Context<Web3FunctionEventContext>
@@ -151,7 +155,7 @@ export const feeDistribution = async (
     }));
 
     if (!userArgs.shouldSendTxn) {
-      console.log("Referral Rewards Not sent"); // potentially simulate calls here for testing
+      logger.log("Referral Rewards Not sent"); // potentially simulate calls here for testing
     }
 
     return {
@@ -343,7 +347,7 @@ async function getDistributionData(
   );
 
   if (allAffiliatesRebateUsd.eq(0)) {
-    console.warn("No rebates on %s", chainId);
+    logger.warn("No rebates on %s", chainId);
     return [bigNumberify(0), bigNumberify(0)];
   }
 
@@ -415,24 +419,24 @@ async function getDistributionData(
     esgmxRewards: esgmxRewards,
   };
 
-  console.log(
+  logger.log(
     "\nTotal referral volume: %s ($%s)",
     totalReferralVolume.toString(),
     formatAmount(totalReferralVolume, USD_DECIMALS, 4)
   );
-  console.log(
+  logger.log(
     "Total fees collected from referral traders: %s ($%s)",
     totalReferralVolume.div(1000).toString(),
     formatAmount(totalReferralVolume.div(1000), USD_DECIMALS, 4)
   );
-  console.log(
+  logger.log(
     "Total rebates (for Affiliates + Traders): %s ($%s)",
     totalRebateUsd.toString(),
     formatAmount(totalRebateUsd, USD_DECIMALS, 4)
   );
 
-  console.log("\nAffiliates (Affiliates):");
-  console.log(
+  logger.log("\nAffiliates (Affiliates):");
+  logger.log(
     "Rebates sum: %s ($%s)",
     allAffiliatesRebateUsd.toString(),
     formatAmount(allAffiliatesRebateUsd, USD_DECIMALS, 4)
@@ -465,7 +469,7 @@ async function getDistributionData(
 
     if (tooSmall) {
       filteredAffiliatesCount++;
-      console.log(
+      logger.log(
         "skip affiliate %s small rewards %s and esGMX %s",
         data.account,
         formatAmount(data.rebateUsd, USD_DECIMALS, 2),
@@ -488,13 +492,13 @@ async function getDistributionData(
     });
   }
 
-  console.log(
+  logger.log(
     "Filter %s of %s affiliates with rebate < $%s",
     filteredAffiliatesCount,
     output.affiliates.length + filteredAffiliatesCount,
     formatAmount(REWARD_THRESHOLD, USD_DECIMALS, USD_DECIMALS)
   );
-  console.table(consoleData);
+  logger.table(consoleData);
 
   let allReferralsDiscountUsd = bigNumberify(0);
   const referralDiscountData = referralStats.reduce(
@@ -527,8 +531,8 @@ async function getDistributionData(
       .div(allReferralsDiscountUsd);
   });
 
-  console.log("Referrals (Traders):");
-  console.log(
+  logger.log("Referrals (Traders):");
+  logger.log(
     "Discount sum: %s ($%s)",
     allReferralsDiscountUsd.toString(),
     formatAmount(allReferralsDiscountUsd, USD_DECIMALS, 4)
@@ -561,13 +565,13 @@ async function getDistributionData(
     });
   }
 
-  console.log(
+  logger.log(
     "Filter %s of %s with discount < $%s",
     filteredTradersCount,
     filteredTradersCount + output.referrals.length,
     formatAmount(REWARD_THRESHOLD, USD_DECIMALS, USD_DECIMALS)
   );
-  console.table(consoleData);
+  logger.table(consoleData);
 
   return [output, esgmxRewardsTotal];
 }
@@ -686,7 +690,7 @@ async function processBatch<T>(
     currentBatch.push(item);
 
     if (currentBatch.length === batchSize) {
-      console.log(
+      logger.log(
         "handling currentBatch",
         i,
         currentBatch.length,
@@ -698,7 +702,7 @@ async function processBatch<T>(
   }
 
   if (currentBatch.length > 0) {
-    console.log(
+    logger.log(
       "handling final batch",
       currentBatch.length,
       referenceList.length
