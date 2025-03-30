@@ -6,9 +6,9 @@ import { ethers } from "ethers";
 
 export type FeeDistributionDataReceivedEventData = {
   numberOfChainsReceivedData: BigNumber;
-  receivedDataTimestamp: number;
-  wntPriceInUsd: BigNumber;
-  receivedDataReadData: string;
+  feeAmountGmxCurrentChain: BigNumber;
+  receivedData: string;
+  isBridgingCompleted: boolean;
 };
 
 export type FeeDistributionCompletedEventData = {
@@ -34,11 +34,9 @@ export const getFeeDistributionDataReceivedEventData = (
 
   return {
     numberOfChainsReceivedData: eventData.getUint("numberOfChainsReceivedData"),
-    receivedDataTimestamp: eventData
-      .getUint("receivedDataTimestamp")
-      .toNumber(),
-    wntPriceInUsd: eventData.getUint("wntPriceInUsd"),
-    receivedDataReadData: eventData.getBytes("receivedDataReadData"),
+    feeAmountGmxCurrentChain: eventData.getUint("feeAmountGmxCurrentChain"),
+    receivedData: eventData.getBytes("receivedData"),
+    isBridgingCompleted: eventData.getBool("isBridgingCompleted"),
   };
 };
 

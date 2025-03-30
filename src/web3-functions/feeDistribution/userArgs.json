@@ -1,13 +1,8 @@
 {
-  "keeperAddress": "",
   "initialFromTimestamp": "",
-  "referralRewardsAmountNativeTokenKey": "",
-  "referralRewardsAmountEsGmxKey": "",
-  "feeAmountUsdV1Key": "",
-  "feeAmountUsdV2Key": "",
+  "wntPriceKey": "",
+  "gmxPriceKey": "",
   "esGmxRewardsKey": "",
-  "nativeToken": "",
-  "esGmx": "",
   "skipSendNativeToken": "",
   "shouldSendTxn": ""
 }
