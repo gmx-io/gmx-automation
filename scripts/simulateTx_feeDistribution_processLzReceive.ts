@@ -3,14 +3,14 @@
 Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
-TX=0x5cf64cfc4ed65e2978057c6b0bd4b258b1edb4fbbb3ab169991a6970b21b17a4 \
+TX=0x5ab895df8c4b227fc77ada660d5a2cab40b6cd9d5902ca3056ff28a8a762a539 \
 INITIAL_FROM_TIMESTAMP=1744333353 \
 WNT_PRICE_KEY=0x66af7011ac8687696c07a8c00f07a4cd3b8574eccaa9d8609991b2824888e113 \
 GMX_PRICE_KEY=0xfb0c2a8c499410abada8871e1b7bb6142f067b1b04951090b658c6843dcf78c9 \
 ESGMX_REWARDS_KEY=0x40526da0fbc85a8524586c9c30616320eabcc480b42239a800f3287664b8b34f \
 SKIP_SEND_NATIVE_TOKEN=true \
 SHOULD_SEND_TXN=false \
-    npx hardhat run scripts/simulateTx_feeDistribution_bridgedGmxReceived.ts --network localhost
+    npx hardhat run scripts/simulateTx_feeDistribution_processLzReceive.ts --network localhost
 ```
 */
 
@@ -51,7 +51,7 @@ assert(gelatoMsgSenderPrivateKey, "GELATO_MSG_SENDER_PRIVATE_KEY is not set");
 
 const topics = [
   "0x7e3bde2ba7aca4a8499608ca57f3b0c1c1c93ace63ffd3741a9fab204146fc9a", // EventLog event signature
-  "0x18b8c59f2f59ef65527915db9544ac15717fd3d18bc754a45263b232b1529ebe", // EventName = FeeDistributionBridgedGmxReceived
+  "0x55ac1650a32c2b1a50780bc0322564f8a36092ee04680ea414c44c7283bc3937", // EventName = FeeDistributionDataReceived
 ];
 
 const topics2 = [

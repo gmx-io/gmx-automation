@@ -158,8 +158,8 @@ export const feeDistribution = async (
     );
 
     [wntPrice, gmxPrice] = await Promise.all([
-      contracts.dateStore.getUint(userArgs.wntPriceKey),
-      contracts.dateStore.getUint(userArgs.gmxPriceKey),
+      contracts.dataStore.getUint(userArgs.wntPriceKey),
+      contracts.dataStore.getUint(userArgs.gmxPriceKey),
     ]);
 
     await storage.set("wntPrice", wntPrice.toString());
@@ -170,7 +170,9 @@ export const feeDistribution = async (
         provider.getBlock("latest"),
         contracts.dataStore.getUint(userArgs.esGmxRewardsKey),
         processPeriodV1("prev", gelatoArgs.chainId),
-        processPeriodV2("prev", gelatoArgs.chainId).mul(10).div(100),
+        processPeriodV2("prev", gelatoArgs.chainId).then((v) =>
+          v.mul(10).div(100)
+        ),
       ]);
     const toTimestamp = latestBlock.timestamp;
 
@@ -464,10 +466,7 @@ async function getDistributionData(
       .add(data.v2TotalRebateUsd)
       .div(5);
 
-    data.esGmxRewards = data.esGmxRewardsUsd
-      .mul(expandDecimals(1, USD_DECIMALS))
-      .div(gmxPrice)
-      .div(expandDecimals(1, 12));
+    data.esGmxRewards = data.esGmxRewardsUsd.div(gmxPrice);
 
     totalEsGmxRewardsUsd = totalEsGmxRewardsUsd.add(data.esGmxRewardsUsd);
     totalEsGmxRewards = totalEsGmxRewards.add(data.esGmxRewards);
@@ -696,7 +695,7 @@ async function processPeriodV1(
   `;
 
   const subgraphService = new SubgraphService({ chainId });
-  const data = await subgraphService.querySubgraph("stats", gql);
+  const data = await subgraphService.querySubgraph("statsV1", gql);
   const stats = data.feeStats;
 
   const total = stats.reduce(
@@ -741,7 +740,7 @@ async function processPeriodV2(
   `;
 
   const subgraphService = new SubgraphService({ chainId });
-  const data = await subgraphService.querySubgraph("stats", gql);
+  const data = await subgraphService.querySubgraph("statsV2", gql);
 
   const positionStats = data.position as PositionFeesInfoWithPeriods[];
   const swapStats = data.swap as SwapFeesInfoWithPeriods[];

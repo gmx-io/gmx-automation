@@ -2,7 +2,7 @@ import {
   ARBITRUM,
   AVALANCHE,
   AVALANCHE_FUJI,
-  HARDHAT,
+  LOCALHOST,
   isSupportedChainId,
   SupportedChainId,
 } from "./chains";
@@ -24,7 +24,7 @@ export const RPC_PROVIDERS: Record<SupportedChainId, string[]> = {
     "https://avalanche-fuji-c-chain.publicnode.com",
     "https://api.avax-test.network/ext/bc/C/rpc",
   ],
-  [HARDHAT]: [],
+  [LOCALHOST]: ["http://127.0.0.1:8545"],
 };
 
 export const getRpcProviderUrl = (chainId: number) => {

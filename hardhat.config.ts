@@ -21,6 +21,8 @@ assert.ok(
 );
 const AVALANCHE_PRIVATE_KEY = process.env.AVALANCHE_PRIVATE_KEY;
 assert.ok(AVALANCHE_PRIVATE_KEY, "no AVALANCHE_PRIVATE_KEY in .env");
+const LOCALHOST_PRIVATE_KEY = process.env.LOCALHOST_PRIVATE_KEY;
+assert.ok(LOCALHOST_PRIVATE_KEY, "no LOCALHOST_PRIVATE_KEY in .env");
 
 const config: HardhatUserConfig = {
   paths: {
@@ -40,6 +42,11 @@ const config: HardhatUserConfig = {
       chainId: 42161,
       url: "https://arb1.arbitrum.io/rpc",
       accounts: [ARBITRUM_PRIVATE_KEY],
+    },
+    localhost: {
+      chainId: 31337,
+      url: "http://127.0.0.1:8545",
+      accounts: [LOCALHOST_PRIVATE_KEY],
     },
   },
 };

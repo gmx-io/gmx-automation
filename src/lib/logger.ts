@@ -6,6 +6,10 @@ class DebugLogger {
     console.log(...args);
   }
 
+  table(...args: any[]) {
+    console.table(...args);
+  }
+
   debug(...args: any[]) {
     console.debug(...args);
   }
@@ -30,6 +34,10 @@ class DebugLogger {
 class GelatoLogger {
   log(..._args: any[]) {
     // noop
+  }
+
+  table(...args: any[]) {
+    console.table(...args);
   }
 
   debug(..._args: any[]) {
