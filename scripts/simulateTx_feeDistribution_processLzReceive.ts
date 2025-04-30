@@ -122,11 +122,19 @@ const main = async () => {
 
       logger.log(`tx mined @ block ${receipt.blockNumber}`);
 
+      logger.log("total logs in receipt:", receipt.logs.length);
+
       const fdCompletedLogs = receipt.logs.filter(
         (l) =>
           l.topics.length >= 2 &&
           l.topics[0] === topics2[0] &&
           l.topics[1] === topics2[1]
+      );
+
+      logger.log(
+        "matching logs:",
+        fdCompletedLogs.length,
+        fdCompletedLogs.map((l) => l.logIndex)
       );
 
       for (const log of fdCompletedLogs) {
