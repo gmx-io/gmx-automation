@@ -3,6 +3,5 @@
   "wntPriceKey": "",
   "gmxPriceKey": "",
   "esGmxRewardsKey": "",
-  "skipSendNativeToken": "",
   "shouldSendTxn": ""
 }

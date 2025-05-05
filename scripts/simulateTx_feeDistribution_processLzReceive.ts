@@ -4,12 +4,12 @@ Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
 TX=0x5ab895df8c4b227fc77ada660d5a2cab40b6cd9d5902ca3056ff28a8a762a539 \
-INITIAL_FROM_TIMESTAMP=1744333353 \
+INITIAL_FROM_TIMESTAMP=1746096466 \
 WNT_PRICE_KEY=0x66af7011ac8687696c07a8c00f07a4cd3b8574eccaa9d8609991b2824888e113 \
 GMX_PRICE_KEY=0xfb0c2a8c499410abada8871e1b7bb6142f067b1b04951090b658c6843dcf78c9 \
-ESGMX_REWARDS_KEY=0x40526da0fbc85a8524586c9c30616320eabcc480b42239a800f3287664b8b34f \
-SKIP_SEND_NATIVE_TOKEN=true \
+ESGMX_REWARDS_KEY=0xdc01aee9b14bf3c45fd436469d8dd2c0d19d1926910cfe7173c8e683ed3c0c57 \
 SHOULD_SEND_TXN=false \
+REVERT_TX=true \
     npx hardhat run scripts/simulateTx_feeDistribution_processLzReceive.ts --network localhost
 ```
 */
@@ -27,6 +27,11 @@ import { getLogger, Logger } from "../src/lib/logger";
 import { feeDistribution } from "../src/web3-functions/feeDistribution/feeDistribution";
 import { getFeeDistributionCompletedEventData } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, USD_DECIMALS, GMX_DECIMALS } from "../src/lib/number";
+import { fileStore, flushStorage } from "../src/lib/storage";
+
+export type RevertOverride = {
+  disableRevert: boolean;
+};
 
 const logger: Logger = getLogger();
 const txHash = process.env.TX;
@@ -35,8 +40,8 @@ const initialFromTimestamp = process.env.INITIAL_FROM_TIMESTAMP;
 const wntPriceKey = process.env.WNT_PRICE_KEY;
 const gmxPriceKey = process.env.GMX_PRICE_KEY;
 const esGmxRewardsKey = process.env.ESGMX_REWARDS_KEY;
-const skipSendNativeToken = process.env.SKIP_SEND_NATIVE_TOKEN;
-const shouldSendTxn = process.env.SHOULD_SEND_TXN;
+const shouldSendTxnStr = process.env.SHOULD_SEND_TXN;
+const revertTxStr = process.env.REVERT_TX;
 
 const gelatoMsgSenderPrivateKey = process.env.GELATO_MSG_SENDER_PRIVATE_KEY;
 
@@ -45,9 +50,11 @@ assert(initialFromTimestamp, "INITIAL_FROM_TIMESTAMP is not set");
 assert(wntPriceKey, "WNT_PRICE_KEY is not set");
 assert(gmxPriceKey, "GMX_PRICE_KEY is not set");
 assert(esGmxRewardsKey, "ESGMX_REWARDS_KEY is not set");
-assert(skipSendNativeToken, "SKIP_SEND_NATIVE_TOKEN is not set");
-assert(shouldSendTxn, "SHOULD_SEND_TXN is not set");
+assert(shouldSendTxnStr, "SHOULD_SEND_TXN is not set");
+assert(revertTxStr, "REVERT_TX is not set");
 assert(gelatoMsgSenderPrivateKey, "GELATO_MSG_SENDER_PRIVATE_KEY is not set");
+
+const shouldSendTxn = shouldSendTxnStr.toLowerCase() === "true";
 
 const topics = [
   "0x7e3bde2ba7aca4a8499608ca57f3b0c1c1c93ace63ffd3741a9fab204146fc9a", // EventLog event signature
@@ -59,7 +66,10 @@ const topics2 = [
   "0xb4f52781abb3fd345f04301fe57915de07b9d6292be94dce510aa8d59dd589e1", // EventName = FeeDistributionCompleted
 ];
 
-const main = async () => {
+const processLzReceiveSimulation = async (opts?: RevertOverride) => {
+  const envRevert = process.env.REVERT_TX?.toLowerCase() === "true";
+  const revertTx = opts?.disableRevert ? false : envRevert;
+
   const chainId = (await ethers.provider.getNetwork()).chainId;
 
   if (!isSupportedChainId(chainId)) {
@@ -83,6 +93,8 @@ const main = async () => {
     relevantLogs.map((l) => l.logIndex)
   );
 
+  const executions: { txHash: string; snapId: string }[] = [];
+
   for (const log of relevantLogs) {
     const gelatoContext = createEventContext(
       log,
@@ -91,7 +103,6 @@ const main = async () => {
         wntPriceKey,
         gmxPriceKey,
         esGmxRewardsKey,
-        skipSendNativeToken,
         shouldSendTxn,
       },
       chainId
@@ -112,7 +123,7 @@ const main = async () => {
     const { eventEmitter } = getContracts(chainId, provider);
 
     for (const call of result.callData) {
-      const snap = await provider.send("evm_snapshot", []);
+      const snap = (await provider.send("evm_snapshot", [])) as string;
 
       const txResponse = await gelatoMsgSender.sendTransaction({
         to: call.to,
@@ -123,6 +134,8 @@ const main = async () => {
       logger.log(`tx mined @ block ${receipt.blockNumber}`);
 
       logger.log("total logs in receipt:", receipt.logs.length);
+
+      executions.push({ txHash: receipt.transactionHash, snapId: snap });
 
       const fdCompletedLogs = receipt.logs.filter(
         (l) =>
@@ -154,14 +167,25 @@ const main = async () => {
           ),
           esGmxForReferralRewards: formatAmount(
             ev.esGmxForReferralRewards,
-            USD_DECIMALS,
+            GMX_DECIMALS,
             4
           ),
         });
       }
 
-      await provider.send("evm_revert", [snap]);
+      if (revertTx) {
+        await provider.send("evm_revert", [snap]);
+      }
     }
+  }
+
+  try {
+    return executions;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  } finally {
+    await flushStorage();
   }
 };
 
@@ -174,6 +198,24 @@ function createEventContext(
     getRpcProviderUrl(chainId),
     chainId
   );
+
+  const storage = {
+    async get(key: string) {
+      return fileStore[key];
+    },
+    async set(key: string, val: string) {
+      fileStore[key] = val;
+    },
+    async delete(key: string) {
+      delete fileStore[key];
+    },
+    async getKeys() {
+      return Object.keys(fileStore);
+    },
+    async getSize() {
+      return Object.keys(fileStore).length;
+    },
+  };
 
   return wrapContext(false, {
     log,
@@ -193,14 +235,12 @@ function createEventContext(
         return null as any; // update if there is a simulation script that includes secrets
       },
     },
-    storage: {
-      get: () => null as any,
-      set: () => null as any,
-      delete: () => null as any,
-      getKeys: () => null as any,
-      getSize: () => null as any,
-    },
+    storage,
   });
 }
 
-main();
+if (require.main === module) {
+  processLzReceiveSimulation();
+}
+
+export { processLzReceiveSimulation };
