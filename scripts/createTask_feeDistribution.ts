@@ -36,9 +36,8 @@ const main = async () => {
     web3FunctionArgs: {
       initialFromTimestamp: "timestamp to be added",
       esGmxRewardsKey:
-        "0x40526da0fbc85a8524586c9c30616320eabcc480b42239a800f3287664b8b34f",
-      skipSendNativeToken: "true",
-      shouldSendTxn: "false",
+        "0xdc01aee9b14bf3c45fd436469d8dd2c0d19d1926910cfe7173c8e683ed3c0c57",
+      shouldSendTxn: "true",
     },
     trigger: {
       type: TriggerType.EVENT,
