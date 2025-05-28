@@ -15,7 +15,7 @@ FEE_SURPLUS=true \
 ```
 */
 
-import { Log } from "@ethersproject/providers";
+import { JsonRpcProvider, Log } from "@ethersproject/providers";
 import { Web3FunctionEventContext } from "@gelatonetwork/web3-functions-sdk/*";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
@@ -27,14 +27,18 @@ import { Context, wrapContext } from "../src/lib/gelato";
 import { getLogger, Logger } from "../src/lib/logger";
 import { feeDistribution } from "../src/web3-functions/feeDistribution/feeDistribution";
 import {
+  ES_GMX_REFERRAL_REWARDS_SENT_HASH,
+  FEE_DISTRIBUTION_COMPLETED_HASH,
   getFeeDistributionEsGmxReferralRewardsSentEventData,
   getFeeDistributionWntReferralRewardsSentEventData,
   getFeeDistributorEventName,
+  WNT_REFERRAL_REWARDS_SENT_HASH,
 } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, GMX_DECIMALS } from "../src/lib/number";
 import { processLzReceiveSimulation } from "./simulateTx_feeDistribution_processLzReceive";
 import { bridgedGmxReceivedSimulation } from "./simulateTx_feeDistribution_bridgedGmxReceived";
 import { fileStore, flushStorage } from "../src/lib/storage";
+import { EVENT_LOG_TOPIC } from "../src/lib/events";
 
 const logger: Logger = getLogger();
 
@@ -61,25 +65,25 @@ const shouldSendTxn = shouldSendTxnStr.toLowerCase() === "true";
 const revertTx = revertTxStr.toLowerCase() === "true";
 const feeSurplus = feeSurplusStr.toLowerCase() === "true";
 
-const topics = [
-  "0x7e3bde2ba7aca4a8499608ca57f3b0c1c1c93ace63ffd3741a9fab204146fc9a", // EventLog event signature
-  "0xb4f52781abb3fd345f04301fe57915de07b9d6292be94dce510aa8d59dd589e1", // EventName = FeeDistributionCompleted
-];
-
-const topics2 = [
-  "0x7e3bde2ba7aca4a8499608ca57f3b0c1c1c93ace63ffd3741a9fab204146fc9a", // EventLog event signature
-  "0x7e7a1877476b749fc6ce109adb20e9e217862a35d9ba0f348dd579237a110945", // EventName = EsGmxReferralRewardsSent
-  "0x86ef018967188096cafdce10b5feb80ce4bd3701f0013eac9bfd7589e527a5cb", // EventName = WntReferralRewardsSent
-];
-
 const distributeSimulation = async () => {
   const chainId = (await ethers.provider.getNetwork()).chainId;
+
+  const feeDistributionCompletedTopics = [
+    EVENT_LOG_TOPIC,
+    FEE_DISTRIBUTION_COMPLETED_HASH,
+  ];
+
+  const referralRewardsSentTopics = [
+    EVENT_LOG_TOPIC,
+    ES_GMX_REFERRAL_REWARDS_SENT_HASH,
+    WNT_REFERRAL_REWARDS_SENT_HASH,
+  ];
 
   if (!isSupportedChainId(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
 
-  let executions: { txHash: string; snapId: string }[];
+  let executions: { txHash: string; snapId: string }[] | undefined;
 
   if (feeSurplus) {
     executions = await processLzReceiveSimulation({ disableRevert: true });
@@ -88,20 +92,28 @@ const distributeSimulation = async () => {
   }
   await flushStorage();
 
-  logger.log("first txHash:", executions[0]?.txHash);
+  if (!executions) {
+    throw new Error("No executions");
+  }
+
+  const txHash = executions[0]?.txHash;
+
+  if (!txHash) {
+    throw new Error("No txHash");
+  }
+
+  logger.log("first txHash:", txHash);
   logger.log("first snapId:", executions[0]?.snapId);
 
-  const txReceipt = await ethers.provider.getTransactionReceipt(
-    executions[0].txHash
-  );
+  const txReceipt = await ethers.provider.getTransactionReceipt(txHash);
   const txLogs = txReceipt.logs;
   logger.log("total logs in second receipt:", txLogs.length);
 
   const relevantLogs = txLogs.filter(
     (log) =>
       log.topics.length >= 2 &&
-      log.topics[0] === topics[0] &&
-      log.topics[1] === topics[1]
+      log.topics[0] === feeDistributionCompletedTopics[0] &&
+      log.topics[1] === feeDistributionCompletedTopics[1]
   );
 
   logger.log(
@@ -154,8 +166,9 @@ const distributeSimulation = async () => {
       const fdCompletedLogs = receipt.logs.filter(
         (l) =>
           l.topics.length >= 2 &&
-          l.topics[0] === topics2[0] &&
-          (l.topics[1] === topics2[1] || l.topics[1] === topics2[2])
+          l.topics[0] === referralRewardsSentTopics[0] &&
+          (l.topics[1] === referralRewardsSentTopics[1] ||
+            l.topics[1] === referralRewardsSentTopics[2])
       );
 
       logger.log(
