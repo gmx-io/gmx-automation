@@ -1,5 +1,6 @@
 import { BigNumber } from "ethers";
 import { LogDescription } from "ethers/lib/utils";
+import { EventEmitter__factory } from "../typechain";
 
 export type KeyValueEventData = {
   getUint: (key: string, defaultValue?: any) => BigNumber;
@@ -94,3 +95,10 @@ export function getKeyValueEventNameHash(log: LogDescription): string {
 
   return eventNameHash;
 }
+
+export const EVENT_LOG_TOPIC =
+  EventEmitter__factory.createInterface().getEventTopic("EventLog");
+export const EVENT_LOG1_TOPIC =
+  EventEmitter__factory.createInterface().getEventTopic("EventLog1");
+export const EVENT_LOG2_TOPIC =
+  EventEmitter__factory.createInterface().getEventTopic("EventLog2");

@@ -45,7 +45,7 @@ function getContract<T = Contract>({
   chainId: SupportedChainId;
   name: string;
   abi: ContractInterface;
-  provider: StaticJsonRpcProvider;
+  provider: StaticJsonRpcProvider | undefined;
 }): T {
   const address = getAddress(chainId, name);
   return new ethers.Contract(address, abi, provider) as unknown as T;
@@ -53,7 +53,10 @@ function getContract<T = Contract>({
 
 export type Contracts = ReturnType<typeof getContracts>;
 
-export function getContracts(chainId: number, provider: StaticJsonRpcProvider) {
+export function getContracts(
+  chainId: number,
+  provider?: StaticJsonRpcProvider
+) {
   if (!isSupportedChainId(chainId)) {
     throw new Error(`Unsupported chain id: ${chainId}`);
   }

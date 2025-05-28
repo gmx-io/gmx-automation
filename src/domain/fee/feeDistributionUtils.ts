@@ -901,3 +901,15 @@ export const getFeeDistributorEventName = (
 
   return eventNameHash;
 };
+
+export const FEE_DISTRIBUTION_COMPLETED_HASH = ethers.utils.id(
+  "FeeDistributionCompleted"
+);
+
+export const ES_GMX_REFERRAL_REWARDS_SENT_HASH = ethers.utils.id(
+  "EsGmxReferralRewardsSent"
+);
+
+export const WNT_REFERRAL_REWARDS_SENT_HASH = ethers.utils.id(
+  "WntReferralRewardsSent"
+);
