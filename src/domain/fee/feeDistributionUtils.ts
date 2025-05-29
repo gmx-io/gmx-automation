@@ -14,7 +14,8 @@ import { Log } from "hardhat-deploy/dist/types";
 import { EventEmitter } from "../../typechain";
 import { SubgraphService } from "../../domain/subgraphService";
 import { dateToSeconds, getPeriod, RelativePeriodName } from "../../utils/date";
-import { Logger } from "@gelatonetwork/web3-functions-sdk/*";
+import { Logger } from "../../lib/logger";
+import { SupportedChainId } from "../../config/chains";
 
 type AffiliateStatsQueryResult = {
   affiliate: string;
@@ -54,8 +55,8 @@ type AffiliateData = {
   v2TotalRebateUsd: ethers.BigNumber;
   tradesCount: number;
   tierId: number;
-  esgmxRewards?: ethers.BigNumber;
-  esgmxRewardsUsd?: ethers.BigNumber;
+  esGmxRewards?: ethers.BigNumber;
+  esGmxRewardsUsd?: ethers.BigNumber;
   allAffiliatesRebateUsd?: ethers.BigNumber;
   account?: string;
   share?: ethers.BigNumber;
@@ -94,7 +95,7 @@ type ReferralRewardsCallsParams = {
 type OutputData = {
   fromTimestamp: number;
   toTimestamp: number;
-  chainId: number;
+  chainId: SupportedChainId;
   totalReferralVolume: string;
   totalRebateUsd: string;
   shareDivisor: string;
@@ -143,7 +144,7 @@ type FeeDistributionWntReferralRewardsSentEventData = {
 // functions used to retrieve and calculate referral rewards
 
 async function getAffiliatesTiers(
-  chainId: number
+  chainId: SupportedChainId
 ): Promise<Record<string, number>> {
   const subgraphService = new SubgraphService({ chainId });
 
@@ -171,7 +172,7 @@ async function getAffiliatesTiers(
 
 export async function getDistributionData(
   logger: Logger,
-  chainId: number,
+  chainId: SupportedChainId,
   fromTimestamp: number,
   toTimestamp: number,
   gmxPrice: ethers.BigNumber,
@@ -277,6 +278,7 @@ export async function getDistributionData(
   const affiliatesRebatesData = affiliateStats.reduce(
     (memo: Record<string, AffiliateData>, item: AffiliateStatsQueryResult) => {
       const tierId = affiliatesTiers[item.affiliate] || 0;
+
       if (!memo[item.affiliate]) {
         memo[item.affiliate] = {
           rebateUsd: bigNumberify(0),
@@ -288,7 +290,7 @@ export async function getDistributionData(
         };
       }
 
-      const affiliateItem = memo[item.affiliate];
+      const affiliateItem: AffiliateData = memo[item.affiliate]!;
 
       const affiliateRebatesUsd = bigNumberify(item.v1Data.totalRebateUsd).sub(
         bigNumberify(item.v1Data.discountUsd)
@@ -453,7 +455,7 @@ export async function getDistributionData(
       continue;
     }
     output.affiliates.push({
-      account: data.account,
+      account: data.account!,
       share: data.share?.toString(),
       volume: data.volume.toString(),
       tradesCount: data.tradesCount,
@@ -488,7 +490,7 @@ export async function getDistributionData(
         };
       }
 
-      const refItem = memo[item.referral];
+      const refItem = memo[item.referral]!;
 
       refItem.discountUsd = refItem.discountUsd.add(
         bigNumberify(item.v1Data.discountUsd)
@@ -521,13 +523,13 @@ export async function getDistributionData(
   let filteredTradersCount = 0;
 
   for (const data of Object.values(referralDiscountData)) {
-    if (data.share.eq(0)) {
+    if (data.share!.eq(0)) {
       continue;
     }
     const tooSmall = data.discountUsd.lt(REWARD_THRESHOLD);
     consoleData.push({
       referral: data.account,
-      "share, %": formatAmount(data.share, 7, 4),
+      "share, %": formatAmount(data.share!, 7, 4),
       "volume, $": formatAmount(data.volume, USD_DECIMALS, 4),
       "discountUsd, $": formatAmount(data.discountUsd, USD_DECIMALS, 4),
       tooSmall,
@@ -537,8 +539,8 @@ export async function getDistributionData(
       continue;
     }
     output.referrals.push({
-      account: data.account,
-      share: data.share.toString(),
+      account: data.account!,
+      share: data.share!.toString(),
       discountUsd: data.discountUsd.toString(),
       volume: data.volume.toString(),
     });
@@ -559,7 +561,7 @@ export async function getDistributionData(
 
 export async function processPeriodV1(
   relativePeriodName: RelativePeriodName,
-  chainId: number
+  chainId: SupportedChainId
 ): Promise<ethers.BigNumber> {
   const [start, end] = getPeriod(relativePeriodName) ?? [];
   if (!start || !end) {
@@ -604,7 +606,7 @@ export async function processPeriodV1(
 
 export async function processPeriodV2(
   relativePeriodName: RelativePeriodName,
-  chainId: number
+  chainId: SupportedChainId
 ): Promise<ethers.BigNumber> {
   const [start, end] = getPeriod(relativePeriodName) ?? [];
   if (!start || !end) {

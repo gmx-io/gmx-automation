@@ -5,11 +5,11 @@ import {
   TriggerType,
   Web3Function,
 } from "@gelatonetwork/automate-sdk";
-import { Logger } from "@gelatonetwork/web3-functions-sdk/*";
+import { getLogger, Logger } from "../src/lib/logger";
 import hre from "hardhat";
 import { getAddress } from "../src/config/addresses";
 
-const logger: Logger;
+const logger: Logger = getLogger(true);
 
 const { ethers, w3f } = hre;
 
@@ -17,6 +17,11 @@ const main = async () => {
   const feeDistributionW3f = w3f.get("feeDistribution");
 
   const [deployer] = await ethers.getSigners();
+
+  if (!deployer) {
+    throw new Error("No deployer signer found");
+  }
+
   const chainId = (await ethers.provider.getNetwork()).chainId;
 
   const automate = new AutomateSDK(chainId, deployer);

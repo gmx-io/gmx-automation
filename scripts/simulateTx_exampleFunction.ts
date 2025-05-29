@@ -9,8 +9,10 @@ UINT_KEY=0xb090a2b4b1460d089313317d9c8dde87144d93e949a91730da157796e1a45cee \
     npx hardhat run scripts/simulateTx_exampleFunction.ts --network arbitrum
 ```
 */
+
 import { Log } from "@ethersproject/providers";
 import { Web3FunctionEventContext } from "@gelatonetwork/web3-functions-sdk";
+import { Web3FunctionResultCallData } from "@gelatonetwork/web3-functions-sdk";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import assert from "node:assert";
@@ -21,7 +23,7 @@ import { Context, wrapContext } from "../src/lib/gelato";
 import { getLogger, Logger } from "../src/lib/logger";
 import { exampleFunction } from "../src/web3-functions/example-function/exampleFunction";
 
-const logger: Logger = getLogger();
+const logger: Logger = getLogger(false);
 
 const txHash = process.env.TX;
 const logIndex =
@@ -96,7 +98,7 @@ const main = async () => {
     const provider = context.multiChainProvider.default();
     const { dataStore } = getContracts(chainId, provider);
 
-    for (const call of result.callData) {
+    for (const call of result.callData as Web3FunctionResultCallData[]) {
       const res = await provider.call(
         {
           to: call.to,

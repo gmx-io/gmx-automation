@@ -6,7 +6,7 @@ import {
 import { BigNumber } from "ethers";
 import { MockedJsonRpcProvider } from "./MockedJsonRpcProvider";
 import { Log } from "@ethersproject/abstract-provider";
-import { HARDHAT } from "../config/chains";
+import { LOCALHOST } from "../config/chains";
 import { getContracts } from "./contracts";
 import { Context } from "./gelato";
 import { MarketService } from "../domain/market/marketService";
@@ -21,7 +21,7 @@ export const createMockedContext = ({
   const provider = new MockedJsonRpcProvider();
   const context = {
     gelatoArgs: {
-      chainId: HARDHAT,
+      chainId: LOCALHOST,
       gasPrice: BigNumber.from(0),
     },
     multiChainProvider: {

@@ -9,18 +9,19 @@ interface SubgraphFragments {
   [endpoint: string]: string;
 }
 
-const subgraphFragments: Record<SupportedChainId, SubgraphFragments> = {
-  [ARBITRUM]: {
-    referrals: "gmx-arbitrum-referrals",
-    statsV1: "gmx-arbitrum-stats",
-    statsV2: "synthetics-arbitrum-stats",
-  },
-  [AVALANCHE]: {
-    referrals: "gmx-avalanche-referrals",
-    statsV1: "gmx-avalanche-stats",
-    statsV2: "synthetics-avalanche-stats",
-  },
-};
+const subgraphFragments: Partial<Record<SupportedChainId, SubgraphFragments>> =
+  {
+    [ARBITRUM]: {
+      referrals: "gmx-arbitrum-referrals",
+      statsV1: "gmx-arbitrum-stats",
+      statsV2: "synthetics-arbitrum-stats",
+    },
+    [AVALANCHE]: {
+      referrals: "gmx-avalanche-referrals",
+      statsV1: "gmx-avalanche-stats",
+      statsV2: "synthetics-avalanche-stats",
+    },
+  };
 
 export function getSubgraphUrl(
   chainId: SupportedChainId,

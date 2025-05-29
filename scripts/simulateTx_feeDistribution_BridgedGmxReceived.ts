@@ -16,6 +16,7 @@ REVERT_TX=true \
 
 import { Log } from "@ethersproject/providers";
 import { Web3FunctionEventContext } from "@gelatonetwork/web3-functions-sdk/*";
+import { Web3FunctionResultCallData } from "@gelatonetwork/web3-functions-sdk";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import assert from "node:assert";
@@ -33,7 +34,7 @@ export type RevertOverride = {
   disableRevert: boolean;
 };
 
-const logger: Logger = getLogger();
+const logger: Logger = getLogger(false);
 const txHash = process.env.TX;
 
 const initialFromTimestamp = process.env.INITIAL_FROM_TIMESTAMP;
@@ -122,7 +123,7 @@ const bridgedGmxReceivedSimulation = async (opts?: RevertOverride) => {
 
     const { eventEmitter } = getContracts(chainId, provider);
 
-    for (const call of result.callData) {
+    for (const call of result.callData as Web3FunctionResultCallData[]) {
       const snap = (await provider.send("evm_snapshot", [])) as string;
 
       const txResponse = await gelatoMsgSender.sendTransaction({

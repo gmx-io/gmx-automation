@@ -17,6 +17,7 @@ FEE_SURPLUS=true \
 
 import { JsonRpcProvider, Log } from "@ethersproject/providers";
 import { Web3FunctionEventContext } from "@gelatonetwork/web3-functions-sdk/*";
+import { Web3FunctionResultCallData } from "@gelatonetwork/web3-functions-sdk";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import assert from "node:assert";
@@ -40,7 +41,7 @@ import { bridgedGmxReceivedSimulation } from "./simulateTx_feeDistribution_bridg
 import { fileStore, flushStorage } from "../src/lib/storage";
 import { EVENT_LOG_TOPIC } from "../src/lib/events";
 
-const logger: Logger = getLogger();
+const logger: Logger = getLogger(false);
 
 const initialFromTimestamp = process.env.INITIAL_FROM_TIMESTAMP;
 const wntPriceKey = process.env.WNT_PRICE_KEY;
@@ -86,9 +87,11 @@ const distributeSimulation = async () => {
   let executions: { txHash: string; snapId: string }[] | undefined;
 
   if (feeSurplus) {
-    executions = await processLzReceiveSimulation({ disableRevert: true });
+    executions =
+      (await processLzReceiveSimulation({ disableRevert: true })) || [];
   } else {
-    executions = await bridgedGmxReceivedSimulation({ disableRevert: true });
+    executions =
+      (await bridgedGmxReceivedSimulation({ disableRevert: true })) || [];
   }
   await flushStorage();
 
@@ -102,8 +105,14 @@ const distributeSimulation = async () => {
     throw new Error("No txHash");
   }
 
+  const snapId = executions[0]?.snapId;
+
+  if (!snapId) {
+    throw new Error("No snapId");
+  }
+
   logger.log("first txHash:", txHash);
-  logger.log("first snapId:", executions[0]?.snapId);
+  logger.log("first snapId:", snapId);
 
   const txReceipt = await ethers.provider.getTransactionReceipt(txHash);
   const txLogs = txReceipt.logs;
@@ -149,7 +158,7 @@ const distributeSimulation = async () => {
 
     const { eventEmitter } = getContracts(chainId, provider);
 
-    for (const call of result.callData) {
+    for (const call of result.callData as Web3FunctionResultCallData[]) {
       const txResponse = await gelatoMsgSender.sendTransaction({
         to: call.to,
         data: call.data,
@@ -207,7 +216,7 @@ const distributeSimulation = async () => {
     }
 
     if (revertTx) {
-      await provider.send("evm_revert", [executions[0].snapId]);
+      await provider.send("evm_revert", [snapId]);
     }
   }
 };

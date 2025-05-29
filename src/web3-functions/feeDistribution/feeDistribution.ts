@@ -108,7 +108,7 @@ export const feeDistribution = async (
     const referralRewardsRawCallData = await referralRewardsCalls({
       logger: logger,
       feeDistributorVault: contracts.feeDistributorVault.address,
-      shouldSendTxn: userArgs.shouldSendTxn,
+      shouldSendTxn: Boolean(userArgs.shouldSendTxn),
       wntPrice: wntPrice,
       feeDistributor: contracts.feeDistributor,
       wnt: contracts.wnt,
