@@ -88,6 +88,7 @@ export const wrapMockContext = <GelatoContext extends Web3FunctionContext>(
       debug: jest.fn<() => Promise<void>>(),
       log: jest.fn<() => Promise<void>>(),
       fatal: jest.fn<() => Promise<void>>(),
+      table: jest.fn<() => Promise<void>>(),
     },
     isGelatoEnvironment: false,
   } satisfies Context<GelatoContext>;

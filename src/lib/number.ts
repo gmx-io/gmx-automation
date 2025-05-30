@@ -45,8 +45,10 @@ export function formatAmount(
     return ret;
   }
 
-  const parts = ret.toString().split(".");
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const parts = ret.split(".");
+  if (parts[0]) {
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
   return parts.join(".");
 }
 
@@ -79,12 +81,16 @@ export function expandDecimals(n: BigNumberish, decimals: number) {
 }
 
 export function getMedian(values: number[]) {
+  if (values.length === 0) {
+    throw new Error("empty array");
+  }
+
   values = [...values].sort((a, b) => a - b);
   const middle = Math.floor(values.length / 2);
-  if (values.length % 2) {
-    return values[middle];
-  }
-  return (values[middle - 1] + values[middle]) / 2;
+
+  return values.length % 2
+    ? values[middle]
+    : (values[middle - 1]! + values[middle]!) / 2;
 }
 
 export function getMin(...values: BigNumber[]) {
@@ -112,7 +118,10 @@ export function bigNumberToNumber(value: BigNumber, decimals: number): number {
 }
 
 export function numberToBigNumber(value: number | string, decimals: number) {
-  const [mantissa, exponentStr] = value.toString().split(/e\+?/);
+  const [mantissa, exponentStr] = value.toString().split(/e\+?/) as [
+    string,
+    string?
+  ];
   let ret = ethers.utils.parseUnits(mantissa, FLOAT_PRECISION);
 
   let exponent = decimals;

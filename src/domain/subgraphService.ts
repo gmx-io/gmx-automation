@@ -9,7 +9,7 @@ export class SubgraphService {
     this.chainId = chainId;
   }
 
-  async querySubgraph(endpoint: string, query: string = {}): Promise<any> {
+  async querySubgraph(endpoint: string, query = ""): Promise<any> {
     const url = getSubgraphUrl(this.chainId, endpoint);
     const response = await fetch(url, {
       method: "POST",

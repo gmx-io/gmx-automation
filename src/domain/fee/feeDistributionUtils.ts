@@ -586,16 +586,23 @@ export async function processPeriodV1(
 
   const subgraphService = new SubgraphService({ chainId });
   const data = await subgraphService.querySubgraph("statsV1", gql);
-  const stats = data.feeStats;
 
-  const total = stats.reduce(
-    (acc, { marginAndLiquidation, swap, mint, burn }) => {
+  const total = (data.feeStats as any[]).reduce<bigint>(
+    (
+      acc: bigint,
+      stat: {
+        marginAndLiquidation: string;
+        swap: string;
+        mint: string;
+        burn: string;
+      }
+    ): bigint => {
       return (
         acc +
-        BigInt(marginAndLiquidation) +
-        BigInt(swap) +
-        BigInt(mint) +
-        BigInt(burn)
+        BigInt(stat.marginAndLiquidation) +
+        BigInt(stat.swap) +
+        BigInt(stat.mint) +
+        BigInt(stat.burn)
       );
     },
     0n
@@ -652,21 +659,28 @@ export async function processPeriodV2(
 
 // send referral rewards function and related helper functions
 
-async function processBatch<T>(
+async function processBatch<T extends readonly any[]>(
   logger: Logger,
-  batchLists: T[][],
+  batchLists: { [K in keyof T]: T[K][] },
   batchSize: number,
-  handler: (batch: T[][]) => Promise<void>
+  handler: (batch: T[]) => Promise<void>
 ): Promise<void> {
-  let currentBatch: T[][] = [];
-  const referenceList = batchLists[0];
+  if (batchLists.length === 0) {
+    throw new Error("batchLists must contain at least one list");
+  }
+
+  const referenceList = batchLists[0]!;
+  let currentBatch: T[] = [];
 
   for (let i = 0; i < referenceList.length; i++) {
-    const item: T[] = [];
+    const item = [] as unknown as T;
 
     for (let j = 0; j < batchLists.length; j++) {
-      const list = batchLists[j];
-      item.push(list[i]);
+      const list = batchLists[j]!;
+      if (i >= list.length) {
+        throw new Error(`list ${j} is shorter than referenceList (index ${i})`);
+      }
+      (item as unknown as any[])[j] = list[i]!;
     }
 
     currentBatch.push(item);
@@ -705,7 +719,10 @@ export async function referralRewardsCalls({
 }: ReferralRewardsCallsParams): Promise<{ to: string; data: string }[]> {
   const calls: Array<{ to: string; data: string }> = [];
 
-  const data: OutputData = dataStr ? (JSON.parse(dataStr) as OutputData) : {};
+  if (!dataStr) {
+    throw new Error("dataStr is required");
+  }
+  const data: OutputData = JSON.parse(dataStr) as OutputData;
   const affiliatesData = data.affiliates as AffiliateOutput[];
   const discountsData = data.referrals as ReferralOutput[];
 
@@ -726,6 +743,9 @@ export async function referralRewardsCalls({
   for (const item of affiliatesData) {
     const { account, rebateUsd, esGmxRewards } = item;
     const rebateUsdBn = bigNumberify(rebateUsd);
+    const esGmxRewardsBn = esGmxRewards
+      ? bigNumberify(esGmxRewards)
+      : bigNumberify(0);
 
     allAffiliateUsd = allAffiliateUsd.add(rebateUsdBn);
 
@@ -733,7 +753,7 @@ export async function referralRewardsCalls({
       continue;
     }
 
-    if (rebateUsdBn > 0) {
+    if (rebateUsdBn.gt(0)) {
       const amount = rebateUsdBn.div(wntPrice);
       affiliateAccounts.push(account);
       affiliateAmounts.push(amount);
@@ -741,10 +761,10 @@ export async function referralRewardsCalls({
       totalAffiliateUsd = totalAffiliateUsd.add(rebateUsdBn);
     }
 
-    if (esGmxRewards > 0) {
+    if (esGmxRewardsBn.gt(0)) {
       esGmxAccounts.push(account);
-      esGmxAmounts.push(esGmxRewards);
-      totalEsGmxAmount = totalEsGmxAmount.add(esGmxRewards);
+      esGmxAmounts.push(esGmxRewardsBn);
+      totalEsGmxAmount = totalEsGmxAmount.add(esGmxRewardsBn);
     }
   }
 
@@ -757,7 +777,7 @@ export async function referralRewardsCalls({
       continue;
     }
 
-    if (discountUsdBn > 0) {
+    if (discountUsdBn.gt(0)) {
       const amount = discountUsdBn.div(wntPrice);
       discountAccounts.push(account);
       discountAmounts.push(amount);
@@ -781,7 +801,7 @@ export async function referralRewardsCalls({
     return calls;
   }
 
-  await processBatch(
+  await processBatch<[string, ethers.BigNumber]>(
     logger,
     [affiliateAccounts, affiliateAmounts],
     batchSize,
@@ -797,7 +817,7 @@ export async function referralRewardsCalls({
     }
   );
 
-  await processBatch(
+  await processBatch<[string, ethers.BigNumber]>(
     logger,
     [discountAccounts, discountAmounts],
     batchSize,
@@ -813,7 +833,7 @@ export async function referralRewardsCalls({
     }
   );
 
-  await processBatch(
+  await processBatch<[string, ethers.BigNumber]>(
     logger,
     [esGmxAccounts, esGmxAmounts],
     batchSize,

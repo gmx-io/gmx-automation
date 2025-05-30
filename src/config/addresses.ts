@@ -13,7 +13,6 @@ export type SupportedContractName =
   | "configSyncer"
   | "eventEmitter"
   | "feeHandler"
-  | "glvHandler"
   | "glvReader"
   | "multicall3"
   | "orderHandler"
@@ -32,7 +31,6 @@ export const isSupportedContractName = (
     "configSyncer",
     "eventEmitter",
     "feeHandler",
-    "glvHandler",
     "glvReader",
     "multicall3",
     "orderHandler",
@@ -54,7 +52,6 @@ const addresses: Record<
     configSyncer: "0x986aaa537b8cc170761FDAC6aC4fc7F9d8a20A8C",
     eventEmitter: "0xc5a5C42992dECbae36851359345FE25997F5C42d",
     feeHandler: "0x2Dd78Fd9B8F40659Af32eF98555B8b31bC97A351",
-    glvHandler: "0x87006e75a5B6bE9D1bbF61AC8Cd84f05D9140589",
     glvReader: "0x8fC8CFB7f7362E44E472c690A6e025B80E406458",
     multicall3: "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
     orderHandler: "0x821f3361D454cc98b7555221A06Be563a7E2E0A6",
@@ -70,7 +67,6 @@ const addresses: Record<
     dataStore: "0xFD70de6b91282D8017aA4E741e9Ae325CAb992d8",
     eventEmitter: "0xC8ee91A54287DB53897056e12D9819156D3822Fb",
     feeHandler: "0x7EB417637a3E6d1C19E6d69158c47610b7a5d9B3",
-    glvHandler: "0x3f6dF0c3A7221BA1375E87e7097885a601B41Afc",
     glvReader: "0x6a9505D0B44cFA863d9281EA5B0b34cB36243b45",
     multicall3: "0xe79118d6D92a4b23369ba356C90b9A7ABf1CB961",
     orderHandler: "0xe68CAAACdf6439628DFD2fe624847602991A31eB",
@@ -86,7 +82,6 @@ const addresses: Record<
     dataStore: "0x2F0b22339414ADeD7D5F06f9D604c7fF5b2fe3f6",
     eventEmitter: "0xDb17B211c34240B014ab6d61d4A31FA0C0e20c26",
     feeHandler: "0x1A3A103F9F536a0456C9b205152A3ac2b3c54490",
-    glvHandler: "0x48486CaF8851ed0085432789D28A8820bEcbfd45",
     glvReader: "0xae9596a1C438675AcC75f69d32E21Ac9c8fF99bD",
     multicall3: "0x50474CAe810B316c294111807F94F9f48527e7F8",
     orderHandler: "0x088711C3d2FA992188125e009E65c726bA090AD6",
@@ -102,7 +97,6 @@ const addresses: Record<
     dataStore: "0xEA1BFb4Ea9A412dCCd63454AbC127431eBB0F0d4",
     eventEmitter: "0xc67D98AC5803aFD776958622CeEE332A0B2CabB9",
     feeHandler: "0x0000000000000000000000000000000000000000",
-    glvHandler: "0x0ce2C878c02ddA303DE5ba5776FcDF055bC52237",
     glvReader: "0x0D4231689B92E6978E5A0439B156bFBe35592C6d",
     multicall3: "0x966D1F5c54a714C6443205F0Ec49eEF81F10fdfD",
     orderHandler: "0x109fd3cd6e6b3711f70EA9d7C4fD8055CEc175e5",

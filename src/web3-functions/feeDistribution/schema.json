@@ -8,7 +8,6 @@
     "wntPriceKey": "string",
     "gmxPriceKey": "string",
     "esGmxRewardsKey": "string",
-    "skipSendNativeToken": "boolean",
     "shouldSendTxn": "boolean"
   }
 }

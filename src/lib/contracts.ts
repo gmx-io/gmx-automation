@@ -10,13 +10,12 @@ import {
   DataStore,
   EventEmitter,
   FeeHandler,
-  GlvHandler,
   GlvReader,
   Multicall3,
   OrderHandler,
   Reader,
   WNT,
-  EsGmx,
+  MintableToken,
   FeeDistributor,
   FeeDistributorVault,
 } from "../typechain";
@@ -26,7 +25,6 @@ import { abi as ConfigSyncerAbi } from "../abi/ConfigSyncer.json";
 import { abi as DataStoreAbi } from "../abi/DataStore.json";
 import { abi as EventEmitterAbi } from "../abi/EventEmitter.json";
 import { abi as FeeHandlerAbi } from "../abi/FeeHandler.json";
-import { abi as GlvHandlerAbi } from "../abi/GlvHandler.json";
 import { abi as GlvReaderAbi } from "../abi/GlvReader.json";
 import { abi as Multicall3Abi } from "../abi/Multicall3.json";
 import { abi as OrderHandlerAbi } from "../abi/OrderHandler.json";
@@ -88,13 +86,6 @@ export function getContracts(
     abi: DataStoreAbi,
   });
 
-  const glvHandler = getContract<GlvHandler>({
-    chainId,
-    name: "glvHandler",
-    provider,
-    abi: GlvHandlerAbi,
-  });
-
   const orderHandler = getContract<OrderHandler>({
     chainId,
     name: "orderHandler",
@@ -134,7 +125,7 @@ export function getContracts(
     provider,
     abi: WntAbi,
   });
-  const esGmx = getContract<EsGmx>({
+  const esGmx = getContract<MintableToken>({
     chainId,
     name: "esGmx",
     provider,
@@ -158,7 +149,6 @@ export function getContracts(
     configSyncer,
     eventEmitter,
     feeHandler,
-    glvHandler,
     glvReader,
     multicall3,
     orderHandler,
