@@ -15,7 +15,7 @@ FEE_SURPLUS=true \
 ```
 */
 
-import { JsonRpcProvider, Log } from "@ethersproject/providers";
+import { Log } from "@ethersproject/providers";
 import { Web3FunctionEventContext } from "@gelatonetwork/web3-functions-sdk/*";
 import { Web3FunctionResultCallData } from "@gelatonetwork/web3-functions-sdk";
 import { BigNumber } from "ethers";
@@ -27,19 +27,19 @@ import { getContracts } from "../src/lib/contracts";
 import { Context, wrapContext } from "../src/lib/gelato";
 import { getLogger, Logger } from "../src/lib/logger";
 import { feeDistribution } from "../src/web3-functions/feeDistribution/feeDistribution";
+import { EVENT_LOG_TOPIC } from "../src/lib/events";
 import {
-  ES_GMX_REFERRAL_REWARDS_SENT_HASH,
   FEE_DISTRIBUTION_COMPLETED_HASH,
+  ES_GMX_REFERRAL_REWARDS_SENT_HASH,
+  WNT_REFERRAL_REWARDS_SENT_HASH,
   getFeeDistributionEsGmxReferralRewardsSentEventData,
   getFeeDistributionWntReferralRewardsSentEventData,
   getFeeDistributorEventName,
-  WNT_REFERRAL_REWARDS_SENT_HASH,
 } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, GMX_DECIMALS } from "../src/lib/number";
 import { processLzReceiveSimulation } from "./simulateTx_feeDistribution_processLzReceive";
 import { bridgedGmxReceivedSimulation } from "./simulateTx_feeDistribution_bridgedGmxReceived";
 import { fileStore, flushStorage } from "../src/lib/storage";
-import { EVENT_LOG_TOPIC } from "../src/lib/events";
 
 const logger: Logger = getLogger(false);
 

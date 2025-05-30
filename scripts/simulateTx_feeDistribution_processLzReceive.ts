@@ -26,7 +26,12 @@ import { getContracts } from "../src/lib/contracts";
 import { Context, wrapContext } from "../src/lib/gelato";
 import { getLogger, Logger } from "../src/lib/logger";
 import { feeDistribution } from "../src/web3-functions/feeDistribution/feeDistribution";
-import { getFeeDistributionCompletedEventData } from "../src/domain/fee/feeDistributionUtils";
+import { EVENT_LOG_TOPIC } from "../src/lib/events";
+import {
+  FEE_DISTRIBUTION_DATA_RECEIVED_HASH,
+  FEE_DISTRIBUTION_COMPLETED_HASH,
+  getFeeDistributionCompletedEventData,
+} from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, USD_DECIMALS, GMX_DECIMALS } from "../src/lib/number";
 import { fileStore, flushStorage } from "../src/lib/storage";
 
@@ -57,14 +62,14 @@ assert(gelatoMsgSenderPrivateKey, "GELATO_MSG_SENDER_PRIVATE_KEY is not set");
 
 const shouldSendTxn = shouldSendTxnStr.toLowerCase() === "true";
 
-const topics = [
-  "0x7e3bde2ba7aca4a8499608ca57f3b0c1c1c93ace63ffd3741a9fab204146fc9a", // EventLog event signature
-  "0x55ac1650a32c2b1a50780bc0322564f8a36092ee04680ea414c44c7283bc3937", // EventName = FeeDistributionDataReceived
+const feeDistributionDataReceivedTopics = [
+  EVENT_LOG_TOPIC,
+  FEE_DISTRIBUTION_DATA_RECEIVED_HASH,
 ];
 
-const topics2 = [
-  "0x7e3bde2ba7aca4a8499608ca57f3b0c1c1c93ace63ffd3741a9fab204146fc9a", // EventLog event signature
-  "0xb4f52781abb3fd345f04301fe57915de07b9d6292be94dce510aa8d59dd589e1", // EventName = FeeDistributionCompleted
+const feeDistributionCompletedTopics = [
+  EVENT_LOG_TOPIC,
+  FEE_DISTRIBUTION_COMPLETED_HASH,
 ];
 
 const processLzReceiveSimulation = async (opts?: RevertOverride) => {
@@ -84,8 +89,8 @@ const processLzReceiveSimulation = async (opts?: RevertOverride) => {
   const relevantLogs = txLogs.filter(
     (log) =>
       log.topics.length >= 2 &&
-      log.topics[0] === topics[0] &&
-      log.topics[1] === topics[1]
+      log.topics[0] === feeDistributionDataReceivedTopics[0] &&
+      log.topics[1] === feeDistributionDataReceivedTopics[1]
   );
 
   logger.log(
@@ -141,8 +146,8 @@ const processLzReceiveSimulation = async (opts?: RevertOverride) => {
       const fdCompletedLogs = receipt.logs.filter(
         (l) =>
           l.topics.length >= 2 &&
-          l.topics[0] === topics2[0] &&
-          l.topics[1] === topics2[1]
+          l.topics[0] === feeDistributionCompletedTopics[0] &&
+          l.topics[1] === feeDistributionCompletedTopics[1]
       );
 
       logger.log(
@@ -181,13 +186,12 @@ const processLzReceiveSimulation = async (opts?: RevertOverride) => {
   }
 
   try {
-    return executions;
+    await flushStorage();
   } catch (err) {
     logger.error(err);
-    throw err;
-  } finally {
-    await flushStorage();
   }
+
+  return executions;
 };
 
 function createEventContext(

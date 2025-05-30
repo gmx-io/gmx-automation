@@ -924,6 +924,14 @@ export const getFeeDistributorEventName = (
   return eventNameHash;
 };
 
+export const FEE_DISTRIBUTION_DATA_RECEIVED_HASH = ethers.utils.id(
+  "FeeDistributionDataReceived"
+);
+
+export const FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH = ethers.utils.id(
+  "FeeDistributionBridgedGmxReceived"
+);
+
 export const FEE_DISTRIBUTION_COMPLETED_HASH = ethers.utils.id(
   "FeeDistributionCompleted"
 );
