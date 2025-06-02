@@ -8,6 +8,12 @@ import {
 import { getLogger, Logger } from "../src/lib/logger";
 import hre from "hardhat";
 import { getAddress } from "../src/config/addresses";
+import { EVENT_LOG_TOPIC } from "../src/lib/events";
+import {
+  FEE_DISTRIBUTION_DATA_RECEIVED_HASH,
+  FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH,
+  FEE_DISTRIBUTION_COMPLETED_HASH,
+} from "../src/domain/fee/feeDistributionUtils";
 
 const logger: Logger = getLogger(true);
 
@@ -40,6 +46,10 @@ const main = async () => {
     web3FunctionHash: cid,
     web3FunctionArgs: {
       initialFromTimestamp: "timestamp to be added",
+      wntPriceKey:
+        "0x66af7011ac8687696c07a8c00f07a4cd3b8574eccaa9d8609991b2824888e113",
+      gmxPriceKey:
+        "0xfb0c2a8c499410abada8871e1b7bb6142f067b1b04951090b658c6843dcf78c9",
       esGmxRewardsKey:
         "0xdc01aee9b14bf3c45fd436469d8dd2c0d19d1926910cfe7173c8e683ed3c0c57",
       shouldSendTxn: "true",
@@ -49,13 +59,11 @@ const main = async () => {
       filter: {
         address: getAddress(chainId, "eventEmitter"),
         topics: [
+          [EVENT_LOG_TOPIC],
           [
-            "0x7e3bde2ba7aca4a8499608ca57f3b0c1c1c93ace63ffd3741a9fab204146fc9a", // EventLog event signature
-          ],
-          [
-            "0x18b8c59f2f59ef65527915db9544ac15717fd3d18bc754a45263b232b1529ebe", // EventName = FeeDistributionBridgedGmxReceived
-            "0x55ac1650a32c2b1a50780bc0322564f8a36092ee04680ea414c44c7283bc3937", // EventName = FeeDistributionDataReceived
-            "0xb4f52781abb3fd345f04301fe57915de07b9d6292be94dce510aa8d59dd589e1", // EventName = FeeDistributionCompleted
+            FEE_DISTRIBUTION_DATA_RECEIVED_HASH,
+            FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH,
+            FEE_DISTRIBUTION_COMPLETED_HASH,
           ],
         ],
       },
