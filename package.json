@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev:update-typechain": "cp -r ../gmx-synthetics/typechain-types/* ./typechain/; for f in $(find ./typechain -name '*.ts'); do echo $f; if [ -f $f ]; then echo \"// @ts-nocheck\n $(cat $f)\" > $f; fi; done",
+    "dev:update-typechain": "cp -r ../gmx-synthetics/typechain-types/* ./src/typechain/; for f in $(find ./src/typechain -name '*.ts'); do echo $f; if [ -f $f ]; then echo \"// @ts-nocheck\n $(cat $f)\" > $f; fi; done",
     "dev:update-abi": "cp $(find ../gmx-synthetics/artifacts/contracts -name '*.json' | grep -v '.dbg.') src/abi",
     "test": "jest src",
     "deploy-example": "npx w3f deploy src/web3-functions/example-function/index.ts"
