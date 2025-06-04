@@ -14,12 +14,20 @@ import {
   FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH,
   FEE_DISTRIBUTION_COMPLETED_HASH,
 } from "../src/domain/fee/feeDistributionUtils";
+import assert from "assert";
+import { hashString } from "../src/lib/hashing";
 
 const logger: Logger = getLogger(true);
 
 const { ethers, w3f } = hre;
 
 const main = async () => {
+  assert.ok(
+    process.env.INITIAL_FROM_TIMESTAMP,
+    "no INITIAL_FROM_TIMESTAMP in .env"
+  );
+  assert.ok(process.env.SHOULD_SEND_TXN, "no SHOULD_SEND_TXN in .env");
+
   const feeDistributionW3f = w3f.get("feeDistribution");
 
   const [deployer] = await ethers.getSigners();
@@ -45,14 +53,13 @@ const main = async () => {
     name: "FeeDistribution",
     web3FunctionHash: cid,
     web3FunctionArgs: {
-      initialFromTimestamp: "timestamp to be added",
-      wntPriceKey:
-        "0x66af7011ac8687696c07a8c00f07a4cd3b8574eccaa9d8609991b2824888e113",
-      gmxPriceKey:
-        "0xfb0c2a8c499410abada8871e1b7bb6142f067b1b04951090b658c6843dcf78c9",
-      esGmxRewardsKey:
-        "0xdc01aee9b14bf3c45fd436469d8dd2c0d19d1926910cfe7173c8e683ed3c0c57",
-      shouldSendTxn: "true",
+      initialFromTimestamp: process.env.INITIAL_FROM_TIMESTAMP,
+      wntPriceKey: hashString("FEE_DISTRIBUTOR_WNT_PRICE"),
+      gmxPriceKey: hashString("FEE_DISTRIBUTOR_GMX_PRICE"),
+      esGmxRewardsKey: hashString(
+        "FEE_DISTRIBUTOR_REFERRAL_REWARDS_ESGMX_LIMIT"
+      ),
+      shouldSendTxn: process.env.SHOULD_SEND_TXN,
     },
     trigger: {
       type: TriggerType.EVENT,

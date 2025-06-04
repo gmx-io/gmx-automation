@@ -21,6 +21,8 @@ assert.ok(
 );
 const AVALANCHE_PRIVATE_KEY = process.env.AVALANCHE_PRIVATE_KEY;
 assert.ok(AVALANCHE_PRIVATE_KEY, "no AVALANCHE_PRIVATE_KEY in .env");
+const AVALANCHE_FUJI_PRIVATE_KEY = process.env.AVALANCHE_FUJI_PRIVATE_KEY;
+assert.ok(AVALANCHE_FUJI_PRIVATE_KEY, "no AVALANCHE_FUJI_PRIVATE_KEY in .env");
 const LOCALHOST_PRIVATE_KEY = process.env.LOCALHOST_PRIVATE_KEY;
 assert.ok(LOCALHOST_PRIVATE_KEY, "no LOCALHOST_PRIVATE_KEY in .env");
 
@@ -42,6 +44,21 @@ const config: HardhatUserConfig = {
       chainId: 42161,
       url: "https://arb1.arbitrum.io/rpc",
       accounts: [ARBITRUM_PRIVATE_KEY],
+    },
+    arbitrumSepolia: {
+      chainId: 421614,
+      url: "https://sepolia-rollup.arbitrum.io/rpc",
+      accounts: [ARBITRUM_SEPOLIA_PRIVATE_KEY],
+    },
+    avalanche: {
+      chainId: 43114,
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      accounts: [AVALANCHE_PRIVATE_KEY],
+    },
+    avalancheFuji: {
+      chainId: 43113,
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
+      accounts: [AVALANCHE_FUJI_PRIVATE_KEY],
     },
     localhost: {
       chainId: 31337,
