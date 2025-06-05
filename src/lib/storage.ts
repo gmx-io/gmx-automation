@@ -1,14 +1,34 @@
 import fs from "fs";
 import path from "path";
 
-export const storagePath = path.resolve(
+const storagePath = path.resolve(
   __dirname,
   "../web3-functions/feeDistribution/storage.json"
 );
 
-export const fileStore: Record<string, string> = fs.existsSync(storagePath)
+const fileStore: Record<string, string> = fs.existsSync(storagePath)
   ? JSON.parse(fs.readFileSync(storagePath, "utf8"))
   : {};
+
+export function createStorage() {
+  return {
+    async get(key: string) {
+      return fileStore[key];
+    },
+    async set(key: string, val: string) {
+      fileStore[key] = val;
+    },
+    async delete(key: string) {
+      delete fileStore[key];
+    },
+    async getKeys() {
+      return Object.keys(fileStore);
+    },
+    async getSize() {
+      return Object.keys(fileStore).length;
+    },
+  };
+}
 
 export async function flushStorage() {
   fs.writeFileSync(storagePath, JSON.stringify(fileStore, null, 2));

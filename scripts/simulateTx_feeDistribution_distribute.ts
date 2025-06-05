@@ -39,7 +39,7 @@ import {
 import { formatAmount, GMX_DECIMALS } from "../src/lib/number";
 import { processLzReceiveSimulation } from "./simulateTx_feeDistribution_processLzReceive";
 import { bridgedGmxReceivedSimulation } from "./simulateTx_feeDistribution_bridgedGmxReceived";
-import { fileStore, flushStorage } from "../src/lib/storage";
+import { createStorage, flushStorage } from "../src/lib/storage";
 
 const logger: Logger = getLogger(false);
 
@@ -202,7 +202,7 @@ const distributeSimulation = async () => {
               4
             ),
           });
-        } else {
+        } else if (eventName === "WntReferralRewardsSent") {
           const ev = getFeeDistributionWntReferralRewardsSentEventData(
             log,
             eventEmitter
@@ -211,6 +211,8 @@ const distributeSimulation = async () => {
           logger.log("WntReferralRewardsSent:", {
             wntAmount: formatAmount(ev.wntAmount, GMX_DECIMALS, 4),
           });
+        } else {
+          throw new Error("Unsupported event: " + eventName);
         }
       }
     }
@@ -231,23 +233,7 @@ function createEventContext(
     chainId
   );
 
-  const storage = {
-    async get(key: string) {
-      return fileStore[key];
-    },
-    async set(key: string, val: string) {
-      fileStore[key] = val;
-    },
-    async delete(key: string) {
-      delete fileStore[key];
-    },
-    async getKeys() {
-      return Object.keys(fileStore);
-    },
-    async getSize() {
-      return Object.keys(fileStore).length;
-    },
-  };
+  const storage = createStorage();
 
   return wrapContext(false, {
     log,

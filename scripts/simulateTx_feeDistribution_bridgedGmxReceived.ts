@@ -33,7 +33,7 @@ import {
   getFeeDistributionCompletedEventData,
 } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, USD_DECIMALS, GMX_DECIMALS } from "../src/lib/number";
-import { fileStore, flushStorage } from "../src/lib/storage";
+import { createStorage, flushStorage } from "../src/lib/storage";
 
 export type RevertOverride = {
   disableRevert: boolean;
@@ -185,11 +185,7 @@ const bridgedGmxReceivedSimulation = async (opts?: RevertOverride) => {
     }
   }
 
-  try {
-    await flushStorage();
-  } catch (err) {
-    logger.error(err);
-  }
+  await flushStorage();
 
   return executions;
 };
@@ -204,23 +200,7 @@ function createEventContext(
     chainId
   );
 
-  const storage = {
-    async get(key: string) {
-      return fileStore[key];
-    },
-    async set(key: string, val: string) {
-      fileStore[key] = val;
-    },
-    async delete(key: string) {
-      delete fileStore[key];
-    },
-    async getKeys() {
-      return Object.keys(fileStore);
-    },
-    async getSize() {
-      return Object.keys(fileStore).length;
-    },
-  };
+  const storage = createStorage();
 
   return wrapContext(false, {
     log,

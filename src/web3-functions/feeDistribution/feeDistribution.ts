@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { BigNumber } from "ethers";
 import {
   Web3FunctionEventContext,
   Web3FunctionResult,
@@ -58,7 +58,7 @@ export const feeDistribution = async (
     throw new Error("shouldSendTxn must be a hex string");
   }
 
-  let wntPrice: ethers.BigNumber, gmxPrice: ethers.BigNumber;
+  let wntPrice: BigNumber, gmxPrice: BigNumber;
 
   if (
     (eventName === "FeeDistributionDataReceived" &&

@@ -41,25 +41,25 @@ type ReferralStatsQueryResult = {
 };
 
 type ReferralDiscountAggregate = {
-  discountUsd: ethers.BigNumber;
-  volume: ethers.BigNumber;
-  allReferralsDiscountUsd?: ethers.BigNumber;
+  discountUsd: BigNumber;
+  volume: BigNumber;
+  allReferralsDiscountUsd?: BigNumber;
   account?: string;
-  share?: ethers.BigNumber;
+  share?: BigNumber;
 };
 
 type AffiliateData = {
-  rebateUsd: ethers.BigNumber;
-  totalRebateUsd: ethers.BigNumber;
-  volume: ethers.BigNumber;
-  v2TotalRebateUsd: ethers.BigNumber;
+  rebateUsd: BigNumber;
+  totalRebateUsd: BigNumber;
+  volume: BigNumber;
+  v2TotalRebateUsd: BigNumber;
   tradesCount: number;
   tierId: number;
-  esGmxRewards?: ethers.BigNumber;
-  esGmxRewardsUsd?: ethers.BigNumber;
-  allAffiliatesRebateUsd?: ethers.BigNumber;
+  esGmxRewards?: BigNumber;
+  esGmxRewardsUsd?: BigNumber;
+  allAffiliatesRebateUsd?: BigNumber;
   account?: string;
-  share?: ethers.BigNumber;
+  share?: BigNumber;
 };
 
 type AffiliateOutput = {
@@ -85,7 +85,7 @@ type ReferralRewardsCallsParams = {
   logger: Logger;
   feeDistributorVault: string;
   shouldSendTxn: boolean;
-  wntPrice: ethers.BigNumber;
+  wntPrice: BigNumber;
   feeDistributor: ethers.Contract;
   wnt: ethers.Contract;
   esGmx: ethers.Contract;
@@ -175,8 +175,8 @@ export async function getDistributionData(
   chainId: SupportedChainId,
   fromTimestamp: number,
   toTimestamp: number,
-  gmxPrice: ethers.BigNumber,
-  esGmxRewardsLimit: ethers.BigNumber
+  gmxPrice: BigNumber,
+  esGmxRewardsLimit: BigNumber
 ): Promise<OutputData> {
   const affiliateCondition = "";
   const referralCondition = "";
@@ -222,21 +222,21 @@ export async function getDistributionData(
     }
   }`;
 
-  const query = `{
-    affiliateStats0: ${getAffiliateStatsQuery(0)}
-    affiliateStats1: ${getAffiliateStatsQuery(10000)}
-    affiliateStats2: ${getAffiliateStatsQuery(20000)}
-    affiliateStats3: ${getAffiliateStatsQuery(30000)}
-    affiliateStats4: ${getAffiliateStatsQuery(40000)}
-    affiliateStats5: ${getAffiliateStatsQuery(50000)}
+  const chunkSize = 10_000;
+  const chunksCount = 6;
+  let query = "";
 
-    referralStats0: ${getReferralStatsQuery(0)}
-    referralStats1: ${getReferralStatsQuery(10000)}
-    referralStats2: ${getReferralStatsQuery(20000)}
-    referralStats3: ${getReferralStatsQuery(30000)}
-    referralStats4: ${getReferralStatsQuery(40000)}
-    referralStats5: ${getReferralStatsQuery(50000)}
-  }`;
+  for (let i = 0; i < chunksCount; i++) {
+    query += `
+    affiliateStats${i}: ${getAffiliateStatsQuery(i * chunkSize)}
+    referralStats${i}: ${getReferralStatsQuery(i * chunkSize)}
+    `;
+  }
+
+  query = `{
+      ${query}
+    }
+    `;
 
   const subgraphService = new SubgraphService({ chainId });
   const [data, affiliatesTiers] = await Promise.all([
@@ -244,29 +244,23 @@ export async function getDistributionData(
     getAffiliatesTiers(chainId),
   ]);
 
-  const affiliateStats: AffiliateStatsQueryResult[] = [
-    ...(data.affiliateStats0 as AffiliateStatsQueryResult[]),
-    ...(data.affiliateStats1 as AffiliateStatsQueryResult[]),
-    ...(data.affiliateStats2 as AffiliateStatsQueryResult[]),
-    ...(data.affiliateStats3 as AffiliateStatsQueryResult[]),
-    ...(data.affiliateStats4 as AffiliateStatsQueryResult[]),
-    ...(data.affiliateStats5 as AffiliateStatsQueryResult[]),
-  ];
+  const affiliateStats: AffiliateStatsQueryResult[] = [];
+  const referralStats: ReferralStatsQueryResult[] = [];
 
-  const referralStats: ReferralStatsQueryResult[] = [
-    ...(data.referralStats0 as ReferralStatsQueryResult[]),
-    ...(data.referralStats1 as ReferralStatsQueryResult[]),
-    ...(data.referralStats2 as ReferralStatsQueryResult[]),
-    ...(data.referralStats3 as ReferralStatsQueryResult[]),
-    ...(data.referralStats4 as ReferralStatsQueryResult[]),
-    ...(data.referralStats5 as ReferralStatsQueryResult[]),
-  ];
+  for (let i = 0; i < chunksCount; i++) {
+    affiliateStats.push(
+      ...(data[`affiliateStats${i}`] as AffiliateStatsQueryResult[])
+    );
+    referralStats.push(
+      ...(data[`referralStats${i}`] as ReferralStatsQueryResult[])
+    );
+  }
 
-  if (referralStats.length === 60000) {
+  if (referralStats.length >= chunkSize * chunksCount) {
     throw new Error("Referrals stats should be paginated");
   }
 
-  if (affiliateStats.length === 60000) {
+  if (affiliateStats.length >= chunkSize * chunksCount) {
     throw new Error("Affiliates stats should be paginated");
   }
 
@@ -293,28 +287,22 @@ export async function getDistributionData(
       const affiliateItem: AffiliateData = memo[item.affiliate]!;
 
       const affiliateRebatesUsd = bigNumberify(item.v1Data.totalRebateUsd).sub(
-        bigNumberify(item.v1Data.discountUsd)
+        item.v1Data.discountUsd
       );
       allAffiliatesRebateUsd = allAffiliatesRebateUsd.add(affiliateRebatesUsd);
       affiliateItem.rebateUsd =
         affiliateItem.rebateUsd.add(affiliateRebatesUsd);
       affiliateItem.totalRebateUsd = affiliateItem.totalRebateUsd.add(
-        bigNumberify(item.v1Data.totalRebateUsd)
+        item.v1Data.totalRebateUsd
       );
-      affiliateItem.volume = affiliateItem.volume.add(
-        bigNumberify(item.v1Data.volume)
-      );
+      affiliateItem.volume = affiliateItem.volume.add(item.v1Data.volume);
       affiliateItem.v2TotalRebateUsd = affiliateItem.v2TotalRebateUsd.add(
-        bigNumberify(item.v2Data.totalRebateUsd)
+        item.v2Data.totalRebateUsd
       );
       affiliateItem.tradesCount += Number(item.v1Data.trades);
 
-      totalRebateUsd = totalRebateUsd.add(
-        bigNumberify(item.v1Data.totalRebateUsd)
-      );
-      totalReferralVolume = totalReferralVolume.add(
-        bigNumberify(item.v1Data.volume)
-      );
+      totalRebateUsd = totalRebateUsd.add(item.v1Data.totalRebateUsd);
+      totalReferralVolume = totalReferralVolume.add(item.v1Data.volume);
       return memo;
     },
     {}
@@ -492,12 +480,10 @@ export async function getDistributionData(
 
       const refItem = memo[item.referral]!;
 
-      refItem.discountUsd = refItem.discountUsd.add(
-        bigNumberify(item.v1Data.discountUsd)
-      );
-      refItem.volume = refItem.volume.add(bigNumberify(item.v1Data.volume));
+      refItem.discountUsd = refItem.discountUsd.add(item.v1Data.discountUsd);
+      refItem.volume = refItem.volume.add(item.v1Data.volume);
       allReferralsDiscountUsd = allReferralsDiscountUsd.add(
-        bigNumberify(item.v1Data.discountUsd)
+        item.v1Data.discountUsd
       );
       return memo;
     },
@@ -562,7 +548,7 @@ export async function getDistributionData(
 export async function processPeriodV1(
   relativePeriodName: RelativePeriodName,
   chainId: SupportedChainId
-): Promise<ethers.BigNumber> {
+): Promise<BigNumber> {
   const [start, end] = getPeriod(relativePeriodName) ?? [];
   if (!start || !end) {
     throw new Error(`Invalid period name: ${relativePeriodName}`);
@@ -614,7 +600,7 @@ export async function processPeriodV1(
 export async function processPeriodV2(
   relativePeriodName: RelativePeriodName,
   chainId: SupportedChainId
-): Promise<ethers.BigNumber> {
+): Promise<BigNumber> {
   const [start, end] = getPeriod(relativePeriodName) ?? [];
   if (!start || !end) {
     throw new Error(`Invalid period name: ${relativePeriodName}`);
@@ -734,11 +720,11 @@ export async function referralRewardsCalls({
   let allDiscountUsd = bigNumberify(0);
   let totalEsGmxAmount = bigNumberify(0);
   const affiliateAccounts: string[] = [];
-  const affiliateAmounts: ethers.BigNumber[] = [];
+  const affiliateAmounts: BigNumber[] = [];
   const discountAccounts: string[] = [];
-  const discountAmounts: ethers.BigNumber[] = [];
+  const discountAmounts: BigNumber[] = [];
   const esGmxAccounts: string[] = [];
-  const esGmxAmounts: ethers.BigNumber[] = [];
+  const esGmxAmounts: BigNumber[] = [];
 
   for (const item of affiliatesData) {
     const { account, rebateUsd, esGmxRewards } = item;
@@ -801,11 +787,11 @@ export async function referralRewardsCalls({
     return calls;
   }
 
-  await processBatch<[string, ethers.BigNumber]>(
+  await processBatch<[string, BigNumber]>(
     logger,
     [affiliateAccounts, affiliateAmounts],
     batchSize,
-    async (currentBatch: [string, ethers.BigNumber][]) => {
+    async (currentBatch: [string, BigNumber][]) => {
       const accounts = currentBatch.map((item) => item[0]);
       const amounts = currentBatch.map((item) => item[1]);
 
@@ -817,11 +803,11 @@ export async function referralRewardsCalls({
     }
   );
 
-  await processBatch<[string, ethers.BigNumber]>(
+  await processBatch<[string, BigNumber]>(
     logger,
     [discountAccounts, discountAmounts],
     batchSize,
-    async (currentBatch: [string, ethers.BigNumber][]) => {
+    async (currentBatch: [string, BigNumber][]) => {
       const accounts = currentBatch.map((item) => item[0]);
       const amounts = currentBatch.map((item) => item[1]);
 
@@ -833,11 +819,11 @@ export async function referralRewardsCalls({
     }
   );
 
-  await processBatch<[string, ethers.BigNumber]>(
+  await processBatch<[string, BigNumber]>(
     logger,
     [esGmxAccounts, esGmxAmounts],
     batchSize,
-    async (currentBatch: [string, ethers.BigNumber][]) => {
+    async (currentBatch: [string, BigNumber][]) => {
       const accounts = currentBatch.map((item) => item[0]);
       const amounts = currentBatch.map((item) => item[1]);
 

@@ -63,7 +63,7 @@ export function bigNumberify(n: BigNumberish) {
   if (typeof n === "number" && n >= Number.MAX_SAFE_INTEGER) {
     n = BigInt(n);
   }
-  return ethers.BigNumber.from(n);
+  return BigNumber.from(n);
 }
 
 export function expandDecimals(n: BigNumberish, decimals: number) {
