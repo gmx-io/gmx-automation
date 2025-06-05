@@ -4,8 +4,6 @@
 # Dependency directory
 node_modules
 
-# Typechain generation
-typechain
 
 # local env variables
 .env
