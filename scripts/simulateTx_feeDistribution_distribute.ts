@@ -39,7 +39,7 @@ import {
 import { formatAmount, GMX_DECIMALS } from "../src/lib/number";
 import { processLzReceiveSimulation } from "./simulateTx_feeDistribution_processLzReceive";
 import { bridgedGmxReceivedSimulation } from "./simulateTx_feeDistribution_bridgedGmxReceived";
-import { createStorage, flushStorage } from "../src/lib/storage";
+import { createSecrets, createStorage, flushStorage } from "../src/lib/storage";
 
 const logger: Logger = getLogger(false);
 
@@ -233,8 +233,6 @@ function createEventContext(
     chainId
   );
 
-  const storage = createStorage();
-
   return wrapContext(false, {
     log,
     userArgs,
@@ -245,15 +243,8 @@ function createEventContext(
     multiChainProvider: {
       default: () => provider,
     } as any,
-    secrets: {
-      get(key?) {
-        if (!key) {
-          return null as any;
-        }
-        return null as any; // update if there is a simulation script that includes secrets
-      },
-    },
-    storage,
+    secrets: createSecrets(),
+    storage: createStorage(),
   });
 }
 

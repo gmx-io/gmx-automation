@@ -7,13 +7,15 @@ import { SupportedChainId } from "../../config/chains";
 import { Context } from "../../lib/gelato";
 import { bigNumberify } from "../../lib/number";
 import {
+  getFeeDistributionDataReceivedEventData,
+  getFeeDistributorEventName,
+} from "../../domain/fee/feeDistributionUtils";
+import {
   processPeriodV1,
   processPeriodV2,
   getDistributionData,
   referralRewardsCalls,
-  getFeeDistributionDataReceivedEventData,
-  getFeeDistributorEventName,
-} from "../../domain/fee/feeDistributionUtils";
+} from "../../domain/fee/feeDistributionService";
 
 export const feeDistribution = async (
   context: Context<Web3FunctionEventContext>
@@ -66,24 +68,26 @@ export const feeDistribution = async (
         .isBridgingCompleted) ||
     eventName === "FeeDistributionBridgedGmxReceived"
   ) {
-    await storage.delete("distributionData");
-    await storage.delete("wntPrice");
-    await storage.delete("gmxPrice");
+    await Promise.all([
+      storage.delete("distributionData"),
+      storage.delete("wntPrice"),
+      storage.delete("gmxPrice"),
+    ]);
 
     const rawFromTimestamp = await storage.get("fromTimestamp");
 
     const fromTimestamp =
-      rawFromTimestamp && rawFromTimestamp.trim() !== ""
-        ? Number(rawFromTimestamp) || Number(initialFromTimestamp)
-        : Number(initialFromTimestamp);
+      Number(rawFromTimestamp) || Number(initialFromTimestamp);
 
     [wntPrice, gmxPrice] = await Promise.all([
       contracts.dataStore.getUint(wntPriceKey),
       contracts.dataStore.getUint(gmxPriceKey),
     ]);
 
-    await storage.set("wntPrice", wntPrice.toString());
-    await storage.set("gmxPrice", gmxPrice.toString());
+    await Promise.all([
+      storage.set("wntPrice", wntPrice.toString()),
+      storage.set("gmxPrice", gmxPrice.toString()),
+    ]);
 
     const [latestBlock, esGmxRewardsLimit, feesV1Usd, feesV2Usd] =
       await Promise.all([
@@ -103,9 +107,10 @@ export const feeDistribution = async (
       esGmxRewardsLimit
     );
 
-    const nextFromTimestamp = toTimestamp + 1;
-    await storage.set("fromTimestamp", nextFromTimestamp.toString());
-    await storage.set("distributionData", JSON.stringify(output, null, 4));
+    await Promise.all([
+      storage.set("fromTimestamp", (toTimestamp + 1).toString()),
+      storage.set("distributionData", JSON.stringify(output, null, 4)),
+    ]);
 
     return {
       canExec: true,
@@ -125,20 +130,24 @@ export const feeDistribution = async (
       ],
     };
   } else if (eventName === "FeeDistributionCompleted") {
-    const wntPriceStr = await storage.get("wntPrice");
+    const [wntPriceStr, gmxPriceStr, dataStr] = await Promise.all([
+      storage.get("wntPrice"),
+      storage.get("gmxPrice"),
+      storage.get("distributionData"),
+    ]);
+
     if (!wntPriceStr) {
       throw new Error("wntPrice is missing in storage");
     }
-    wntPrice = bigNumberify(wntPriceStr);
-    const gmxPriceStr = await storage.get("gmxPrice");
     if (!gmxPriceStr) {
       throw new Error("gmxPrice is missing in storage");
     }
-    gmxPrice = bigNumberify(gmxPriceStr);
-    const dataStr = await storage.get("distributionData");
     if (!dataStr) {
       throw new Error("dataStr is missing in storage");
     }
+
+    wntPrice = bigNumberify(wntPriceStr);
+    gmxPrice = bigNumberify(gmxPriceStr);
 
     const referralRewardsRawCallData = await referralRewardsCalls({
       logger: logger,

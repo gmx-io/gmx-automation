@@ -22,6 +22,7 @@ import { getContracts } from "../src/lib/contracts";
 import { Context, wrapContext } from "../src/lib/gelato";
 import { getLogger, Logger } from "../src/lib/logger";
 import { exampleFunction } from "../src/web3-functions/example-function/exampleFunction";
+import { createSecrets, createStorage } from "../src/lib/storage";
 
 const logger: Logger = getLogger(false);
 
@@ -135,21 +136,8 @@ function createEventContext(
     multiChainProvider: {
       default: () => provider,
     } as any,
-    secrets: {
-      get(key?) {
-        if (!key) {
-          return null as any;
-        }
-        return null as any; // update if there is a simulation script that includes secrets
-      },
-    },
-    storage: {
-      get: () => null as any,
-      set: () => null as any,
-      delete: () => null as any,
-      getKeys: () => null as any,
-      getSize: () => null as any,
-    },
+    secrets: createSecrets(),
+    storage: createStorage(),
   });
 }
 

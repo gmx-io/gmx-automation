@@ -19,7 +19,7 @@ export function getPeriod(
     case "current":
       return [recentWednesday, nextWednesday];
     default:
-      return undefined;
+      throw new Error("Unsupported period: " + relativePeriodName);
   }
 }
 

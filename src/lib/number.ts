@@ -24,6 +24,7 @@ export const USD_DECIMALS = 30;
 export const GMX_DECIMALS = 18;
 export const REWARD_THRESHOLD = expandDecimals(1, 28); // 1 cent
 export const ESGMX_REWARDS_THRESHOLD = expandDecimals(1, 16); // 0.01 esGMX
+export const ZERO = bigNumberify(0);
 
 export function formatAmount(
   amount: BigNumberish,

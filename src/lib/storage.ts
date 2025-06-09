@@ -10,6 +10,17 @@ const fileStore: Record<string, string> = fs.existsSync(storagePath)
   ? JSON.parse(fs.readFileSync(storagePath, "utf8"))
   : {};
 
+export function createSecrets(seed: Record<string, string> = {}) {
+  return {
+    async get(key: string): Promise<string | undefined> {
+      if (!key) {
+        return undefined;
+      }
+      return seed[key];
+    },
+  };
+}
+
 export function createStorage() {
   return {
     async get(key: string) {

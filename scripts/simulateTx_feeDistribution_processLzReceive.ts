@@ -33,7 +33,7 @@ import {
   getFeeDistributionCompletedEventData,
 } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, USD_DECIMALS, GMX_DECIMALS } from "../src/lib/number";
-import { createStorage, flushStorage } from "../src/lib/storage";
+import { createSecrets, createStorage, flushStorage } from "../src/lib/storage";
 
 export type RevertOverride = {
   disableRevert: boolean;
@@ -200,8 +200,6 @@ function createEventContext(
     chainId
   );
 
-  const storage = createStorage();
-
   return wrapContext(false, {
     log,
     userArgs,
@@ -212,15 +210,8 @@ function createEventContext(
     multiChainProvider: {
       default: () => provider,
     } as any,
-    secrets: {
-      get(key?) {
-        if (!key) {
-          return null as any;
-        }
-        return null as any; // update if there is a simulation script that includes secrets
-      },
-    },
-    storage,
+    secrets: createSecrets(),
+    storage: createStorage(),
   });
 }
 
