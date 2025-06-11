@@ -36,7 +36,7 @@ export const feeDistribution = async (
     initialFromTimestamp,
     wntPriceKey,
     gmxPriceKey,
-    esGmxRewardsKey,
+    maxRewardsEsGmxAmountKey,
     shouldSendTxn,
   } = userArgs;
 
@@ -52,8 +52,8 @@ export const feeDistribution = async (
     throw new Error("gmxPriceKey must be a hex string");
   }
 
-  if (typeof esGmxRewardsKey !== "string") {
-    throw new Error("esGmxRewardsKey must be a hex string");
+  if (typeof maxRewardsEsGmxAmountKey !== "string") {
+    throw new Error("maxRewardsEsGmxAmountKey must be a hex string");
   }
 
   if (typeof shouldSendTxn !== "boolean") {
@@ -89,10 +89,10 @@ export const feeDistribution = async (
       storage.set("gmxPrice", gmxPrice.toString()),
     ]);
 
-    const [latestBlock, esGmxRewardsLimit, feesV1Usd, feesV2Usd] =
+    const [latestBlock, maxEsGmxRewards, feesV1Usd, feesV2Usd] =
       await Promise.all([
         provider.getBlock("latest"),
-        contracts.dataStore.getUint(esGmxRewardsKey),
+        contracts.dataStore.getUint(maxRewardsEsGmxAmountKey),
         processPeriodV1("prev", chainId),
         processPeriodV2("prev", chainId).then((v) => v.mul(10).div(100)),
       ]);
@@ -104,7 +104,7 @@ export const feeDistribution = async (
       fromTimestamp,
       toTimestamp,
       gmxPrice,
-      esGmxRewardsLimit
+      maxEsGmxRewards
     );
 
     await Promise.all([

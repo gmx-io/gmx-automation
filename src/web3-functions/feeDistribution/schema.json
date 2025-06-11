@@ -7,7 +7,7 @@
     "initialFromTimestamp": "string",
     "wntPriceKey": "string",
     "gmxPriceKey": "string",
-    "esGmxRewardsKey": "string",
+    "maxRewardsEsGmxAmountKey": "string",
     "shouldSendTxn": "boolean"
   }
 }

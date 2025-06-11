@@ -2,6 +2,6 @@
   "initialFromTimestamp": "",
   "wntPriceKey": "",
   "gmxPriceKey": "",
-  "esGmxRewardsKey": "",
+  "maxRewardsEsGmxAmountKey": "",
   "shouldSendTxn": ""
 }

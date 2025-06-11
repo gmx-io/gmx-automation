@@ -3,11 +3,8 @@
 Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
-TX=0xf92af3bd96aa70cb04243cfd0fffee466cc9f12d6693888769250c687a49645e \
-INITIAL_FROM_TIMESTAMP=1748250613 \
-WNT_PRICE_KEY=0x66af7011ac8687696c07a8c00f07a4cd3b8574eccaa9d8609991b2824888e113 \
-GMX_PRICE_KEY=0xfb0c2a8c499410abada8871e1b7bb6142f067b1b04951090b658c6843dcf78c9 \
-ESGMX_REWARDS_KEY=0xdc01aee9b14bf3c45fd436469d8dd2c0d19d1926910cfe7173c8e683ed3c0c57 \
+TX=0x38e56ffc64c5d05c64824f8e6c5c2544f3b5b26ed153a2ec1c2b1d6d8af4cf51 \
+INITIAL_FROM_TIMESTAMP=1749106409 \
 SHOULD_SEND_TXN=true \
 REVERT_TX=true \
     npx hardhat run scripts/simulateTx_feeDistribution_bridgedGmxReceived.ts --network localhost
@@ -28,6 +25,11 @@ import { getLogger, Logger } from "../src/lib/logger";
 import { feeDistribution } from "../src/web3-functions/feeDistribution/feeDistribution";
 import { EVENT_LOG_TOPIC } from "../src/lib/events";
 import {
+  WNT_PRICE_KEY,
+  GMX_PRICE_KEY,
+  MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY,
+} from "../src/lib/keys/keys";
+import {
   FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH,
   FEE_DISTRIBUTION_COMPLETED_HASH,
   getFeeDistributionCompletedEventData,
@@ -43,9 +45,6 @@ const logger: Logger = getLogger(false);
 const txHash = process.env.TX;
 
 const initialFromTimestamp = process.env.INITIAL_FROM_TIMESTAMP;
-const wntPriceKey = process.env.WNT_PRICE_KEY;
-const gmxPriceKey = process.env.GMX_PRICE_KEY;
-const esGmxRewardsKey = process.env.ESGMX_REWARDS_KEY;
 const shouldSendTxnStr = process.env.SHOULD_SEND_TXN;
 const revertTxStr = process.env.REVERT_TX;
 
@@ -53,14 +52,15 @@ const gelatoMsgSenderPrivateKey = process.env.GELATO_MSG_SENDER_PRIVATE_KEY;
 
 assert(txHash, "TX is not set");
 assert(initialFromTimestamp, "INITIAL_FROM_TIMESTAMP is not set");
-assert(wntPriceKey, "WNT_PRICE_KEY is not set");
-assert(gmxPriceKey, "GMX_PRICE_KEY is not set");
-assert(esGmxRewardsKey, "ESGMX_REWARDS_KEY is not set");
 assert(shouldSendTxnStr, "SHOULD_SEND_TXN is not set");
 assert(revertTxStr, "REVERT_TX is not set");
 assert(gelatoMsgSenderPrivateKey, "GELATO_MSG_SENDER_PRIVATE_KEY is not set");
 
 const shouldSendTxn = shouldSendTxnStr.toLowerCase() === "true";
+
+const wntPriceKey = WNT_PRICE_KEY;
+const gmxPriceKey = GMX_PRICE_KEY;
+const maxRewardsEsGmxAmountKey = MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY;
 
 const feeDistributionBridgedGmxReceivedTopics = [
   EVENT_LOG_TOPIC,
@@ -108,7 +108,7 @@ const bridgedGmxReceivedSimulation = async (opts?: RevertOverride) => {
         initialFromTimestamp,
         wntPriceKey,
         gmxPriceKey,
-        esGmxRewardsKey,
+        maxRewardsEsGmxAmountKey,
         shouldSendTxn,
       },
       chainId

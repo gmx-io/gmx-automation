@@ -148,7 +148,7 @@ export async function getDistributionData(
   fromTimestamp: number,
   toTimestamp: number,
   gmxPrice: BigNumber,
-  esGmxRewardsLimit: BigNumber
+  maxEsGmxRewards: BigNumber
 ): Promise<OutputData> {
   const affiliateCondition = "";
   const referralCondition = "";
@@ -302,8 +302,8 @@ export async function getDistributionData(
     data.share = data.rebateUsd.mul(SHARE_DIVISOR).div(allAffiliatesRebateUsd);
   });
 
-  const esGmxRewardsUsdLimit = esGmxRewardsLimit.mul(gmxPrice);
-  let totalEsGmxRewardsUsd = ZERO;
+  const maxEsGmxRewardsInUsd = maxEsGmxRewards.mul(gmxPrice);
+  let totalEsGmxRewardsInUsd = ZERO;
 
   Object.values(affiliatesRebatesData).forEach((data) => {
     if (data.tierId !== BONUS_TIER) {
@@ -321,14 +321,14 @@ export async function getDistributionData(
 
     data.esGmxRewards = data.esGmxRewardsUsd.div(gmxPrice);
 
-    totalEsGmxRewardsUsd = totalEsGmxRewardsUsd.add(data.esGmxRewardsUsd);
+    totalEsGmxRewardsInUsd = totalEsGmxRewardsInUsd.add(data.esGmxRewardsUsd);
     totalEsGmxRewards = totalEsGmxRewards.add(data.esGmxRewards);
   });
 
-  if (totalEsGmxRewardsUsd.gt(esGmxRewardsUsdLimit)) {
-    const denominator = totalEsGmxRewardsUsd
+  if (totalEsGmxRewardsInUsd.gt(maxEsGmxRewardsInUsd)) {
+    const denominator = totalEsGmxRewardsInUsd
       .mul(USD_DECIMALS)
-      .div(esGmxRewardsUsdLimit);
+      .div(maxEsGmxRewardsInUsd);
 
     totalEsGmxRewards = ZERO;
     Object.values(affiliatesRebatesData).forEach((data) => {
@@ -556,10 +556,10 @@ export async function processPeriodV1(
       }
     ): BigNumber => {
       return acc
-        .add(bigNumberify(stat.marginAndLiquidation))
-        .add(bigNumberify(stat.swap))
-        .add(bigNumberify(stat.mint))
-        .add(bigNumberify(stat.burn));
+        .add(stat.marginAndLiquidation)
+        .add(stat.swap)
+        .add(stat.mint)
+        .add(stat.burn);
     },
     ZERO
   );
@@ -599,15 +599,11 @@ export async function processPeriodV2(
   const swapStats = data.swap as SwapFeesInfoWithPeriods[];
 
   const positionFees = positionStats.reduce((acc, stat) => {
-    return acc
-      .add(bigNumberify(stat.totalBorrowingFeeUsd))
-      .add(bigNumberify(stat.totalPositionFeeUsd));
+    return acc.add(stat.totalBorrowingFeeUsd).add(stat.totalPositionFeeUsd);
   }, ZERO);
 
   const swapFees = swapStats.reduce((acc, stat) => {
-    return acc
-      .add(bigNumberify(stat.totalFeeReceiverUsd))
-      .add(bigNumberify(stat.totalFeeUsdForPool));
+    return acc.add(stat.totalFeeReceiverUsd).add(stat.totalFeeUsdForPool);
   }, ZERO);
 
   return positionFees.add(swapFees);

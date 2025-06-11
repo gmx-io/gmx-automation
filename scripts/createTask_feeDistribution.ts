@@ -10,12 +10,16 @@ import hre from "hardhat";
 import { getAddress } from "../src/config/addresses";
 import { EVENT_LOG_TOPIC } from "../src/lib/events";
 import {
+  WNT_PRICE_KEY,
+  GMX_PRICE_KEY,
+  MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY,
+} from "../src/lib/keys/keys";
+import {
   FEE_DISTRIBUTION_DATA_RECEIVED_HASH,
   FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH,
   FEE_DISTRIBUTION_COMPLETED_HASH,
 } from "../src/domain/fee/feeDistributionUtils";
 import assert from "assert";
-import { hashString } from "../src/lib/hashing";
 
 const logger: Logger = getLogger(true);
 
@@ -54,11 +58,9 @@ const main = async () => {
     web3FunctionHash: cid,
     web3FunctionArgs: {
       initialFromTimestamp: process.env.INITIAL_FROM_TIMESTAMP,
-      wntPriceKey: hashString("FEE_DISTRIBUTOR_WNT_PRICE"),
-      gmxPriceKey: hashString("FEE_DISTRIBUTOR_GMX_PRICE"),
-      esGmxRewardsKey: hashString(
-        "FEE_DISTRIBUTOR_REFERRAL_REWARDS_ESGMX_LIMIT"
-      ),
+      wntPriceKey: WNT_PRICE_KEY,
+      gmxPriceKey: GMX_PRICE_KEY,
+      maxRewardsEsGmxAmountKey: MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY,
       shouldSendTxn: process.env.SHOULD_SEND_TXN,
     },
     trigger: {
@@ -74,7 +76,7 @@ const main = async () => {
           ],
         ],
       },
-      blockConfirmations: 0,
+      blockConfirmations: 2,
     },
   });
 
