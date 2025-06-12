@@ -76,7 +76,7 @@ const main = async () => {
           ],
         ],
       },
-      blockConfirmations: 2,
+      blockConfirmations: 0,
     },
   });
 
