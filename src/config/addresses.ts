@@ -21,7 +21,9 @@ export type SupportedContractName =
   | "wnt"
   | "esGmx"
   | "feeDistributor"
-  | "feeDistributorVault";
+  | "feeDistributorVault"
+  | "contributorHandler"
+  | "mockOFTAdapter";
 
 export const isSupportedContractName = (
   contractName: string
@@ -40,6 +42,8 @@ export const isSupportedContractName = (
     "esGmx",
     "feeDistributor",
     "feeDistributorVault",
+    "contributorHandler",
+    "mockOFTAdapter",
   ].includes(contractName);
 };
 
@@ -52,15 +56,17 @@ const addresses: Record<
     config: "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
     configSyncer: "0xefc1aB2475ACb7E60499Efb171D173be19928a05",
     eventEmitter: "0x67d269191c92Caf3cD7723F116c85e6E9bf55933",
-    feeHandler: "0x2625760C4A8e8101801D3a48eE64B2bEA42f1E96",
-    glvReader: "0x162700d1613DfEC978032A909DE02643bC55df1A",
+    feeHandler: "0xD6b040736e948621c5b6E0a494473c47a6113eA8",
+    glvReader: "0x114e375B6FCC6d6fCb68c7A1d407E652C54F25FB",
     multicall3: "0x851356ae760d987E095750cCeb3bC6014560891C",
-    orderHandler: "0x26B862f640357268Bd2d9E95bc81553a2Aa81D7E",
-    reader: "0x7580708993de7CA120E957A62f26A5dDD4b3D8aC",
+    orderHandler: "0x5D42EBdBBa61412295D7b0302d6F50aC449Ddb4F",
+    reader: "0x572316aC11CB4bc5daf6BDae68f43EA3CCE3aE0e",
     wnt: "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
     esGmx: "0x9A676e781A523b5d0C0e43731313A708CB607508",
-    feeDistributor: "0x82EdA215Fa92B45a3a76837C65Ab862b6C7564a8",
-    feeDistributorVault: "0x3904b8f5b0F49cD206b7d5AABeE5D1F37eE15D8d",
+    feeDistributor: "0x51C65cd0Cdb1A8A8b79dfc2eE965B1bA0bb8fc89",
+    feeDistributorVault: "0x56fC17a65ccFEC6B7ad0aDe9BD9416CB365B9BE8",
+    contributorHandler: "0x0000000000000000000000000000000000000000",
+    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
   },
   [ARBITRUM]: {
     config: "0xD1781719eDbED8940534511ac671027989e724b9",
@@ -76,6 +82,8 @@ const addresses: Record<
     esGmx: "0xf42ae1d54fd613c9bb14810b0588faaa09a426ca",
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
+    contributorHandler: "0x0000000000000000000000000000000000000000",
+    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
   },
   [ARBITRUM_SEPOLIA]: {
     config: "0x0000000000000000000000000000000000000000",
@@ -91,6 +99,8 @@ const addresses: Record<
     esGmx: "0x0000000000000000000000000000000000000000",
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
+    contributorHandler: "0x0000000000000000000000000000000000000000",
+    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
   },
   [AVALANCHE]: {
     config: "0xEb376626D44c638Fd0C41170a40fd23a1A0622b7",
@@ -106,6 +116,8 @@ const addresses: Record<
     esGmx: "0xff1489227bbaac61a9209a08929e4c2a526ddd17",
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
+    contributorHandler: "0x0000000000000000000000000000000000000000",
+    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
   },
   [AVALANCHE_FUJI]: {
     config: "0x1518ab348e7187d9CDCAB6Ba4ea3e37E187eB8D7",
@@ -121,6 +133,8 @@ const addresses: Record<
     esGmx: "0x0000000000000000000000000000000000000000",
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
+    contributorHandler: "0x0000000000000000000000000000000000000000",
+    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
   },
 };
 

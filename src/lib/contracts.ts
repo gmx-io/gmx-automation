@@ -18,6 +18,8 @@ import {
   MintableToken,
   FeeDistributor,
   FeeDistributorVault,
+  ContributorHandler,
+  MockOFTAdapter,
 } from "../typechain";
 
 import { abi as ConfigAbi } from "../abi/Config.json";
@@ -33,6 +35,8 @@ import { abi as WntAbi } from "../abi/WNT.json";
 import { abi as EsGmxAbi } from "../abi/EsGmx.json";
 import { abi as FeeDistributorAbi } from "../abi/FeeDistributor.json";
 import { abi as FeeDistributorVaultAbi } from "../abi/FeeDistributorVault.json";
+import { abi as ContributorHandlerAbi } from "../abi/ContributorHandler.json";
+import { abi as MockOFTAdapterAbi } from "../abi/MockOFTAdapter.json";
 
 function getContract<T = Contract>({
   chainId,
@@ -143,6 +147,18 @@ export function getContracts(
     provider,
     abi: FeeDistributorVaultAbi,
   });
+  const contributorHandler = getContract<ContributorHandler>({
+    chainId,
+    name: "contributorHandler",
+    provider,
+    abi: ContributorHandlerAbi,
+  });
+  const mockOFTAdapter = getContract<MockOFTAdapter>({
+    chainId,
+    name: "mockOFTAdapter",
+    provider,
+    abi: MockOFTAdapterAbi,
+  });
   const contracts = {
     dataStore,
     config,
@@ -157,6 +173,8 @@ export function getContracts(
     esGmx,
     feeDistributor,
     feeDistributorVault,
+    contributorHandler,
+    mockOFTAdapter,
   };
 
   return contracts;

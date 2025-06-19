@@ -3,8 +3,8 @@
 Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
-TX=0x38e56ffc64c5d05c64824f8e6c5c2544f3b5b26ed153a2ec1c2b1d6d8af4cf51 \
-INITIAL_FROM_TIMESTAMP=1749106409 \
+TX=0xcd608a468d32677d236dcdee965e3c7747cbd8ea631ff9ead5aad7628f926138 \
+INITIAL_FROM_TIMESTAMP=1750044238 \
 SHOULD_SEND_TXN=true \
 REVERT_TX=true \
     npx hardhat run scripts/simulateTx_feeDistribution_bridgedGmxReceived.ts --network localhost
