@@ -10,7 +10,6 @@ import { getLogger, Logger } from "../src/lib/logger";
 import hre from "hardhat";
 import { getRpcProviderUrl } from "../src/config/providers";
 import { getContracts } from "../src/lib/contracts";
-import { getAddress } from "../src/config/addresses";
 
 const logger: Logger = getLogger(true);
 
@@ -36,7 +35,10 @@ const main = async () => {
 
   const automate = new AutomateSDK(chainId, deployer);
 
-  const { feeDistributor } = getContracts(chainId, provider);
+  const { feeDistributor, feeDistributorVault, mockOFTAdapter } = getContracts(
+    chainId,
+    provider
+  );
 
   // Create task using automate sdk
   logger.log("Creating Task...");
@@ -48,16 +50,11 @@ const main = async () => {
     trigger: {
       type: TriggerType.EVENT,
       filter: {
-        address: getAddress(chainId, "OFTAdapter"),
+        address: mockOFTAdapter.address,
         topics: [
-          [ethers.utils.id("OFTReceived(bytes32,uint32,address,uint256)")],
-          [
-            null,
-            ethers.utils.hexZeroPad(
-              getAddress(chainId, "feeDistributorVault"),
-              32
-            ),
-          ],
+          [mockOFTAdapter.filters.OFTReceived().topics[0]],
+          [],
+          [ethers.utils.hexZeroPad(feeDistributorVault.address, 32)],
         ],
       },
       blockConfirmations: 0,
