@@ -1,31 +1,16 @@
 import "@nomiclabs/hardhat-ethers";
 import "@gelatonetwork/web3-functions-sdk/hardhat-plugin";
-import {
-  AutomateSDK,
-  TriggerType,
-  Web3Function,
-} from "@gelatonetwork/automate-sdk";
-import { getLogger, Logger } from "../src/lib/logger";
+import { TriggerType } from "@gelatonetwork/automate-sdk";
 import hre from "hardhat";
+import { initCreateTask, logTaskCreation, run } from "./utils/createTaskUtils";
 import { getAddress } from "../src/config/addresses";
 
-const logger: Logger = getLogger(true);
-
-const { ethers, w3f } = hre;
+const { w3f } = hre;
 
 const main = async () => {
+  const { logger, chainId, automate, web3Function } = await initCreateTask();
+
   const exampleFunctionW3f = w3f.get("example-function");
-
-  const [deployer] = await ethers.getSigners();
-
-  if (!deployer) {
-    throw new Error("No deployer signer found");
-  }
-
-  const chainId = (await ethers.provider.getNetwork()).chainId;
-
-  const automate = new AutomateSDK(chainId, deployer);
-  const web3Function = new Web3Function(chainId, deployer);
 
   // Deploy Web3Function on IPFS
   logger.log("Deploying Web3Function on IPFS...");
@@ -59,11 +44,7 @@ const main = async () => {
     },
   });
 
-  await tx.wait();
-  logger.log(`Task created, taskId: ${taskId} (tx hash: ${tx.hash})`);
-  logger.log(
-    `> https://app.gelato.network/functions/task/${taskId}:${chainId}`
-  );
+  await logTaskCreation(tx, taskId, chainId);
 
   // Set task specific secrets
   const secrets = exampleFunctionW3f.getSecrets();
@@ -73,15 +54,4 @@ const main = async () => {
   }
 };
 
-main()
-  .then(() => {
-    process.exit();
-  })
-  .catch((err) => {
-    if (err.response) {
-      logger.error("Error Response:", err.response.body);
-    } else {
-      logger.error("Error:", err.message);
-    }
-    process.exit(1);
-  });
+run(main);

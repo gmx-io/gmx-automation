@@ -1,39 +1,11 @@
 import "@nomiclabs/hardhat-ethers";
-import "@gelatonetwork/web3-functions-sdk/hardhat-plugin";
-import {
-  AutomateSDK,
-  TaskTransaction,
-  TriggerType,
-  isAutomateSupported,
-} from "@gelatonetwork/automate-sdk";
-import { getLogger, Logger } from "../src/lib/logger";
-import hre from "hardhat";
-import { getRpcProviderUrl } from "../src/config/providers";
+import { TriggerType } from "@gelatonetwork/automate-sdk";
+import { ethers } from "hardhat";
+import { initCreateTask, logTaskCreation, run } from "./utils/createTaskUtils";
 import { getContracts } from "../src/lib/contracts";
 
-const logger: Logger = getLogger(true);
-
-const { ethers } = hre;
-
 const main = async () => {
-  const [deployer] = await ethers.getSigners();
-
-  if (!deployer) {
-    throw new Error("No deployer signer found");
-  }
-
-  const chainId = (await ethers.provider.getNetwork()).chainId;
-
-  if (!isAutomateSupported(chainId)) {
-    throw new Error(`Gelato Automate network not supported (${chainId})`);
-  }
-
-  const provider = new ethers.providers.JsonRpcProvider(
-    getRpcProviderUrl(chainId),
-    chainId
-  );
-
-  const automate = new AutomateSDK(chainId, deployer);
+  const { logger, chainId, provider, automate } = await initCreateTask();
 
   const { feeDistributor, feeDistributorVault, mockOFTAdapter } = getContracts(
     chainId,
@@ -41,9 +13,9 @@ const main = async () => {
   );
 
   // Create task using automate sdk
-  logger.log("Creating Task...");
+  logger.log("Creating automate task...");
 
-  const { taskId, tx }: TaskTransaction = await automate.createTask({
+  const { taskId, tx } = await automate.createTask({
     execAddress: feeDistributor.address,
     execSelector: feeDistributor.interface.getSighash("bridgedGmxReceived()"),
     execAbi: feeDistributor.interface.format("json") as string,
@@ -52,7 +24,7 @@ const main = async () => {
       filter: {
         address: mockOFTAdapter.address,
         topics: [
-          [mockOFTAdapter.filters.OFTReceived().topics[0]],
+          [mockOFTAdapter.interface.getEventTopic("OFTReceived")],
           [],
           [ethers.utils.hexZeroPad(feeDistributorVault.address, 32)],
         ],
@@ -63,22 +35,7 @@ const main = async () => {
     dedicatedMsgSender: true,
   });
 
-  await tx.wait();
-  logger.log(`Task created, taskId: ${taskId} (tx hash: ${tx.hash})`);
-  logger.log(
-    `> https://app.gelato.network/functions/task/${taskId}:${chainId}`
-  );
+  await logTaskCreation(tx, taskId, chainId);
 };
 
-main()
-  .then(() => {
-    process.exit();
-  })
-  .catch((err) => {
-    if (err.response) {
-      logger.error("Error Response:", err.response.body);
-    } else {
-      logger.error("Error:", err.message);
-    }
-    process.exit(1);
-  });
+run(main);
