@@ -1,11 +1,10 @@
-import { Web3FunctionEventContext } from "@gelatonetwork/web3-functions-sdk/*";
-
 import { Web3FunctionContext } from "@gelatonetwork/web3-functions-sdk/*";
 import {
   getMarketService,
   MarketService,
 } from "../domain/market/marketService";
 import { getContracts } from "./contracts";
+import { getLogger, Logger } from "./logger";
 
 type Secrets = {
   get: (key: string) => Promise<string | undefined>;
@@ -36,9 +35,12 @@ export type Context<GelatoContext extends Web3FunctionContext> =
       marketService: MarketService;
     };
     contracts: ReturnType<typeof getContracts>;
+    logger: Logger;
+    isGelatoEnvironment: boolean;
   };
 
 export const wrapContext = <GelatoContext extends Web3FunctionContext>(
+  isGelatoEnvironment: boolean,
   gelatoContext: GelatoContext
 ): Context<GelatoContext> => {
   return {
@@ -54,5 +56,7 @@ export const wrapContext = <GelatoContext extends Web3FunctionContext>(
         provider: gelatoContext.multiChainProvider.default(),
       }),
     },
+    logger: getLogger(isGelatoEnvironment),
+    isGelatoEnvironment,
   };
 };

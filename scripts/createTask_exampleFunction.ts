@@ -1,31 +1,24 @@
 import "@nomiclabs/hardhat-ethers";
 import "@gelatonetwork/web3-functions-sdk/hardhat-plugin";
-import {
-  AutomateSDK,
-  TriggerType,
-  Web3Function,
-} from "@gelatonetwork/automate-sdk";
+import { TriggerType } from "@gelatonetwork/automate-sdk";
 import hre from "hardhat";
+import { initCreateTask, logTaskCreation, run } from "./utils/createTaskUtils";
 import { getAddress } from "../src/config/addresses";
 
-const { ethers, w3f } = hre;
+const { w3f } = hre;
 
 const main = async () => {
+  const { logger, chainId, automate, web3Function } = await initCreateTask();
+
   const exampleFunctionW3f = w3f.get("example-function");
 
-  const [deployer] = await ethers.getSigners();
-  const chainId = (await ethers.provider.getNetwork()).chainId;
-
-  const automate = new AutomateSDK(chainId, deployer);
-  const web3Function = new Web3Function(chainId, deployer);
-
   // Deploy Web3Function on IPFS
-  console.log("Deploying Web3Function on IPFS...");
+  logger.log("Deploying Web3Function on IPFS...");
   const cid = await exampleFunctionW3f.deploy();
-  console.log(`Web3Function IPFS CID: ${cid}`);
+  logger.log(`Web3Function IPFS CID: ${cid}`);
 
   // Create task using automate sdk
-  console.log("Creating automate task...");
+  logger.log("Creating automate task...");
 
   const { taskId, tx } = await automate.createBatchExecTask({
     name: "Example Function 1",
@@ -51,29 +44,14 @@ const main = async () => {
     },
   });
 
-  await tx.wait();
-  console.log(`Task created, taskId: ${taskId} (tx hash: ${tx.hash})`);
-  console.log(
-    `> https://app.gelato.network/functions/task/${taskId}:${chainId}`
-  );
+  await logTaskCreation(tx, taskId, chainId);
 
   // Set task specific secrets
   const secrets = exampleFunctionW3f.getSecrets();
   if (Object.keys(secrets).length > 0) {
     await web3Function.secrets.set(secrets, taskId);
-    console.log(`Secrets set`);
+    logger.log(`Secrets set`);
   }
 };
 
-main()
-  .then(() => {
-    process.exit();
-  })
-  .catch((err) => {
-    if (err.response) {
-      console.error("Error Response:", err.response.body);
-    } else {
-      console.error("Error:", err.message);
-    }
-    process.exit(1);
-  });
+run(main);

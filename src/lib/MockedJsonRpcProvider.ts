@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BlockTag } from "@ethersproject/abstract-provider";
 import {
   JsonRpcProvider,
@@ -8,7 +9,6 @@ import {
 } from "@ethersproject/providers";
 import { BigNumber } from "ethers";
 import { Deferrable } from "ethers/lib/utils";
-import { HARDHAT } from "../config/chains";
 
 export class MockedJsonRpcProvider extends JsonRpcProvider {
   async send(method: string, params: Array<any>): Promise<any> {

@@ -6,13 +6,10 @@ import {
 import { BigNumber } from "ethers";
 import { MockedJsonRpcProvider } from "./MockedJsonRpcProvider";
 import { Log } from "@ethersproject/abstract-provider";
-import { HARDHAT } from "../config/chains";
+import { LOCALHOST } from "../config/chains";
 import { getContracts } from "./contracts";
 import { Context } from "./gelato";
-import {
-  getMarketService,
-  MarketService,
-} from "../domain/market/marketService";
+import { MarketService } from "../domain/market/marketService";
 import { jest } from "@jest/globals";
 import { MarketData } from "../domain/market/marketUtils";
 
@@ -24,7 +21,7 @@ export const createMockedContext = ({
   const provider = new MockedJsonRpcProvider();
   const context = {
     gelatoArgs: {
-      chainId: HARDHAT,
+      chainId: LOCALHOST,
       gasPrice: BigNumber.from(0),
     },
     multiChainProvider: {
@@ -33,6 +30,7 @@ export const createMockedContext = ({
       },
     } as any as Web3FunctionContext["multiChainProvider"],
     secrets: {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       async get(key) {
         throw new Error("Not implemented");
       },
@@ -83,5 +81,15 @@ export const wrapMockContext = <GelatoContext extends Web3FunctionContext>(
     services: {
       marketService,
     },
+    logger: {
+      info: jest.fn<() => Promise<void>>(),
+      error: jest.fn<() => Promise<void>>(),
+      warn: jest.fn<() => Promise<void>>(),
+      debug: jest.fn<() => Promise<void>>(),
+      log: jest.fn<() => Promise<void>>(),
+      fatal: jest.fn<() => Promise<void>>(),
+      table: jest.fn<() => Promise<void>>(),
+    },
+    isGelatoEnvironment: false,
   } satisfies Context<GelatoContext>;
 };

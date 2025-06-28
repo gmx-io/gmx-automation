@@ -12,11 +12,10 @@
     "outDir": "dist",
     "lib": ["ES2020", "DOM"],
     "module": "commonjs",
-    "target": "es2020"
+    "target": "es2020",
+    "noUncheckedIndexedAccess": true
   },
   "files": ["hardhat.config.ts"],
-  "include": [
-    "src"
-  ],
+  "include": ["src", "scripts"],
   "exclude": ["node_modules"]
 }

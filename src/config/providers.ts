@@ -1,8 +1,9 @@
 import {
   ARBITRUM,
+  ARBITRUM_SEPOLIA,
   AVALANCHE,
   AVALANCHE_FUJI,
-  HARDHAT,
+  LOCALHOST,
   isSupportedChainId,
   SupportedChainId,
 } from "./chains";
@@ -15,6 +16,7 @@ export const RPC_PROVIDERS: Record<SupportedChainId, string[]> = {
     "https://arbitrum-one.public.blastapi.io",
     // "https://rpc.ankr.com/arbitrum",
   ],
+  [ARBITRUM_SEPOLIA]: ["https://sepolia-rollup.arbitrum.io/rpc"],
   [AVALANCHE]: [
     "https://api.avax.network/ext/bc/C/rpc",
     "https://avalanche-c-chain-rpc.publicnode.com",
@@ -24,7 +26,7 @@ export const RPC_PROVIDERS: Record<SupportedChainId, string[]> = {
     "https://avalanche-fuji-c-chain.publicnode.com",
     "https://api.avax-test.network/ext/bc/C/rpc",
   ],
-  [HARDHAT]: [],
+  [LOCALHOST]: ["http://127.0.0.1:8545"],
 };
 
 export const getRpcProviderUrl = (chainId: number) => {

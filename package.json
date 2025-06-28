@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev:update-typechain": "cp -r ../gmx-synthetics/typechain-types/* ./src/typechain/; for f in $(find ./src/typechain -name '*.ts'); do echo $f; if [ -f $f ]; then echo \"// @ts-nocheck\n $(cat $f)\" > $f; fi; done",
+    "dev:update-typechain": "mkdir -p ./src/typechain && cp -r ../gmx-synthetics/typechain-types/* ./src/typechain/; for f in $(find ./src/typechain -name '*.ts'); do echo $f; if [ -f $f ]; then echo \"// @ts-nocheck\n $(cat $f)\" > $f; fi; done",
     "dev:update-abi": "cp $(find ../gmx-synthetics/artifacts/contracts -name '*.json' | grep -v '.dbg.') src/abi",
     "test": "jest src",
-    "deploy-example": "npx w3f deploy src/web3-functions/example-function/index.ts"
+    "deploy-example": "npx w3f deploy src/web3-functions/example-function/index.ts",
+    "lint:eslint": "eslint -c .eslintrc.json src",
+    "lint:tsc-check": "tsc --noEmit",
+    "lint": "npm run lint:eslint && npm run lint:tsc-check"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.26.0",
@@ -50,6 +53,7 @@
     "@gelatonetwork/automate-sdk": "^3.0.2",
     "@gelatonetwork/web3-functions-sdk": "2.3.0",
     "@types/sinon": "^17.0.3",
+    "date-fns": "^4.1.0",
     "jest": "^29.7.0",
     "ky": "^0.33.2",
     "ts-mock-imports": "^1.3.16"

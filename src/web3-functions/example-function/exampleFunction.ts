@@ -8,7 +8,9 @@ import { Context } from "../../lib/gelato";
 export const exampleFunction = async (
   context: Context<Web3FunctionEventContext>
 ): Promise<Web3FunctionResult> => {
-  const { log, userArgs, services, contracts } = context;
+  const { log, userArgs, services, contracts, logger } = context;
+
+  logger.info("Hello, world!");
 
   const markets = await services.marketService.getMarketsData();
   const oraclePriceUpdateEventData = getOraclePriceUpdateEventData(

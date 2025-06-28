@@ -18,6 +18,45 @@ export const FLOAT_PRECISION = 30;
 
 export const BASIS_POINTS = 10000;
 
+export const SHARE_DIVISOR = BigNumber.from("1000000000"); // 1e9
+export const BONUS_TIER = 2; // for EsGMX distributions
+export const USD_DECIMALS = 30;
+export const GMX_DECIMALS = 18;
+export const REWARD_THRESHOLD = expandDecimals(1, 28); // 1 cent
+export const ESGMX_REWARDS_THRESHOLD = expandDecimals(1, 16); // 0.01 esGMX
+export const ZERO = bigNumberify(0);
+
+export function formatAmount(
+  amount: BigNumberish,
+  decimals = 30,
+  displayDecimals = 2,
+  useCommas = false
+): string {
+  // passed displayDecimals can be greater than decimals
+  const adjustedDisplayDecimals = Math.min(displayDecimals, decimals);
+  const result = bigNumberify(amount).div(
+    expandDecimals(1, decimals - adjustedDisplayDecimals)
+  );
+
+  const ret = (Number(result) / 10 ** adjustedDisplayDecimals).toFixed(
+    displayDecimals
+  );
+
+  if (!useCommas) {
+    return ret;
+  }
+
+  const parts = ret.split(".");
+  if (parts[0]) {
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+  return parts.join(".");
+}
+
+export function stringToFixed(s: string | number, n: number): string {
+  return Number(s).toFixed(n);
+}
+
 export function bigNumberify(n: BigNumberish) {
   if (n === undefined) {
     throw new Error("bigNumberify: n is undefined");
@@ -25,7 +64,7 @@ export function bigNumberify(n: BigNumberish) {
   if (typeof n === "number" && n >= Number.MAX_SAFE_INTEGER) {
     n = BigInt(n);
   }
-  return ethers.BigNumber.from(n);
+  return BigNumber.from(n);
 }
 
 export function expandDecimals(n: BigNumberish, decimals: number) {
@@ -43,12 +82,16 @@ export function expandDecimals(n: BigNumberish, decimals: number) {
 }
 
 export function getMedian(values: number[]) {
+  if (values.length === 0) {
+    throw new Error("empty array");
+  }
+
   values = [...values].sort((a, b) => a - b);
   const middle = Math.floor(values.length / 2);
-  if (values.length % 2) {
-    return values[middle];
-  }
-  return (values[middle - 1] + values[middle]) / 2;
+
+  return values.length % 2
+    ? values[middle]
+    : (values[middle - 1]! + values[middle]!) / 2;
 }
 
 export function getMin(...values: BigNumber[]) {
@@ -76,7 +119,10 @@ export function bigNumberToNumber(value: BigNumber, decimals: number): number {
 }
 
 export function numberToBigNumber(value: number | string, decimals: number) {
-  const [mantissa, exponentStr] = value.toString().split(/e\+?/);
+  const [mantissa, exponentStr] = value.toString().split(/e\+?/) as [
+    string,
+    string?
+  ];
   let ret = ethers.utils.parseUnits(mantissa, FLOAT_PRECISION);
 
   let exponent = decimals;

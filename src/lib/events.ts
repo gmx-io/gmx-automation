@@ -1,6 +1,6 @@
-import { Log } from "@ethersproject/abstract-provider";
 import { BigNumber } from "ethers";
 import { LogDescription } from "ethers/lib/utils";
+import { EventEmitter__factory } from "../typechain";
 
 export type KeyValueEventData = {
   getUint: (key: string, defaultValue?: any) => BigNumber;
@@ -21,6 +21,10 @@ export type KeyValueEventData = {
 
 export function parseLogToEventData(log: LogDescription) {
   return getKeyValueEventData(log);
+}
+
+export function parseLogToEventNameHash(log: LogDescription) {
+  return getKeyValueEventNameHash(log);
 }
 
 export function getKeyValueEventData(log: LogDescription): KeyValueEventData {
@@ -83,3 +87,18 @@ export function getKeyValueEventData(log: LogDescription): KeyValueEventData {
     getStringArray: getter("stringItems", "arrayItems"),
   };
 }
+
+export function getKeyValueEventNameHash(log: LogDescription): string {
+  // for some reason ethers doesn't create keys for eventName, eventData, etc.
+  // eventNameHash is the second field of event
+  const eventNameHash: string = (log.args as any)[1];
+
+  return eventNameHash;
+}
+
+export const EVENT_LOG_TOPIC =
+  EventEmitter__factory.createInterface().getEventTopic("EventLog");
+export const EVENT_LOG1_TOPIC =
+  EventEmitter__factory.createInterface().getEventTopic("EventLog1");
+export const EVENT_LOG2_TOPIC =
+  EventEmitter__factory.createInterface().getEventTopic("EventLog2");

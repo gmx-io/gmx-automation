@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import { KeyValueEventData, parseLogToEventData } from "../../lib/events";
+import { parseLogToEventData } from "../../lib/events";
 import { Log } from "hardhat-deploy/dist/types";
 import { EventEmitter } from "../../typechain";
 

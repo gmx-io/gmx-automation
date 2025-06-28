@@ -10,11 +10,16 @@ import {
   DataStore,
   EventEmitter,
   FeeHandler,
-  GlvHandler,
   GlvReader,
   Multicall3,
   OrderHandler,
   Reader,
+  WNT,
+  MintableToken,
+  FeeDistributor,
+  FeeDistributorVault,
+  ContributorHandler,
+  MockOFTAdapter,
 } from "../typechain";
 
 import { abi as ConfigAbi } from "../abi/Config.json";
@@ -22,11 +27,16 @@ import { abi as ConfigSyncerAbi } from "../abi/ConfigSyncer.json";
 import { abi as DataStoreAbi } from "../abi/DataStore.json";
 import { abi as EventEmitterAbi } from "../abi/EventEmitter.json";
 import { abi as FeeHandlerAbi } from "../abi/FeeHandler.json";
-import { abi as GlvHandlerAbi } from "../abi/GlvHandler.json";
 import { abi as GlvReaderAbi } from "../abi/GlvReader.json";
 import { abi as Multicall3Abi } from "../abi/Multicall3.json";
 import { abi as OrderHandlerAbi } from "../abi/OrderHandler.json";
 import { abi as ReaderAbi } from "../abi/Reader.json";
+import { abi as WntAbi } from "../abi/WNT.json";
+import { abi as EsGmxAbi } from "../abi/EsGmx.json";
+import { abi as FeeDistributorAbi } from "../abi/FeeDistributor.json";
+import { abi as FeeDistributorVaultAbi } from "../abi/FeeDistributorVault.json";
+import { abi as ContributorHandlerAbi } from "../abi/ContributorHandler.json";
+import { abi as MockOFTAdapterAbi } from "../abi/MockOFTAdapter.json";
 
 function getContract<T = Contract>({
   chainId,
@@ -37,7 +47,7 @@ function getContract<T = Contract>({
   chainId: SupportedChainId;
   name: string;
   abi: ContractInterface;
-  provider: StaticJsonRpcProvider;
+  provider: StaticJsonRpcProvider | undefined;
 }): T {
   const address = getAddress(chainId, name);
   return new ethers.Contract(address, abi, provider) as unknown as T;
@@ -45,7 +55,10 @@ function getContract<T = Contract>({
 
 export type Contracts = ReturnType<typeof getContracts>;
 
-export function getContracts(chainId: number, provider: StaticJsonRpcProvider) {
+export function getContracts(
+  chainId: number,
+  provider?: StaticJsonRpcProvider
+) {
   if (!isSupportedChainId(chainId)) {
     throw new Error(`Unsupported chain id: ${chainId}`);
   }
@@ -75,13 +88,6 @@ export function getContracts(chainId: number, provider: StaticJsonRpcProvider) {
     name: "dataStore",
     provider,
     abi: DataStoreAbi,
-  });
-
-  const glvHandler = getContract<GlvHandler>({
-    chainId,
-    name: "glvHandler",
-    provider,
-    abi: GlvHandlerAbi,
   });
 
   const orderHandler = getContract<OrderHandler>({
@@ -117,17 +123,58 @@ export function getContracts(chainId: number, provider: StaticJsonRpcProvider) {
     provider,
     abi: ConfigAbi,
   });
+  const wnt = getContract<WNT>({
+    chainId,
+    name: "wnt",
+    provider,
+    abi: WntAbi,
+  });
+  const esGmx = getContract<MintableToken>({
+    chainId,
+    name: "esGmx",
+    provider,
+    abi: EsGmxAbi,
+  });
+  const feeDistributor = getContract<FeeDistributor>({
+    chainId,
+    name: "feeDistributor",
+    provider,
+    abi: FeeDistributorAbi,
+  });
+  const feeDistributorVault = getContract<FeeDistributorVault>({
+    chainId,
+    name: "feeDistributorVault",
+    provider,
+    abi: FeeDistributorVaultAbi,
+  });
+  const contributorHandler = getContract<ContributorHandler>({
+    chainId,
+    name: "contributorHandler",
+    provider,
+    abi: ContributorHandlerAbi,
+  });
+  const mockOFTAdapter = getContract<MockOFTAdapter>({
+    chainId,
+    name: "mockOFTAdapter",
+    provider,
+    abi: MockOFTAdapterAbi,
+  });
   const contracts = {
     dataStore,
     config,
     configSyncer,
     eventEmitter,
     feeHandler,
-    glvHandler,
     glvReader,
     multicall3,
     orderHandler,
     reader,
+    wnt,
+    esGmx,
+    feeDistributor,
+    feeDistributorVault,
+    contributorHandler,
+    mockOFTAdapter,
   };
 
   return contracts;

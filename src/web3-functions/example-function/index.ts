@@ -6,5 +6,5 @@ import { exampleFunction } from "./exampleFunction";
 import { wrapContext } from "../../lib/gelato";
 
 Web3Function.onRun((gelatoContext: Web3FunctionEventContext) => {
-  return exampleFunction(wrapContext(gelatoContext));
+  return exampleFunction(wrapContext(true, gelatoContext));
 });
