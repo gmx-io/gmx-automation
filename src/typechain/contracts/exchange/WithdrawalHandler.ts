@@ -202,6 +202,7 @@ export declare namespace IExecuteWithdrawalUtils {
     dataStore: PromiseOrValue<string>;
     eventEmitter: PromiseOrValue<string>;
     multichainVault: PromiseOrValue<string>;
+    multichainTransferRouter: PromiseOrValue<string>;
     withdrawalVault: PromiseOrValue<string>;
     oracle: PromiseOrValue<string>;
     swapHandler: PromiseOrValue<string>;
@@ -220,12 +221,14 @@ export declare namespace IExecuteWithdrawalUtils {
     string,
     string,
     string,
+    string,
     BigNumber,
     number
   ] & {
     dataStore: string;
     eventEmitter: string;
     multichainVault: string;
+    multichainTransferRouter: string;
     withdrawalVault: string;
     oracle: string;
     swapHandler: string;
@@ -276,7 +279,8 @@ export interface WithdrawalHandlerInterface extends utils.Interface {
     "eventEmitter()": FunctionFragment;
     "executeAtomicWithdrawal(address,((address,address,address,address,address[],address[]),uint256,uint256,bool,uint256,uint256,bytes32[]),(address[],address[],bytes[]))": FunctionFragment;
     "executeWithdrawal(bytes32,(address[],address[],bytes[]))": FunctionFragment;
-    "executeWithdrawalFromController((address,address,address,address,address,address,bytes32,address,uint256,uint8),((address,address,address,address,address,address[],address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bool),bytes32[]))": FunctionFragment;
+    "executeWithdrawalFromController((address,address,address,address,address,address,address,bytes32,address,uint256,uint8),((address,address,address,address,address,address[],address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bool),bytes32[]))": FunctionFragment;
+    "multichainTransferRouter()": FunctionFragment;
     "multichainVault()": FunctionFragment;
     "oracle()": FunctionFragment;
     "roleStore()": FunctionFragment;
@@ -295,6 +299,7 @@ export interface WithdrawalHandlerInterface extends utils.Interface {
       | "executeAtomicWithdrawal"
       | "executeWithdrawal"
       | "executeWithdrawalFromController"
+      | "multichainTransferRouter"
       | "multichainVault"
       | "oracle"
       | "roleStore"
@@ -349,6 +354,10 @@ export interface WithdrawalHandlerInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "multichainTransferRouter",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "multichainVault",
     values?: undefined
   ): string;
@@ -398,6 +407,10 @@ export interface WithdrawalHandlerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "executeWithdrawalFromController",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "multichainTransferRouter",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -492,6 +505,8 @@ export interface WithdrawalHandler extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    multichainTransferRouter(overrides?: CallOverrides): Promise<[string]>;
+
     multichainVault(overrides?: CallOverrides): Promise<[string]>;
 
     oracle(overrides?: CallOverrides): Promise<[string]>;
@@ -553,6 +568,8 @@ export interface WithdrawalHandler extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  multichainTransferRouter(overrides?: CallOverrides): Promise<string>;
+
   multichainVault(overrides?: CallOverrides): Promise<string>;
 
   oracle(overrides?: CallOverrides): Promise<string>;
@@ -613,6 +630,8 @@ export interface WithdrawalHandler extends BaseContract {
       withdrawal: Withdrawal.PropsStruct,
       overrides?: CallOverrides
     ): Promise<IExecuteWithdrawalUtils.ExecuteWithdrawalResultStructOutput>;
+
+    multichainTransferRouter(overrides?: CallOverrides): Promise<string>;
 
     multichainVault(overrides?: CallOverrides): Promise<string>;
 
@@ -678,6 +697,8 @@ export interface WithdrawalHandler extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    multichainTransferRouter(overrides?: CallOverrides): Promise<BigNumber>;
+
     multichainVault(overrides?: CallOverrides): Promise<BigNumber>;
 
     oracle(overrides?: CallOverrides): Promise<BigNumber>;
@@ -738,6 +759,10 @@ export interface WithdrawalHandler extends BaseContract {
       executeWithdrawalParams: IExecuteWithdrawalUtils.ExecuteWithdrawalParamsStruct,
       withdrawal: Withdrawal.PropsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    multichainTransferRouter(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     multichainVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;

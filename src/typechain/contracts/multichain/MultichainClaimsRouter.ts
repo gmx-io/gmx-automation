@@ -189,6 +189,7 @@ export interface MultichainClaimsRouterInterface extends utils.Interface {
     "claimCollateral(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,address[],address[],uint256[],address)": FunctionFragment;
     "claimFundingFees(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,address[],address[],address)": FunctionFragment;
     "dataStore()": FunctionFragment;
+    "digests(bytes32)": FunctionFragment;
     "eventEmitter()": FunctionFragment;
     "externalHandler()": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
@@ -202,7 +203,6 @@ export interface MultichainClaimsRouterInterface extends utils.Interface {
     "sendTokens(address,address,uint256)": FunctionFragment;
     "sendWnt(address,uint256)": FunctionFragment;
     "swapHandler()": FunctionFragment;
-    "userNonces(address)": FunctionFragment;
   };
 
   getFunction(
@@ -211,6 +211,7 @@ export interface MultichainClaimsRouterInterface extends utils.Interface {
       | "claimCollateral"
       | "claimFundingFees"
       | "dataStore"
+      | "digests"
       | "eventEmitter"
       | "externalHandler"
       | "multicall"
@@ -224,7 +225,6 @@ export interface MultichainClaimsRouterInterface extends utils.Interface {
       | "sendTokens"
       | "sendWnt"
       | "swapHandler"
-      | "userNonces"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -262,6 +262,10 @@ export interface MultichainClaimsRouterInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "dataStore", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "digests",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "eventEmitter",
     values?: undefined
@@ -309,10 +313,6 @@ export interface MultichainClaimsRouterInterface extends utils.Interface {
     functionFragment: "swapHandler",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "userNonces",
-    values: [PromiseOrValue<string>]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "claimAffiliateRewards",
@@ -327,6 +327,7 @@ export interface MultichainClaimsRouterInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "dataStore", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "digests", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eventEmitter",
     data: BytesLike
@@ -358,7 +359,6 @@ export interface MultichainClaimsRouterInterface extends utils.Interface {
     functionFragment: "swapHandler",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "userNonces", data: BytesLike): Result;
 
   events: {
     "TokenTransferReverted(string,bytes)": EventFragment;
@@ -439,6 +439,11 @@ export interface MultichainClaimsRouter extends BaseContract {
 
     dataStore(overrides?: CallOverrides): Promise<[string]>;
 
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     eventEmitter(overrides?: CallOverrides): Promise<[string]>;
 
     externalHandler(overrides?: CallOverrides): Promise<[string]>;
@@ -480,11 +485,6 @@ export interface MultichainClaimsRouter extends BaseContract {
     ): Promise<ContractTransaction>;
 
     swapHandler(overrides?: CallOverrides): Promise<[string]>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
   };
 
   claimAffiliateRewards(
@@ -519,6 +519,11 @@ export interface MultichainClaimsRouter extends BaseContract {
   ): Promise<ContractTransaction>;
 
   dataStore(overrides?: CallOverrides): Promise<string>;
+
+  digests(
+    arg0: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -562,11 +567,6 @@ export interface MultichainClaimsRouter extends BaseContract {
 
   swapHandler(overrides?: CallOverrides): Promise<string>;
 
-  userNonces(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   callStatic: {
     claimAffiliateRewards(
       relayParams: IRelayUtils.RelayParamsStruct,
@@ -600,6 +600,11 @@ export interface MultichainClaimsRouter extends BaseContract {
     ): Promise<BigNumber[]>;
 
     dataStore(overrides?: CallOverrides): Promise<string>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -642,11 +647,6 @@ export interface MultichainClaimsRouter extends BaseContract {
     ): Promise<void>;
 
     swapHandler(overrides?: CallOverrides): Promise<string>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -694,6 +694,11 @@ export interface MultichainClaimsRouter extends BaseContract {
 
     dataStore(overrides?: CallOverrides): Promise<BigNumber>;
 
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     eventEmitter(overrides?: CallOverrides): Promise<BigNumber>;
 
     externalHandler(overrides?: CallOverrides): Promise<BigNumber>;
@@ -735,11 +740,6 @@ export interface MultichainClaimsRouter extends BaseContract {
     ): Promise<BigNumber>;
 
     swapHandler(overrides?: CallOverrides): Promise<BigNumber>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -775,6 +775,11 @@ export interface MultichainClaimsRouter extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     dataStore(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     eventEmitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -817,10 +822,5 @@ export interface MultichainClaimsRouter extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     swapHandler(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
   };
 }

@@ -44,32 +44,31 @@ export interface TimelockConfigInterface extends utils.Interface {
     "cancelAction(bytes32)": FunctionFragment;
     "dataStore()": FunctionFragment;
     "eventEmitter()": FunctionFragment;
-    "execute(address,bytes)": FunctionFragment;
-    "executeBatch(address[],uint256[],bytes[])": FunctionFragment;
+    "execute(address,bytes,bytes32,bytes32)": FunctionFragment;
+    "executeBatch(address[],uint256[],bytes[],bytes32,bytes32)": FunctionFragment;
     "executeWithOraclePrice(address,bytes,bytes32,bytes32,(address[],address[],bytes[]))": FunctionFragment;
-    "getHash(address,bytes)": FunctionFragment;
-    "getHashBatch(address[],bytes[],uint256[])": FunctionFragment;
-    "increaseTimelockDelay(uint256)": FunctionFragment;
+    "getHash(address,bytes,bytes32,bytes32)": FunctionFragment;
+    "getHashBatch(address[],bytes[],uint256[],bytes32,bytes32)": FunctionFragment;
+    "increaseTimelockDelay(uint256,bytes32,bytes32)": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
     "oracleStore()": FunctionFragment;
     "revokeRole(address,bytes32)": FunctionFragment;
     "roleStore()": FunctionFragment;
-    "signalAddOracleSigner(address)": FunctionFragment;
-    "signalGrantRole(address,bytes32)": FunctionFragment;
-    "signalReduceLentAmount(address,address,uint256)": FunctionFragment;
-    "signalRemoveOracleSigner(address)": FunctionFragment;
-    "signalRevokeRole(address,bytes32)": FunctionFragment;
-    "signalSetAtomicOracleProvider(address,bool)": FunctionFragment;
-    "signalSetDataStream(address,bytes32,uint256,uint256)": FunctionFragment;
-    "signalSetFeeReceiver(address)": FunctionFragment;
-    "signalSetHoldingAddress(address)": FunctionFragment;
-    "signalSetMaxTotalContributorTokenAmount(address,address[],uint256[])": FunctionFragment;
-    "signalSetMinContributorPaymentInterval(address,uint256)": FunctionFragment;
-    "signalSetOracleProviderEnabled(address,bool)": FunctionFragment;
-    "signalSetOracleProviderForToken(address,address)": FunctionFragment;
-    "signalSetPriceFeed(address,address,uint256,uint256,uint256)": FunctionFragment;
-    "signalWithdrawFromPositionImpactPool(address,address,uint256)": FunctionFragment;
-    "signalWithdrawTokens(address,address,address,uint256)": FunctionFragment;
+    "signalAddOracleSigner(address,bytes32,bytes32)": FunctionFragment;
+    "signalGrantRole(address,bytes32,bytes32,bytes32)": FunctionFragment;
+    "signalReduceLentAmount(address,address,uint256,bytes32,bytes32)": FunctionFragment;
+    "signalRemoveOracleSigner(address,bytes32,bytes32)": FunctionFragment;
+    "signalRevokeRole(address,bytes32,bytes32,bytes32)": FunctionFragment;
+    "signalSetAtomicOracleProvider(address,bool,bytes32,bytes32)": FunctionFragment;
+    "signalSetDataStream(address,bytes32,uint256,uint256,bytes32,bytes32)": FunctionFragment;
+    "signalSetEdgeDataStream(address,bytes32,uint256,bytes32,bytes32)": FunctionFragment;
+    "signalSetFeeReceiver(address,bytes32,bytes32)": FunctionFragment;
+    "signalSetHoldingAddress(address,bytes32,bytes32)": FunctionFragment;
+    "signalSetOracleProviderEnabled(address,bool,bytes32,bytes32)": FunctionFragment;
+    "signalSetOracleProviderForToken(address,address,address,bytes32,bytes32)": FunctionFragment;
+    "signalSetPriceFeed(address,address,uint256,uint256,uint256,bytes32,bytes32)": FunctionFragment;
+    "signalWithdrawFromPositionImpactPool(address,address,uint256,bytes32,bytes32)": FunctionFragment;
+    "signalWithdrawTokens(address,address,address,uint256,bytes32,bytes32)": FunctionFragment;
     "timelockController()": FunctionFragment;
   };
 
@@ -96,10 +95,9 @@ export interface TimelockConfigInterface extends utils.Interface {
       | "signalRevokeRole"
       | "signalSetAtomicOracleProvider"
       | "signalSetDataStream"
+      | "signalSetEdgeDataStream"
       | "signalSetFeeReceiver"
       | "signalSetHoldingAddress"
-      | "signalSetMaxTotalContributorTokenAmount"
-      | "signalSetMinContributorPaymentInterval"
       | "signalSetOracleProviderEnabled"
       | "signalSetOracleProviderForToken"
       | "signalSetPriceFeed"
@@ -123,14 +121,21 @@ export interface TimelockConfigInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "execute",
-    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "executeBatch",
     values: [
       PromiseOrValue<string>[],
       PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BytesLike>[]
+      PromiseOrValue<BytesLike>[],
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
@@ -145,19 +150,30 @@ export interface TimelockConfigInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getHash",
-    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getHashBatch",
     values: [
       PromiseOrValue<string>[],
       PromiseOrValue<BytesLike>[],
-      PromiseOrValue<BigNumberish>[]
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "increaseTimelockDelay",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "multicall",
@@ -174,31 +190,56 @@ export interface TimelockConfigInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "roleStore", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "signalAddOracleSigner",
-    values: [PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "signalGrantRole",
-    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "signalReduceLentAmount",
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "signalRemoveOracleSigner",
-    values: [PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "signalRevokeRole",
-    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "signalSetAtomicOracleProvider",
-    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "signalSetDataStream",
@@ -206,36 +247,55 @@ export interface TimelockConfigInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "signalSetEdgeDataStream",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "signalSetFeeReceiver",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "signalSetHoldingAddress",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "signalSetMaxTotalContributorTokenAmount",
     values: [
       PromiseOrValue<string>,
-      PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>[]
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "signalSetMinContributorPaymentInterval",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    functionFragment: "signalSetHoldingAddress",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "signalSetOracleProviderEnabled",
-    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "signalSetOracleProviderForToken",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "signalSetPriceFeed",
@@ -244,7 +304,9 @@ export interface TimelockConfigInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
@@ -252,7 +314,9 @@ export interface TimelockConfigInterface extends utils.Interface {
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
@@ -261,7 +325,9 @@ export interface TimelockConfigInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
@@ -336,19 +402,15 @@ export interface TimelockConfigInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "signalSetEdgeDataStream",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "signalSetFeeReceiver",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "signalSetHoldingAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "signalSetMaxTotalContributorTokenAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "signalSetMinContributorPaymentInterval",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -420,6 +482,8 @@ export interface TimelockConfig extends BaseContract {
     execute(
       target: PromiseOrValue<string>,
       payload: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -427,6 +491,8 @@ export interface TimelockConfig extends BaseContract {
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       payloads: PromiseOrValue<BytesLike>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -442,6 +508,8 @@ export interface TimelockConfig extends BaseContract {
     getHash(
       target: PromiseOrValue<string>,
       payload: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -449,11 +517,15 @@ export interface TimelockConfig extends BaseContract {
       targets: PromiseOrValue<string>[],
       payloads: PromiseOrValue<BytesLike>[],
       values: PromiseOrValue<BigNumberish>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     increaseTimelockDelay(
       _timelockDelay: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -474,12 +546,16 @@ export interface TimelockConfig extends BaseContract {
 
     signalAddOracleSigner(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     signalGrantRole(
       account: PromiseOrValue<string>,
       roleKey: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -487,23 +563,31 @@ export interface TimelockConfig extends BaseContract {
       market: PromiseOrValue<string>,
       fundingAccount: PromiseOrValue<string>,
       reductionAmount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     signalRemoveOracleSigner(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     signalRevokeRole(
       account: PromiseOrValue<string>,
       roleKey: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     signalSetAtomicOracleProvider(
       provider: PromiseOrValue<string>,
       value: PromiseOrValue<boolean>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -512,41 +596,48 @@ export interface TimelockConfig extends BaseContract {
       feedId: PromiseOrValue<BytesLike>,
       dataStreamMultiplier: PromiseOrValue<BigNumberish>,
       dataStreamSpreadReductionFactor: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    signalSetEdgeDataStream(
+      token: PromiseOrValue<string>,
+      edgeDataStreamId: PromiseOrValue<BytesLike>,
+      edgeDataStreamTokenDecimals: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     signalSetFeeReceiver(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     signalSetHoldingAddress(
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    signalSetMaxTotalContributorTokenAmount(
-      target: PromiseOrValue<string>,
-      tokens: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    signalSetMinContributorPaymentInterval(
-      target: PromiseOrValue<string>,
-      interval: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     signalSetOracleProviderEnabled(
       provider: PromiseOrValue<string>,
       value: PromiseOrValue<boolean>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     signalSetOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -556,6 +647,8 @@ export interface TimelockConfig extends BaseContract {
       priceFeedMultiplier: PromiseOrValue<BigNumberish>,
       priceFeedHeartbeatDuration: PromiseOrValue<BigNumberish>,
       stablePrice: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -563,6 +656,8 @@ export interface TimelockConfig extends BaseContract {
       market: PromiseOrValue<string>,
       receiver: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -571,6 +666,8 @@ export interface TimelockConfig extends BaseContract {
       token: PromiseOrValue<string>,
       receiver: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -591,6 +688,8 @@ export interface TimelockConfig extends BaseContract {
   execute(
     target: PromiseOrValue<string>,
     payload: PromiseOrValue<BytesLike>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -598,6 +697,8 @@ export interface TimelockConfig extends BaseContract {
     targets: PromiseOrValue<string>[],
     values: PromiseOrValue<BigNumberish>[],
     payloads: PromiseOrValue<BytesLike>[],
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -613,6 +714,8 @@ export interface TimelockConfig extends BaseContract {
   getHash(
     target: PromiseOrValue<string>,
     payload: PromiseOrValue<BytesLike>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -620,11 +723,15 @@ export interface TimelockConfig extends BaseContract {
     targets: PromiseOrValue<string>[],
     payloads: PromiseOrValue<BytesLike>[],
     values: PromiseOrValue<BigNumberish>[],
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   increaseTimelockDelay(
     _timelockDelay: PromiseOrValue<BigNumberish>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -645,12 +752,16 @@ export interface TimelockConfig extends BaseContract {
 
   signalAddOracleSigner(
     account: PromiseOrValue<string>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   signalGrantRole(
     account: PromiseOrValue<string>,
     roleKey: PromiseOrValue<BytesLike>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -658,23 +769,31 @@ export interface TimelockConfig extends BaseContract {
     market: PromiseOrValue<string>,
     fundingAccount: PromiseOrValue<string>,
     reductionAmount: PromiseOrValue<BigNumberish>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   signalRemoveOracleSigner(
     account: PromiseOrValue<string>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   signalRevokeRole(
     account: PromiseOrValue<string>,
     roleKey: PromiseOrValue<BytesLike>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   signalSetAtomicOracleProvider(
     provider: PromiseOrValue<string>,
     value: PromiseOrValue<boolean>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -683,41 +802,48 @@ export interface TimelockConfig extends BaseContract {
     feedId: PromiseOrValue<BytesLike>,
     dataStreamMultiplier: PromiseOrValue<BigNumberish>,
     dataStreamSpreadReductionFactor: PromiseOrValue<BigNumberish>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  signalSetEdgeDataStream(
+    token: PromiseOrValue<string>,
+    edgeDataStreamId: PromiseOrValue<BytesLike>,
+    edgeDataStreamTokenDecimals: PromiseOrValue<BigNumberish>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   signalSetFeeReceiver(
     account: PromiseOrValue<string>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   signalSetHoldingAddress(
     account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  signalSetMaxTotalContributorTokenAmount(
-    target: PromiseOrValue<string>,
-    tokens: PromiseOrValue<string>[],
-    amounts: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  signalSetMinContributorPaymentInterval(
-    target: PromiseOrValue<string>,
-    interval: PromiseOrValue<BigNumberish>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   signalSetOracleProviderEnabled(
     provider: PromiseOrValue<string>,
     value: PromiseOrValue<boolean>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   signalSetOracleProviderForToken(
+    oracle: PromiseOrValue<string>,
     token: PromiseOrValue<string>,
     provider: PromiseOrValue<string>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -727,6 +853,8 @@ export interface TimelockConfig extends BaseContract {
     priceFeedMultiplier: PromiseOrValue<BigNumberish>,
     priceFeedHeartbeatDuration: PromiseOrValue<BigNumberish>,
     stablePrice: PromiseOrValue<BigNumberish>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -734,6 +862,8 @@ export interface TimelockConfig extends BaseContract {
     market: PromiseOrValue<string>,
     receiver: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -742,6 +872,8 @@ export interface TimelockConfig extends BaseContract {
     token: PromiseOrValue<string>,
     receiver: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -762,6 +894,8 @@ export interface TimelockConfig extends BaseContract {
     execute(
       target: PromiseOrValue<string>,
       payload: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -769,6 +903,8 @@ export interface TimelockConfig extends BaseContract {
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       payloads: PromiseOrValue<BytesLike>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -784,6 +920,8 @@ export interface TimelockConfig extends BaseContract {
     getHash(
       target: PromiseOrValue<string>,
       payload: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -791,11 +929,15 @@ export interface TimelockConfig extends BaseContract {
       targets: PromiseOrValue<string>[],
       payloads: PromiseOrValue<BytesLike>[],
       values: PromiseOrValue<BigNumberish>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     increaseTimelockDelay(
       _timelockDelay: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -816,12 +958,16 @@ export interface TimelockConfig extends BaseContract {
 
     signalAddOracleSigner(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     signalGrantRole(
       account: PromiseOrValue<string>,
       roleKey: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -829,23 +975,31 @@ export interface TimelockConfig extends BaseContract {
       market: PromiseOrValue<string>,
       fundingAccount: PromiseOrValue<string>,
       reductionAmount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     signalRemoveOracleSigner(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     signalRevokeRole(
       account: PromiseOrValue<string>,
       roleKey: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     signalSetAtomicOracleProvider(
       provider: PromiseOrValue<string>,
       value: PromiseOrValue<boolean>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -854,41 +1008,48 @@ export interface TimelockConfig extends BaseContract {
       feedId: PromiseOrValue<BytesLike>,
       dataStreamMultiplier: PromiseOrValue<BigNumberish>,
       dataStreamSpreadReductionFactor: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    signalSetEdgeDataStream(
+      token: PromiseOrValue<string>,
+      edgeDataStreamId: PromiseOrValue<BytesLike>,
+      edgeDataStreamTokenDecimals: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     signalSetFeeReceiver(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     signalSetHoldingAddress(
       account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    signalSetMaxTotalContributorTokenAmount(
-      target: PromiseOrValue<string>,
-      tokens: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    signalSetMinContributorPaymentInterval(
-      target: PromiseOrValue<string>,
-      interval: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     signalSetOracleProviderEnabled(
       provider: PromiseOrValue<string>,
       value: PromiseOrValue<boolean>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     signalSetOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -898,6 +1059,8 @@ export interface TimelockConfig extends BaseContract {
       priceFeedMultiplier: PromiseOrValue<BigNumberish>,
       priceFeedHeartbeatDuration: PromiseOrValue<BigNumberish>,
       stablePrice: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -905,6 +1068,8 @@ export interface TimelockConfig extends BaseContract {
       market: PromiseOrValue<string>,
       receiver: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -913,6 +1078,8 @@ export interface TimelockConfig extends BaseContract {
       token: PromiseOrValue<string>,
       receiver: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -936,6 +1103,8 @@ export interface TimelockConfig extends BaseContract {
     execute(
       target: PromiseOrValue<string>,
       payload: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -943,6 +1112,8 @@ export interface TimelockConfig extends BaseContract {
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       payloads: PromiseOrValue<BytesLike>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -958,6 +1129,8 @@ export interface TimelockConfig extends BaseContract {
     getHash(
       target: PromiseOrValue<string>,
       payload: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -965,11 +1138,15 @@ export interface TimelockConfig extends BaseContract {
       targets: PromiseOrValue<string>[],
       payloads: PromiseOrValue<BytesLike>[],
       values: PromiseOrValue<BigNumberish>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     increaseTimelockDelay(
       _timelockDelay: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -990,12 +1167,16 @@ export interface TimelockConfig extends BaseContract {
 
     signalAddOracleSigner(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     signalGrantRole(
       account: PromiseOrValue<string>,
       roleKey: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1003,23 +1184,31 @@ export interface TimelockConfig extends BaseContract {
       market: PromiseOrValue<string>,
       fundingAccount: PromiseOrValue<string>,
       reductionAmount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     signalRemoveOracleSigner(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     signalRevokeRole(
       account: PromiseOrValue<string>,
       roleKey: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     signalSetAtomicOracleProvider(
       provider: PromiseOrValue<string>,
       value: PromiseOrValue<boolean>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1028,41 +1217,48 @@ export interface TimelockConfig extends BaseContract {
       feedId: PromiseOrValue<BytesLike>,
       dataStreamMultiplier: PromiseOrValue<BigNumberish>,
       dataStreamSpreadReductionFactor: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    signalSetEdgeDataStream(
+      token: PromiseOrValue<string>,
+      edgeDataStreamId: PromiseOrValue<BytesLike>,
+      edgeDataStreamTokenDecimals: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     signalSetFeeReceiver(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     signalSetHoldingAddress(
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    signalSetMaxTotalContributorTokenAmount(
-      target: PromiseOrValue<string>,
-      tokens: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    signalSetMinContributorPaymentInterval(
-      target: PromiseOrValue<string>,
-      interval: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     signalSetOracleProviderEnabled(
       provider: PromiseOrValue<string>,
       value: PromiseOrValue<boolean>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     signalSetOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1072,6 +1268,8 @@ export interface TimelockConfig extends BaseContract {
       priceFeedMultiplier: PromiseOrValue<BigNumberish>,
       priceFeedHeartbeatDuration: PromiseOrValue<BigNumberish>,
       stablePrice: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1079,6 +1277,8 @@ export interface TimelockConfig extends BaseContract {
       market: PromiseOrValue<string>,
       receiver: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1087,6 +1287,8 @@ export interface TimelockConfig extends BaseContract {
       token: PromiseOrValue<string>,
       receiver: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1110,6 +1312,8 @@ export interface TimelockConfig extends BaseContract {
     execute(
       target: PromiseOrValue<string>,
       payload: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1117,6 +1321,8 @@ export interface TimelockConfig extends BaseContract {
       targets: PromiseOrValue<string>[],
       values: PromiseOrValue<BigNumberish>[],
       payloads: PromiseOrValue<BytesLike>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1132,6 +1338,8 @@ export interface TimelockConfig extends BaseContract {
     getHash(
       target: PromiseOrValue<string>,
       payload: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1139,11 +1347,15 @@ export interface TimelockConfig extends BaseContract {
       targets: PromiseOrValue<string>[],
       payloads: PromiseOrValue<BytesLike>[],
       values: PromiseOrValue<BigNumberish>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     increaseTimelockDelay(
       _timelockDelay: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1164,12 +1376,16 @@ export interface TimelockConfig extends BaseContract {
 
     signalAddOracleSigner(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     signalGrantRole(
       account: PromiseOrValue<string>,
       roleKey: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1177,23 +1393,31 @@ export interface TimelockConfig extends BaseContract {
       market: PromiseOrValue<string>,
       fundingAccount: PromiseOrValue<string>,
       reductionAmount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     signalRemoveOracleSigner(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     signalRevokeRole(
       account: PromiseOrValue<string>,
       roleKey: PromiseOrValue<BytesLike>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     signalSetAtomicOracleProvider(
       provider: PromiseOrValue<string>,
       value: PromiseOrValue<boolean>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1202,41 +1426,48 @@ export interface TimelockConfig extends BaseContract {
       feedId: PromiseOrValue<BytesLike>,
       dataStreamMultiplier: PromiseOrValue<BigNumberish>,
       dataStreamSpreadReductionFactor: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    signalSetEdgeDataStream(
+      token: PromiseOrValue<string>,
+      edgeDataStreamId: PromiseOrValue<BytesLike>,
+      edgeDataStreamTokenDecimals: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     signalSetFeeReceiver(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     signalSetHoldingAddress(
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    signalSetMaxTotalContributorTokenAmount(
-      target: PromiseOrValue<string>,
-      tokens: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    signalSetMinContributorPaymentInterval(
-      target: PromiseOrValue<string>,
-      interval: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     signalSetOracleProviderEnabled(
       provider: PromiseOrValue<string>,
       value: PromiseOrValue<boolean>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     signalSetOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1246,6 +1477,8 @@ export interface TimelockConfig extends BaseContract {
       priceFeedMultiplier: PromiseOrValue<BigNumberish>,
       priceFeedHeartbeatDuration: PromiseOrValue<BigNumberish>,
       stablePrice: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1253,6 +1486,8 @@ export interface TimelockConfig extends BaseContract {
       market: PromiseOrValue<string>,
       receiver: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1261,6 +1496,8 @@ export interface TimelockConfig extends BaseContract {
       token: PromiseOrValue<string>,
       receiver: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -24,7 +24,7 @@ import { getContracts } from "../src/lib/contracts";
 import { Context, wrapContext } from "../src/lib/gelato";
 import { getLogger, Logger } from "../src/lib/logger";
 import { feeDistribution } from "../src/web3-functions/feeDistribution/feeDistribution";
-import { EVENT_LOG_TOPIC } from "../src/lib/events";
+import { EVENT_LOG_TOPIC, EVENT_LOG1_TOPIC } from "../src/lib/events";
 import {
   WNT_PRICE_KEY,
   GMX_PRICE_KEY,
@@ -32,10 +32,9 @@ import {
 } from "../src/lib/keys/keys";
 import {
   FEE_DISTRIBUTION_COMPLETED_HASH,
-  ES_GMX_REFERRAL_REWARDS_SENT_HASH,
-  WNT_REFERRAL_REWARDS_SENT_HASH,
-  getFeeDistributionEsGmxReferralRewardsSentEventData,
-  getFeeDistributionWntReferralRewardsSentEventData,
+  TOTAL_ES_GMX_REWARDS_INCREASED_HASH,
+  DISTRIBUTION_ID,
+  getFeeDistributionTotalEsGmxRewardsIncreasedEventData,
   getFeeDistributorEventName,
 } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, GMX_DECIMALS } from "../src/lib/number";
@@ -65,6 +64,7 @@ const feeSurplus = feeSurplusStr.toLowerCase() === "true";
 const wntPriceKey = WNT_PRICE_KEY;
 const gmxPriceKey = GMX_PRICE_KEY;
 const maxRewardsEsGmxAmountKey = MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY;
+const distributionId = DISTRIBUTION_ID;
 
 const distributeSimulation = async () => {
   const chainId = (await ethers.provider.getNetwork()).chainId;
@@ -75,9 +75,8 @@ const distributeSimulation = async () => {
   ];
 
   const referralRewardsSentTopics = [
-    EVENT_LOG_TOPIC,
-    ES_GMX_REFERRAL_REWARDS_SENT_HASH,
-    WNT_REFERRAL_REWARDS_SENT_HASH,
+    EVENT_LOG1_TOPIC,
+    TOTAL_ES_GMX_REWARDS_INCREASED_HASH,
   ];
 
   if (!isSupportedChainId(chainId)) {
@@ -139,6 +138,7 @@ const distributeSimulation = async () => {
         wntPriceKey,
         gmxPriceKey,
         maxRewardsEsGmxAmountKey,
+        distributionId,
         shouldSendTxn,
       },
       chainId
@@ -188,28 +188,20 @@ const distributeSimulation = async () => {
 
       for (const log of fdCompletedLogs) {
         const eventName = getFeeDistributorEventName(log, eventEmitter);
-        if (eventName === "EsGmxReferralRewardsSent") {
-          const ev = getFeeDistributionEsGmxReferralRewardsSentEventData(
+        if (eventName === "TotalEsGmxRewardsIncreased") {
+          const ev = getFeeDistributionTotalEsGmxRewardsIncreasedEventData(
             log,
             eventEmitter
           );
 
-          logger.log("EsGmxReferralRewardsSent:", {
-            esGmxAmount: formatAmount(ev.esGmxAmount, GMX_DECIMALS, 4),
-            updatedBonusRewards: formatAmount(
-              ev.updatedBonusRewards,
+          logger.log("TotalEsGmxRewardsIncreased:", {
+            account: ev.account,
+            amount: formatAmount(ev.amount, GMX_DECIMALS, 4),
+            totalEsGmxRewards: formatAmount(
+              ev.totalEsGmxRewards,
               GMX_DECIMALS,
               4
             ),
-          });
-        } else if (eventName === "WntReferralRewardsSent") {
-          const ev = getFeeDistributionWntReferralRewardsSentEventData(
-            log,
-            eventEmitter
-          );
-
-          logger.log("WntReferralRewardsSent:", {
-            wntAmount: formatAmount(ev.wntAmount, GMX_DECIMALS, 4),
           });
         } else {
           throw new Error("Unsupported event: " + eventName);

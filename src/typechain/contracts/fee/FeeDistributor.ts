@@ -24,6 +24,18 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
+export declare namespace ClaimUtils {
+  export type DepositParamStruct = {
+    account: PromiseOrValue<string>;
+    amount: PromiseOrValue<BigNumberish>;
+  };
+
+  export type DepositParamStructOutput = [string, BigNumber] & {
+    account: string;
+    amount: BigNumber;
+  };
+}
+
 export declare namespace MultichainReaderUtils {
   export type ReceivedDataStruct = {
     timestamp: PromiseOrValue<BigNumberish>;
@@ -39,28 +51,36 @@ export declare namespace MultichainReaderUtils {
 export interface FeeDistributorInterface extends utils.Interface {
   functions: {
     "bridgedGmxReceived()": FunctionFragment;
+    "depositReferralRewards(address,uint256,(address,uint256)[])": FunctionFragment;
     "distribute(uint256,uint256,uint256,uint256)": FunctionFragment;
     "initiateDistribute()": FunctionFragment;
     "oracle()": FunctionFragment;
     "processLzReceive(bytes32,(uint256,bytes))": FunctionFragment;
     "roleStore()": FunctionFragment;
-    "sendReferralRewards(address,uint256,address[],uint256[])": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "bridgedGmxReceived"
+      | "depositReferralRewards"
       | "distribute"
       | "initiateDistribute"
       | "oracle"
       | "processLzReceive"
       | "roleStore"
-      | "sendReferralRewards"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "bridgedGmxReceived",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "depositReferralRewards",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      ClaimUtils.DepositParamStruct[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "distribute",
@@ -84,18 +104,13 @@ export interface FeeDistributorInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "roleStore", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "sendReferralRewards",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "bridgedGmxReceived",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "depositReferralRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "distribute", data: BytesLike): Result;
@@ -109,10 +124,6 @@ export interface FeeDistributorInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "roleStore", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "sendReferralRewards",
-    data: BytesLike
-  ): Result;
 
   events: {};
 }
@@ -148,6 +159,13 @@ export interface FeeDistributor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    depositReferralRewards(
+      token: PromiseOrValue<string>,
+      distributionId: PromiseOrValue<BigNumberish>,
+      params: ClaimUtils.DepositParamStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     distribute(
       wntReferralRewardsInUsd: PromiseOrValue<BigNumberish>,
       esGmxForReferralRewards: PromiseOrValue<BigNumberish>,
@@ -169,17 +187,16 @@ export interface FeeDistributor extends BaseContract {
     ): Promise<ContractTransaction>;
 
     roleStore(overrides?: CallOverrides): Promise<[string]>;
-
-    sendReferralRewards(
-      token: PromiseOrValue<string>,
-      maxBatchSize: PromiseOrValue<BigNumberish>,
-      accounts: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
   };
 
   bridgedGmxReceived(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  depositReferralRewards(
+    token: PromiseOrValue<string>,
+    distributionId: PromiseOrValue<BigNumberish>,
+    params: ClaimUtils.DepositParamStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -205,16 +222,15 @@ export interface FeeDistributor extends BaseContract {
 
   roleStore(overrides?: CallOverrides): Promise<string>;
 
-  sendReferralRewards(
-    token: PromiseOrValue<string>,
-    maxBatchSize: PromiseOrValue<BigNumberish>,
-    accounts: PromiseOrValue<string>[],
-    amounts: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     bridgedGmxReceived(overrides?: CallOverrides): Promise<void>;
+
+    depositReferralRewards(
+      token: PromiseOrValue<string>,
+      distributionId: PromiseOrValue<BigNumberish>,
+      params: ClaimUtils.DepositParamStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     distribute(
       wntReferralRewardsInUsd: PromiseOrValue<BigNumberish>,
@@ -235,20 +251,19 @@ export interface FeeDistributor extends BaseContract {
     ): Promise<void>;
 
     roleStore(overrides?: CallOverrides): Promise<string>;
-
-    sendReferralRewards(
-      token: PromiseOrValue<string>,
-      maxBatchSize: PromiseOrValue<BigNumberish>,
-      accounts: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
     bridgedGmxReceived(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    depositReferralRewards(
+      token: PromiseOrValue<string>,
+      distributionId: PromiseOrValue<BigNumberish>,
+      params: ClaimUtils.DepositParamStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -273,18 +288,17 @@ export interface FeeDistributor extends BaseContract {
     ): Promise<BigNumber>;
 
     roleStore(overrides?: CallOverrides): Promise<BigNumber>;
-
-    sendReferralRewards(
-      token: PromiseOrValue<string>,
-      maxBatchSize: PromiseOrValue<BigNumberish>,
-      accounts: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     bridgedGmxReceived(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    depositReferralRewards(
+      token: PromiseOrValue<string>,
+      distributionId: PromiseOrValue<BigNumberish>,
+      params: ClaimUtils.DepositParamStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -309,13 +323,5 @@ export interface FeeDistributor extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     roleStore(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    sendReferralRewards(
-      token: PromiseOrValue<string>,
-      maxBatchSize: PromiseOrValue<BigNumberish>,
-      accounts: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
   };
 }

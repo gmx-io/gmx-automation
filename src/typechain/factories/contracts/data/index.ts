@@ -4,3 +4,4 @@
 /* eslint-disable */
 export { DataStore__factory } from "./DataStore__factory";
 export { Keys__factory } from "./Keys__factory";
+export { Keys2__factory } from "./Keys2__factory";

@@ -36,29 +36,41 @@ export type TransferStructOutput = [BigNumber, BigNumber, BigNumber] & {
 
 export interface FeeDistributorUtilsInterface extends utils.Interface {
   functions: {
+    "calculateKeeperCosts(DataStore)": FunctionFragment;
     "computeTransfers(uint256[],uint256[])": FunctionFragment;
-    "sortChainIds(uint256[])": FunctionFragment;
+    "retrieveChainIds(DataStore)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "computeTransfers" | "sortChainIds"
+    nameOrSignatureOrTopic:
+      | "calculateKeeperCosts"
+      | "computeTransfers"
+      | "retrieveChainIds"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "calculateKeeperCosts",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "computeTransfers",
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "sortChainIds",
-    values: [PromiseOrValue<BigNumberish>[]]
+    functionFragment: "retrieveChainIds",
+    values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "calculateKeeperCosts",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "computeTransfers",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "sortChainIds",
+    functionFragment: "retrieveChainIds",
     data: BytesLike
   ): Result;
 
@@ -92,17 +104,27 @@ export interface FeeDistributorUtils extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    calculateKeeperCosts(
+      dataStore: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
     computeTransfers(
       balances: PromiseOrValue<BigNumberish>[],
       targetBalances: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<[TransferStructOutput[]]>;
 
-    sortChainIds(
-      chainIds: PromiseOrValue<BigNumberish>[],
+    retrieveChainIds(
+      dataStore: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
   };
+
+  calculateKeeperCosts(
+    dataStore: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber]>;
 
   computeTransfers(
     balances: PromiseOrValue<BigNumberish>[],
@@ -110,20 +132,25 @@ export interface FeeDistributorUtils extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TransferStructOutput[]>;
 
-  sortChainIds(
-    chainIds: PromiseOrValue<BigNumberish>[],
+  retrieveChainIds(
+    dataStore: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
   callStatic: {
+    calculateKeeperCosts(
+      dataStore: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
     computeTransfers(
       balances: PromiseOrValue<BigNumberish>[],
       targetBalances: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<TransferStructOutput[]>;
 
-    sortChainIds(
-      chainIds: PromiseOrValue<BigNumberish>[],
+    retrieveChainIds(
+      dataStore: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
   };
@@ -131,27 +158,37 @@ export interface FeeDistributorUtils extends BaseContract {
   filters: {};
 
   estimateGas: {
+    calculateKeeperCosts(
+      dataStore: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     computeTransfers(
       balances: PromiseOrValue<BigNumberish>[],
       targetBalances: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    sortChainIds(
-      chainIds: PromiseOrValue<BigNumberish>[],
+    retrieveChainIds(
+      dataStore: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    calculateKeeperCosts(
+      dataStore: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     computeTransfers(
       balances: PromiseOrValue<BigNumberish>[],
       targetBalances: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    sortChainIds(
-      chainIds: PromiseOrValue<BigNumberish>[],
+    retrieveChainIds(
+      dataStore: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
