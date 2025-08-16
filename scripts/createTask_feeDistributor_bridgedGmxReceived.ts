@@ -7,7 +7,7 @@ import { getContracts } from "../src/lib/contracts";
 const main = async () => {
   const { logger, chainId, provider, automate } = await initCreateTask();
 
-  const { feeDistributor, feeDistributorVault, mockOFTAdapter } = getContracts(
+  const { feeDistributor, feeDistributorVault, gmx_Adapter } = getContracts(
     chainId,
     provider
   );
@@ -22,9 +22,9 @@ const main = async () => {
     trigger: {
       type: TriggerType.EVENT,
       filter: {
-        address: mockOFTAdapter.address,
+        address: gmx_Adapter.address,
         topics: [
-          [mockOFTAdapter.interface.getEventTopic("OFTReceived")],
+          [gmx_Adapter.interface.getEventTopic("OFTReceived")],
           [],
           [ethers.utils.hexZeroPad(feeDistributorVault.address, 32)],
         ],

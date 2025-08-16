@@ -23,7 +23,7 @@ export type SupportedContractName =
   | "feeDistributor"
   | "feeDistributorVault"
   | "contributorHandler"
-  | "mockOFTAdapter";
+  | "gmx_Adapter";
 
 export const isSupportedContractName = (
   contractName: string
@@ -43,7 +43,7 @@ export const isSupportedContractName = (
     "feeDistributor",
     "feeDistributorVault",
     "contributorHandler",
-    "mockOFTAdapter",
+    "gmx_Adapter",
   ].includes(contractName);
 };
 
@@ -66,7 +66,7 @@ const addresses: Record<
     feeDistributor: "0x871ACbEabBaf8Bed65c22ba7132beCFaBf8c27B5",
     feeDistributorVault: "0x8bEe2037448F096900Fd9affc427d38aE6CC0350",
     contributorHandler: "0x0000000000000000000000000000000000000000",
-    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
+    gmx_Adapter: "0x0000000000000000000000000000000000000000",
   },
   [ARBITRUM]: {
     config: "0xD1781719eDbED8940534511ac671027989e724b9",
@@ -83,7 +83,7 @@ const addresses: Record<
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
     contributorHandler: "0x0000000000000000000000000000000000000000",
-    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
+    gmx_Adapter: "0x0000000000000000000000000000000000000000",
   },
   [ARBITRUM_SEPOLIA]: {
     config: "0x0000000000000000000000000000000000000000",
@@ -100,7 +100,7 @@ const addresses: Record<
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
     contributorHandler: "0x0000000000000000000000000000000000000000",
-    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
+    gmx_Adapter: "0x0000000000000000000000000000000000000000",
   },
   [AVALANCHE]: {
     config: "0xEb376626D44c638Fd0C41170a40fd23a1A0622b7",
@@ -117,7 +117,7 @@ const addresses: Record<
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
     contributorHandler: "0x0000000000000000000000000000000000000000",
-    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
+    gmx_Adapter: "0x0000000000000000000000000000000000000000",
   },
   [AVALANCHE_FUJI]: {
     config: "0x1518ab348e7187d9CDCAB6Ba4ea3e37E187eB8D7",
@@ -134,7 +134,7 @@ const addresses: Record<
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
     contributorHandler: "0x0000000000000000000000000000000000000000",
-    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
+    gmx_Adapter: "0x0000000000000000000000000000000000000000",
   },
 };
 

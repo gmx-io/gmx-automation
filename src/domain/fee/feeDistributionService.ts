@@ -282,7 +282,10 @@ export async function getDistributionData(
   );
 
   if (allAffiliatesRebateUsd.eq(0)) {
-  logger.warn("No V1 rebates on %s; continuing to compute esGMX rewards (v1+v2)", chainId);
+    logger.warn(
+      "No V1 rebates on %s; continuing to compute esGMX rewards (v1+v2)",
+      chainId
+    );
   }
 
   const hasV1Rebates = !allAffiliatesRebateUsd.eq(0);
@@ -295,7 +298,6 @@ export async function getDistributionData(
       : ZERO;
   });
 
-  const maxEsGmxRewardsInUsd = maxEsGmxRewards.mul(gmxPrice);
   let totalEsGmxRewardsInUsd = ZERO;
 
   Object.values(affiliatesRebatesData).forEach((data) => {
@@ -318,21 +320,26 @@ export async function getDistributionData(
     totalEsGmxRewards = totalEsGmxRewards.add(data.esGmxRewards);
   });
 
-  if (totalEsGmxRewardsInUsd.gt(maxEsGmxRewardsInUsd)) {
-    const denominator = totalEsGmxRewardsInUsd
-      .mul(USD_DECIMALS)
-      .div(maxEsGmxRewardsInUsd);
+  if (totalEsGmxRewards.gt(maxEsGmxRewards)) {
+    const denominator = totalEsGmxRewards;
 
     totalEsGmxRewards = ZERO;
+    totalEsGmxRewardsInUsd = ZERO;
+
     Object.values(affiliatesRebatesData).forEach((data) => {
-      if (!data.esGmxRewardsUsd) {
+      if (data.tierId !== BONUS_TIER) {
         return;
       }
-      data.esGmxRewardsUsd = data.esGmxRewardsUsd
-        .mul(USD_DECIMALS)
+      if (!data.esGmxRewards) {
+        return;
+      }
+      data.esGmxRewards = data.esGmxRewards
+        .mul(maxEsGmxRewards)
         .div(denominator);
-      data.esGmxRewards = data.esGmxRewardsUsd.div(gmxPrice);
+      data.esGmxRewardsUsd = data.esGmxRewards.mul(gmxPrice);
+
       totalEsGmxRewards = totalEsGmxRewards.add(data.esGmxRewards);
+      totalEsGmxRewardsInUsd = totalEsGmxRewardsInUsd.add(data.esGmxRewardsUsd);
     });
   }
 
@@ -749,7 +756,10 @@ export async function referralRewardsCalls({
       affiliateAmounts,
       batchSize,
       async (currentBatch: [string, BigNumber][]) => {
-        const params = currentBatch.map(([account, amount]) => ({ account, amount }));
+        const params = currentBatch.map(([account, amount]) => ({
+          account,
+          amount,
+        }));
 
         const callData = feeDistributor.interface.encodeFunctionData(
           "depositReferralRewards",
@@ -771,7 +781,10 @@ export async function referralRewardsCalls({
       discountAmounts,
       batchSize,
       async (currentBatch: [string, BigNumber][]) => {
-        const params = currentBatch.map(([account, amount]) => ({ account, amount }));
+        const params = currentBatch.map(([account, amount]) => ({
+          account,
+          amount,
+        }));
 
         const callData = feeDistributor.interface.encodeFunctionData(
           "depositReferralRewards",
@@ -791,7 +804,10 @@ export async function referralRewardsCalls({
       esGmxAmounts,
       batchSize,
       async (currentBatch: [string, BigNumber][]) => {
-        const params = currentBatch.map(([account, amount]) => ({ account, amount }));
+        const params = currentBatch.map(([account, amount]) => ({
+          account,
+          amount,
+        }));
 
         calls.push({
           to: feeDistributor.address,
