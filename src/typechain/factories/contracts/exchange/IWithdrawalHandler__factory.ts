@@ -253,6 +253,11 @@ const _abi = [
             type: "address",
           },
           {
+            internalType: "contract IMultichainTransferRouter",
+            name: "multichainTransferRouter",
+            type: "address",
+          },
+          {
             internalType: "contract WithdrawalVault",
             name: "withdrawalVault",
             type: "address",

@@ -9,7 +9,6 @@ import type {
   BytesLike,
   CallOverrides,
   ContractTransaction,
-  Overrides,
   PayableOverrides,
   PopulatedTransaction,
   Signer,
@@ -230,10 +229,10 @@ export interface MockStargatePool extends BaseContract {
     ): Promise<ContractTransaction>;
 
     sendToken(
-      _to: PromiseOrValue<string>,
+      layerZeroProvider: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
       _message: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
@@ -272,10 +271,10 @@ export interface MockStargatePool extends BaseContract {
   ): Promise<ContractTransaction>;
 
   sendToken(
-    _to: PromiseOrValue<string>,
+    layerZeroProvider: PromiseOrValue<string>,
     _amount: PromiseOrValue<BigNumberish>,
     _message: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   token(overrides?: CallOverrides): Promise<string>;
@@ -314,7 +313,7 @@ export interface MockStargatePool extends BaseContract {
     ): Promise<[MessagingReceiptStructOutput, OFTReceiptStructOutput]>;
 
     sendToken(
-      _to: PromiseOrValue<string>,
+      layerZeroProvider: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
       _message: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -349,10 +348,10 @@ export interface MockStargatePool extends BaseContract {
     ): Promise<BigNumber>;
 
     sendToken(
-      _to: PromiseOrValue<string>,
+      layerZeroProvider: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
       _message: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
@@ -382,10 +381,10 @@ export interface MockStargatePool extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     sendToken(
-      _to: PromiseOrValue<string>,
+      layerZeroProvider: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
       _message: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;

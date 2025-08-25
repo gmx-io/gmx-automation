@@ -142,6 +142,7 @@ export declare namespace IRelayUtils {
   export type BridgeOutParamsStruct = {
     token: PromiseOrValue<string>;
     amount: PromiseOrValue<BigNumberish>;
+    minAmountOut: PromiseOrValue<BigNumberish>;
     provider: PromiseOrValue<string>;
     data: PromiseOrValue<BytesLike>;
   };
@@ -149,17 +150,24 @@ export declare namespace IRelayUtils {
   export type BridgeOutParamsStructOutput = [
     string,
     BigNumber,
+    BigNumber,
     string,
     string
-  ] & { token: string; amount: BigNumber; provider: string; data: string };
+  ] & {
+    token: string;
+    amount: BigNumber;
+    minAmountOut: BigNumber;
+    provider: string;
+    data: string;
+  };
 }
 
 export interface IMultichainTransferRouterInterface extends utils.Interface {
   functions: {
     "bridgeIn(address,address)": FunctionFragment;
-    "bridgeOut(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,(address,uint256,address,bytes))": FunctionFragment;
-    "bridgeOutFromController(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,(address,uint256,address,bytes))": FunctionFragment;
-    "transferOut((address,uint256,address,bytes))": FunctionFragment;
+    "bridgeOut(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,(address,uint256,uint256,address,bytes))": FunctionFragment;
+    "bridgeOutFromController(address,uint256,uint256,uint256,(address,uint256,uint256,address,bytes))": FunctionFragment;
+    "transferOut((address,uint256,uint256,address,bytes))": FunctionFragment;
   };
 
   getFunction(
@@ -186,8 +194,9 @@ export interface IMultichainTransferRouterInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "bridgeOutFromController",
     values: [
-      IRelayUtils.RelayParamsStruct,
       PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       IRelayUtils.BridgeOutParamsStruct
     ]
@@ -253,9 +262,10 @@ export interface IMultichainTransferRouter extends BaseContract {
     ): Promise<ContractTransaction>;
 
     bridgeOutFromController(
-      relayParams: IRelayUtils.RelayParamsStruct,
       account: PromiseOrValue<string>,
       srcChainId: PromiseOrValue<BigNumberish>,
+      desChainId: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -281,9 +291,10 @@ export interface IMultichainTransferRouter extends BaseContract {
   ): Promise<ContractTransaction>;
 
   bridgeOutFromController(
-    relayParams: IRelayUtils.RelayParamsStruct,
     account: PromiseOrValue<string>,
     srcChainId: PromiseOrValue<BigNumberish>,
+    desChainId: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
     params: IRelayUtils.BridgeOutParamsStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -309,9 +320,10 @@ export interface IMultichainTransferRouter extends BaseContract {
     ): Promise<void>;
 
     bridgeOutFromController(
-      relayParams: IRelayUtils.RelayParamsStruct,
       account: PromiseOrValue<string>,
       srcChainId: PromiseOrValue<BigNumberish>,
+      desChainId: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -340,9 +352,10 @@ export interface IMultichainTransferRouter extends BaseContract {
     ): Promise<BigNumber>;
 
     bridgeOutFromController(
-      relayParams: IRelayUtils.RelayParamsStruct,
       account: PromiseOrValue<string>,
       srcChainId: PromiseOrValue<BigNumberish>,
+      desChainId: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -369,9 +382,10 @@ export interface IMultichainTransferRouter extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     bridgeOutFromController(
-      relayParams: IRelayUtils.RelayParamsStruct,
       account: PromiseOrValue<string>,
       srcChainId: PromiseOrValue<BigNumberish>,
+      desChainId: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

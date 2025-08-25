@@ -114,6 +114,7 @@ export interface MockStargatePoolUsdcInterface extends utils.Interface {
     "send((uint32,bytes32,uint256,uint256,bytes,bytes,bytes),(uint256,uint256),address)": FunctionFragment;
     "sendToken(address,uint256,bytes)": FunctionFragment;
     "token()": FunctionFragment;
+    "updateToken(address)": FunctionFragment;
   };
 
   getFunction(
@@ -125,6 +126,7 @@ export interface MockStargatePoolUsdcInterface extends utils.Interface {
       | "send"
       | "sendToken"
       | "token"
+      | "updateToken"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -153,6 +155,10 @@ export interface MockStargatePoolUsdcInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "updateToken",
+    values: [PromiseOrValue<string>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "BRIDGE_OUT_FEE",
@@ -164,6 +170,10 @@ export interface MockStargatePoolUsdcInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "send", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "sendToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateToken",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -230,13 +240,18 @@ export interface MockStargatePoolUsdc extends BaseContract {
     ): Promise<ContractTransaction>;
 
     sendToken(
-      _to: PromiseOrValue<string>,
+      layerZeroProvider: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
       _message: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
+
+    updateToken(
+      _token: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   BRIDGE_OUT_FEE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -272,13 +287,18 @@ export interface MockStargatePoolUsdc extends BaseContract {
   ): Promise<ContractTransaction>;
 
   sendToken(
-    _to: PromiseOrValue<string>,
+    layerZeroProvider: PromiseOrValue<string>,
     _amount: PromiseOrValue<BigNumberish>,
     _message: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   token(overrides?: CallOverrides): Promise<string>;
+
+  updateToken(
+    _token: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     BRIDGE_OUT_FEE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -314,13 +334,18 @@ export interface MockStargatePoolUsdc extends BaseContract {
     ): Promise<[MessagingReceiptStructOutput, OFTReceiptStructOutput]>;
 
     sendToken(
-      _to: PromiseOrValue<string>,
+      layerZeroProvider: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
       _message: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     token(overrides?: CallOverrides): Promise<string>;
+
+    updateToken(
+      _token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
@@ -349,13 +374,18 @@ export interface MockStargatePoolUsdc extends BaseContract {
     ): Promise<BigNumber>;
 
     sendToken(
-      _to: PromiseOrValue<string>,
+      layerZeroProvider: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
       _message: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
+
+    updateToken(
+      _token: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -382,12 +412,17 @@ export interface MockStargatePoolUsdc extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     sendToken(
-      _to: PromiseOrValue<string>,
+      layerZeroProvider: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
       _message: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    updateToken(
+      _token: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

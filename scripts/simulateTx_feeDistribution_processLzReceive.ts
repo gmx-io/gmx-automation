@@ -3,8 +3,8 @@
 Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
-TX=0x4c4b20c976e1f0a16ae992cdf72d03352cb49f4cbc60513d660a4e17ba0287b9 \
-INITIAL_FROM_TIMESTAMP=1750044238 \
+TX=0xb2746f4714fd7b8e6931fb7c546af8054915de38def5d3f96013e732c370f099 \
+INITIAL_FROM_TIMESTAMP=1754965540 \
 SHOULD_SEND_TXN=true \
 REVERT_TX=true \
     npx hardhat run scripts/simulateTx_feeDistribution_processLzReceive.ts --network localhost
@@ -32,6 +32,7 @@ import {
 import {
   FEE_DISTRIBUTION_DATA_RECEIVED_HASH,
   FEE_DISTRIBUTION_COMPLETED_HASH,
+  DISTRIBUTION_ID,
   getFeeDistributionCompletedEventData,
 } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, USD_DECIMALS, GMX_DECIMALS } from "../src/lib/number";
@@ -61,6 +62,7 @@ const shouldSendTxn = shouldSendTxnStr.toLowerCase() === "true";
 const wntPriceKey = WNT_PRICE_KEY;
 const gmxPriceKey = GMX_PRICE_KEY;
 const maxRewardsEsGmxAmountKey = MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY;
+const distributionId = DISTRIBUTION_ID;
 
 const feeDistributionDataReceivedTopics = [
   EVENT_LOG_TOPIC,
@@ -109,6 +111,7 @@ const processLzReceiveSimulation = async (opts?: RevertOverride) => {
         wntPriceKey,
         gmxPriceKey,
         maxRewardsEsGmxAmountKey,
+        distributionId,
         shouldSendTxn,
       },
       chainId
@@ -165,7 +168,6 @@ const processLzReceiveSimulation = async (opts?: RevertOverride) => {
           wntForKeepers: formatAmount(ev.wntForKeepers, GMX_DECIMALS, 4),
           wntForChainlink: formatAmount(ev.wntForChainlink, GMX_DECIMALS, 4),
           wntForTreasury: formatAmount(ev.wntForTreasury, GMX_DECIMALS, 4),
-          wntForGlp: formatAmount(ev.wntForGlp, GMX_DECIMALS, 4),
           wntForReferralRewards: formatAmount(
             ev.wntForReferralRewards,
             GMX_DECIMALS,

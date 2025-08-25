@@ -4,6 +4,7 @@
 /* eslint-disable */
 export * as interfaces from "./interfaces";
 export * as libs from "./libs";
+export * as utils from "./utils";
 export { OApp__factory } from "./OApp__factory";
 export { OAppCore__factory } from "./OAppCore__factory";
 export { OAppReceiver__factory } from "./OAppReceiver__factory";

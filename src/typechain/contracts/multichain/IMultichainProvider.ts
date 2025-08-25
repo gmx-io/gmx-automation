@@ -28,6 +28,7 @@ export declare namespace IRelayUtils {
   export type BridgeOutParamsStruct = {
     token: PromiseOrValue<string>;
     amount: PromiseOrValue<BigNumberish>;
+    minAmountOut: PromiseOrValue<BigNumberish>;
     provider: PromiseOrValue<string>;
     data: PromiseOrValue<BytesLike>;
   };
@@ -35,14 +36,21 @@ export declare namespace IRelayUtils {
   export type BridgeOutParamsStructOutput = [
     string,
     BigNumber,
+    BigNumber,
     string,
     string
-  ] & { token: string; amount: BigNumber; provider: string; data: string };
+  ] & {
+    token: string;
+    amount: BigNumber;
+    minAmountOut: BigNumber;
+    provider: string;
+    data: string;
+  };
 }
 
 export interface IMultichainProviderInterface extends utils.Interface {
   functions: {
-    "bridgeOut(address,uint256,(address,uint256,address,bytes))": FunctionFragment;
+    "bridgeOut(address,uint256,(address,uint256,uint256,address,bytes))": FunctionFragment;
     "withdrawTokens(address,address,uint256)": FunctionFragment;
   };
 

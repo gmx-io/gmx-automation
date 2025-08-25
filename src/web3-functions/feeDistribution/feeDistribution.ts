@@ -37,6 +37,7 @@ export const feeDistribution = async (
     wntPriceKey,
     gmxPriceKey,
     maxRewardsEsGmxAmountKey,
+    distributionId,
     shouldSendTxn,
   } = userArgs;
 
@@ -56,8 +57,12 @@ export const feeDistribution = async (
     throw new Error("maxRewardsEsGmxAmountKey must be a hex string");
   }
 
+  if (typeof distributionId !== "string") {
+    throw new Error("distributionId must be a string");
+  }
+
   if (typeof shouldSendTxn !== "boolean") {
-    throw new Error("shouldSendTxn must be a hex string");
+    throw new Error("shouldSendTxn must be a bool");
   }
 
   let wntPrice: BigNumber, gmxPrice: BigNumber;
@@ -158,6 +163,7 @@ export const feeDistribution = async (
       wnt: contracts.wnt,
       esGmx: contracts.esGmx,
       dataStr: dataStr,
+      distributionId: distributionId,
     });
 
     const referralRewardsCallData = referralRewardsRawCallData.map((c) => ({

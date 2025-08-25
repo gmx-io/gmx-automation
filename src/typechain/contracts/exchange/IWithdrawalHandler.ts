@@ -117,6 +117,7 @@ export declare namespace IExecuteWithdrawalUtils {
     dataStore: PromiseOrValue<string>;
     eventEmitter: PromiseOrValue<string>;
     multichainVault: PromiseOrValue<string>;
+    multichainTransferRouter: PromiseOrValue<string>;
     withdrawalVault: PromiseOrValue<string>;
     oracle: PromiseOrValue<string>;
     swapHandler: PromiseOrValue<string>;
@@ -135,12 +136,14 @@ export declare namespace IExecuteWithdrawalUtils {
     string,
     string,
     string,
+    string,
     BigNumber,
     number
   ] & {
     dataStore: string;
     eventEmitter: string;
     multichainVault: string;
+    multichainTransferRouter: string;
     withdrawalVault: string;
     oracle: string;
     swapHandler: string;
@@ -272,7 +275,7 @@ export interface IWithdrawalHandlerInterface extends utils.Interface {
     "cancelWithdrawal(bytes32)": FunctionFragment;
     "createWithdrawal(address,uint256,((address,address,address,address,address[],address[]),uint256,uint256,bool,uint256,uint256,bytes32[]))": FunctionFragment;
     "executeAtomicWithdrawal(address,((address,address,address,address,address[],address[]),uint256,uint256,bool,uint256,uint256,bytes32[]),(address[],address[],bytes[]))": FunctionFragment;
-    "executeWithdrawalFromController((address,address,address,address,address,address,bytes32,address,uint256,uint8),((address,address,address,address,address,address[],address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bool),bytes32[]))": FunctionFragment;
+    "executeWithdrawalFromController((address,address,address,address,address,address,address,bytes32,address,uint256,uint8),((address,address,address,address,address,address[],address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bool),bytes32[]))": FunctionFragment;
     "simulateExecuteWithdrawal(bytes32,(address[],(uint256,uint256)[],uint256,uint256),uint8)": FunctionFragment;
   };
 

@@ -22,16 +22,30 @@ import type {
 
 export interface IPriceFeedInterface extends utils.Interface {
   functions: {
+    "decimals()": FunctionFragment;
+    "description()": FunctionFragment;
     "latestRoundData()": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "latestRoundData"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "decimals" | "description" | "latestRoundData"
+  ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "description",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "latestRoundData",
     values?: undefined
   ): string;
 
+  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "description",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "latestRoundData",
     data: BytesLike
@@ -67,6 +81,10 @@ export interface IPriceFeed extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    decimals(overrides?: CallOverrides): Promise<[number]>;
+
+    description(overrides?: CallOverrides): Promise<[string]>;
+
     latestRoundData(
       overrides?: CallOverrides
     ): Promise<
@@ -79,6 +97,10 @@ export interface IPriceFeed extends BaseContract {
       }
     >;
   };
+
+  decimals(overrides?: CallOverrides): Promise<number>;
+
+  description(overrides?: CallOverrides): Promise<string>;
 
   latestRoundData(
     overrides?: CallOverrides
@@ -93,6 +115,10 @@ export interface IPriceFeed extends BaseContract {
   >;
 
   callStatic: {
+    decimals(overrides?: CallOverrides): Promise<number>;
+
+    description(overrides?: CallOverrides): Promise<string>;
+
     latestRoundData(
       overrides?: CallOverrides
     ): Promise<
@@ -109,10 +135,18 @@ export interface IPriceFeed extends BaseContract {
   filters: {};
 
   estimateGas: {
+    decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    description(overrides?: CallOverrides): Promise<BigNumber>;
+
     latestRoundData(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     latestRoundData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

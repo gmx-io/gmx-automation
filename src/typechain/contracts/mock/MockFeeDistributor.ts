@@ -24,6 +24,30 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
+export declare namespace MockFeeDistributor {
+  export type MockVariablesStruct = {
+    dataStoreForOracle: PromiseOrValue<string>;
+    gmxForOracle: PromiseOrValue<string>;
+  };
+
+  export type MockVariablesStructOutput = [string, string] & {
+    dataStoreForOracle: string;
+    gmxForOracle: string;
+  };
+}
+
+export declare namespace ClaimUtils {
+  export type DepositParamStruct = {
+    account: PromiseOrValue<string>;
+    amount: PromiseOrValue<BigNumberish>;
+  };
+
+  export type DepositParamStructOutput = [string, BigNumber] & {
+    account: string;
+    amount: BigNumber;
+  };
+}
+
 export declare namespace MultichainReaderUtils {
   export type ReceivedDataStruct = {
     timestamp: PromiseOrValue<BigNumberish>;
@@ -39,30 +63,36 @@ export declare namespace MultichainReaderUtils {
 export interface MockFeeDistributorInterface extends utils.Interface {
   functions: {
     "bridgedGmxReceived()": FunctionFragment;
+    "depositReferralRewards(address,uint256,(address,uint256)[])": FunctionFragment;
     "distribute(uint256,uint256,uint256,uint256)": FunctionFragment;
     "initiateDistribute()": FunctionFragment;
-    "mockChainId()": FunctionFragment;
     "oracle()": FunctionFragment;
     "processLzReceive(bytes32,(uint256,bytes))": FunctionFragment;
     "roleStore()": FunctionFragment;
-    "sendReferralRewards(address,uint256,address[],uint256[])": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "bridgedGmxReceived"
+      | "depositReferralRewards"
       | "distribute"
       | "initiateDistribute"
-      | "mockChainId"
       | "oracle"
       | "processLzReceive"
       | "roleStore"
-      | "sendReferralRewards"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "bridgedGmxReceived",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "depositReferralRewards",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      ClaimUtils.DepositParamStruct[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "distribute",
@@ -77,10 +107,6 @@ export interface MockFeeDistributorInterface extends utils.Interface {
     functionFragment: "initiateDistribute",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "mockChainId",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "oracle", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "processLzReceive",
@@ -90,27 +116,18 @@ export interface MockFeeDistributorInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "roleStore", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "sendReferralRewards",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "bridgedGmxReceived",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "depositReferralRewards",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "distribute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initiateDistribute",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "mockChainId",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "oracle", data: BytesLike): Result;
@@ -119,10 +136,6 @@ export interface MockFeeDistributorInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "roleStore", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "sendReferralRewards",
-    data: BytesLike
-  ): Result;
 
   events: {};
 }
@@ -158,6 +171,13 @@ export interface MockFeeDistributor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    depositReferralRewards(
+      token: PromiseOrValue<string>,
+      distributionId: PromiseOrValue<BigNumberish>,
+      params: ClaimUtils.DepositParamStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     distribute(
       wntReferralRewardsInUsd: PromiseOrValue<BigNumberish>,
       esGmxForReferralRewards: PromiseOrValue<BigNumberish>,
@@ -170,8 +190,6 @@ export interface MockFeeDistributor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    mockChainId(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     oracle(overrides?: CallOverrides): Promise<[string]>;
 
     processLzReceive(
@@ -181,17 +199,16 @@ export interface MockFeeDistributor extends BaseContract {
     ): Promise<ContractTransaction>;
 
     roleStore(overrides?: CallOverrides): Promise<[string]>;
-
-    sendReferralRewards(
-      token: PromiseOrValue<string>,
-      maxBatchSize: PromiseOrValue<BigNumberish>,
-      accounts: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
   };
 
   bridgedGmxReceived(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  depositReferralRewards(
+    token: PromiseOrValue<string>,
+    distributionId: PromiseOrValue<BigNumberish>,
+    params: ClaimUtils.DepositParamStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -207,8 +224,6 @@ export interface MockFeeDistributor extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  mockChainId(overrides?: CallOverrides): Promise<BigNumber>;
-
   oracle(overrides?: CallOverrides): Promise<string>;
 
   processLzReceive(
@@ -219,16 +234,15 @@ export interface MockFeeDistributor extends BaseContract {
 
   roleStore(overrides?: CallOverrides): Promise<string>;
 
-  sendReferralRewards(
-    token: PromiseOrValue<string>,
-    maxBatchSize: PromiseOrValue<BigNumberish>,
-    accounts: PromiseOrValue<string>[],
-    amounts: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     bridgedGmxReceived(overrides?: CallOverrides): Promise<void>;
+
+    depositReferralRewards(
+      token: PromiseOrValue<string>,
+      distributionId: PromiseOrValue<BigNumberish>,
+      params: ClaimUtils.DepositParamStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     distribute(
       wntReferralRewardsInUsd: PromiseOrValue<BigNumberish>,
@@ -240,8 +254,6 @@ export interface MockFeeDistributor extends BaseContract {
 
     initiateDistribute(overrides?: CallOverrides): Promise<void>;
 
-    mockChainId(overrides?: CallOverrides): Promise<BigNumber>;
-
     oracle(overrides?: CallOverrides): Promise<string>;
 
     processLzReceive(
@@ -251,20 +263,19 @@ export interface MockFeeDistributor extends BaseContract {
     ): Promise<void>;
 
     roleStore(overrides?: CallOverrides): Promise<string>;
-
-    sendReferralRewards(
-      token: PromiseOrValue<string>,
-      maxBatchSize: PromiseOrValue<BigNumberish>,
-      accounts: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
     bridgedGmxReceived(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    depositReferralRewards(
+      token: PromiseOrValue<string>,
+      distributionId: PromiseOrValue<BigNumberish>,
+      params: ClaimUtils.DepositParamStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -279,8 +290,6 @@ export interface MockFeeDistributor extends BaseContract {
     initiateDistribute(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    mockChainId(overrides?: CallOverrides): Promise<BigNumber>;
 
     oracle(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -291,18 +300,17 @@ export interface MockFeeDistributor extends BaseContract {
     ): Promise<BigNumber>;
 
     roleStore(overrides?: CallOverrides): Promise<BigNumber>;
-
-    sendReferralRewards(
-      token: PromiseOrValue<string>,
-      maxBatchSize: PromiseOrValue<BigNumberish>,
-      accounts: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     bridgedGmxReceived(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    depositReferralRewards(
+      token: PromiseOrValue<string>,
+      distributionId: PromiseOrValue<BigNumberish>,
+      params: ClaimUtils.DepositParamStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -318,8 +326,6 @@ export interface MockFeeDistributor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    mockChainId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     oracle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     processLzReceive(
@@ -329,13 +335,5 @@ export interface MockFeeDistributor extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     roleStore(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    sendReferralRewards(
-      token: PromiseOrValue<string>,
-      maxBatchSize: PromiseOrValue<BigNumberish>,
-      accounts: PromiseOrValue<string>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
   };
 }

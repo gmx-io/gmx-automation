@@ -539,16 +539,25 @@ export declare namespace ReaderPricingUtils {
     priceImpactUsd: PromiseOrValue<BigNumberish>;
     executionPrice: PromiseOrValue<BigNumberish>;
     balanceWasImproved: PromiseOrValue<boolean>;
+    proportionalPendingImpactUsd: PromiseOrValue<BigNumberish>;
+    totalImpactUsd: PromiseOrValue<BigNumberish>;
+    priceImpactDiffUsd: PromiseOrValue<BigNumberish>;
   };
 
   export type ExecutionPriceResultStructOutput = [
     BigNumber,
     BigNumber,
-    boolean
+    boolean,
+    BigNumber,
+    BigNumber,
+    BigNumber
   ] & {
     priceImpactUsd: BigNumber;
     executionPrice: BigNumber;
     balanceWasImproved: boolean;
+    proportionalPendingImpactUsd: BigNumber;
+    totalImpactUsd: BigNumber;
+    priceImpactDiffUsd: BigNumber;
   };
 }
 
@@ -940,7 +949,7 @@ export interface ReaderInterface extends utils.Interface {
     "getAdlState(address,address,bool,((uint256,uint256),(uint256,uint256),(uint256,uint256)))": FunctionFragment;
     "getDeposit(address,bytes32)": FunctionFragment;
     "getDepositAmountOut(address,(address,address,address,address),((uint256,uint256),(uint256,uint256),(uint256,uint256)),uint256,uint256,address,uint8,bool)": FunctionFragment;
-    "getExecutionPrice(address,address,((uint256,uint256),(uint256,uint256),(uint256,uint256)),uint256,uint256,int256,bool)": FunctionFragment;
+    "getExecutionPrice(address,address,((uint256,uint256),(uint256,uint256),(uint256,uint256)),uint256,uint256,int256,int256,bool)": FunctionFragment;
     "getMarket(address,address)": FunctionFragment;
     "getMarketBySalt(address,bytes32)": FunctionFragment;
     "getMarketInfo(address,((uint256,uint256),(uint256,uint256),(uint256,uint256)),address)": FunctionFragment;
@@ -1061,6 +1070,7 @@ export interface ReaderInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       MarketUtils.MarketPricesStruct,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -1437,6 +1447,7 @@ export interface Reader extends BaseContract {
       positionSizeInUsd: PromiseOrValue<BigNumberish>,
       positionSizeInTokens: PromiseOrValue<BigNumberish>,
       sizeDeltaUsd: PromiseOrValue<BigNumberish>,
+      pendingImpactAmount: PromiseOrValue<BigNumberish>,
       isLong: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[ReaderPricingUtils.ExecutionPriceResultStructOutput]>;
@@ -1690,6 +1701,7 @@ export interface Reader extends BaseContract {
     positionSizeInUsd: PromiseOrValue<BigNumberish>,
     positionSizeInTokens: PromiseOrValue<BigNumberish>,
     sizeDeltaUsd: PromiseOrValue<BigNumberish>,
+    pendingImpactAmount: PromiseOrValue<BigNumberish>,
     isLong: PromiseOrValue<boolean>,
     overrides?: CallOverrides
   ): Promise<ReaderPricingUtils.ExecutionPriceResultStructOutput>;
@@ -1943,6 +1955,7 @@ export interface Reader extends BaseContract {
       positionSizeInUsd: PromiseOrValue<BigNumberish>,
       positionSizeInTokens: PromiseOrValue<BigNumberish>,
       sizeDeltaUsd: PromiseOrValue<BigNumberish>,
+      pendingImpactAmount: PromiseOrValue<BigNumberish>,
       isLong: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<ReaderPricingUtils.ExecutionPriceResultStructOutput>;
@@ -2199,6 +2212,7 @@ export interface Reader extends BaseContract {
       positionSizeInUsd: PromiseOrValue<BigNumberish>,
       positionSizeInTokens: PromiseOrValue<BigNumberish>,
       sizeDeltaUsd: PromiseOrValue<BigNumberish>,
+      pendingImpactAmount: PromiseOrValue<BigNumberish>,
       isLong: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2447,6 +2461,7 @@ export interface Reader extends BaseContract {
       positionSizeInUsd: PromiseOrValue<BigNumberish>,
       positionSizeInTokens: PromiseOrValue<BigNumberish>,
       sizeDeltaUsd: PromiseOrValue<BigNumberish>,
+      pendingImpactAmount: PromiseOrValue<BigNumberish>,
       isLong: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

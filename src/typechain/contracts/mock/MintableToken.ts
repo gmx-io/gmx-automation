@@ -462,7 +462,7 @@ export interface MintableToken extends BaseContract {
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -496,7 +496,7 @@ export interface MintableToken extends BaseContract {
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
