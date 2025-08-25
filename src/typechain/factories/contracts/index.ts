@@ -40,5 +40,3 @@ export * as token from "./token";
 export * as utils from "./utils";
 export * as v1 from "./v1";
 export * as withdrawal from "./withdrawal";
-export * as interfaces from "./interfaces";
-export { GMX_Adapter__factory } from "./GMX_Adapter__factory";

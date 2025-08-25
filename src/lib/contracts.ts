@@ -19,7 +19,7 @@ import {
   FeeDistributor,
   FeeDistributorVault,
   ContributorHandler,
-  GMX_Adapter,
+  MockGMX_Adapter,
 } from "../typechain";
 
 import { abi as ConfigAbi } from "../abi/Config.json";
@@ -36,7 +36,7 @@ import { abi as EsGmxAbi } from "../abi/EsGmx.json";
 import { abi as FeeDistributorAbi } from "../abi/FeeDistributor.json";
 import { abi as FeeDistributorVaultAbi } from "../abi/FeeDistributorVault.json";
 import { abi as ContributorHandlerAbi } from "../abi/ContributorHandler.json";
-import { abi as GMX_AdapterAbi } from "../abi/GMX_Adapter.json";
+import { abi as MockGMX_AdapterAbi } from "../abi/MockGMX_Adapter.json";
 
 function getContract<T = Contract>({
   chainId,
@@ -153,11 +153,11 @@ export function getContracts(
     provider,
     abi: ContributorHandlerAbi,
   });
-  const gmx_Adapter = getContract<GMX_Adapter>({
+  const gmx_Adapter = getContract<MockGMX_Adapter>({
     chainId,
     name: "gmx_Adapter",
     provider,
-    abi: GMX_AdapterAbi,
+    abi: MockGMX_AdapterAbi,
   });
   const contracts = {
     dataStore,

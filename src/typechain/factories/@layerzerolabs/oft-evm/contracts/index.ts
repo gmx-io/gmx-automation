@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as interfaces from "./interfaces";
+export { MintBurnOFTAdapter__factory } from "./MintBurnOFTAdapter__factory";
 export { OFT__factory } from "./OFT__factory";
 export { OFTAdapter__factory } from "./OFTAdapter__factory";
 export { OFTCore__factory } from "./OFTCore__factory";

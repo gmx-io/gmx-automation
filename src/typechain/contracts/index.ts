@@ -78,6 +78,3 @@ import type * as v1 from "./v1";
 export type { v1 };
 import type * as withdrawal from "./withdrawal";
 export type { withdrawal };
-import type * as interfaces from "./interfaces";
-export type { interfaces };
-export type { GMX_Adapter } from "./GMX_Adapter";

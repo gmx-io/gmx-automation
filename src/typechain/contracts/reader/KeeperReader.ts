@@ -22,36 +22,6 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export declare namespace Price {
-  export type PropsStruct = {
-    min: PromiseOrValue<BigNumberish>;
-    max: PromiseOrValue<BigNumberish>;
-  };
-
-  export type PropsStructOutput = [BigNumber, BigNumber] & {
-    min: BigNumber;
-    max: BigNumber;
-  };
-}
-
-export declare namespace MarketUtils {
-  export type MarketPricesStruct = {
-    indexTokenPrice: Price.PropsStruct;
-    longTokenPrice: Price.PropsStruct;
-    shortTokenPrice: Price.PropsStruct;
-  };
-
-  export type MarketPricesStructOutput = [
-    Price.PropsStructOutput,
-    Price.PropsStructOutput,
-    Price.PropsStructOutput
-  ] & {
-    indexTokenPrice: Price.PropsStructOutput;
-    longTokenPrice: Price.PropsStructOutput;
-    shortTokenPrice: Price.PropsStructOutput;
-  };
-}
-
 export declare namespace Order {
   export type AddressesStruct = {
     account: PromiseOrValue<string>;
@@ -163,25 +133,11 @@ export declare namespace Order {
 
 export interface KeeperReaderInterface extends utils.Interface {
   functions: {
-    "getLiquidatablePositions(address,address,((uint256,uint256),(uint256,uint256),(uint256,uint256))[],uint256,uint256,bool)": FunctionFragment;
     "getOrders(address,uint256,uint256)": FunctionFragment;
   };
 
-  getFunction(
-    nameOrSignatureOrTopic: "getLiquidatablePositions" | "getOrders"
-  ): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "getOrders"): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "getLiquidatablePositions",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      MarketUtils.MarketPricesStruct[],
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<boolean>
-    ]
-  ): string;
   encodeFunctionData(
     functionFragment: "getOrders",
     values: [
@@ -191,10 +147,6 @@ export interface KeeperReaderInterface extends utils.Interface {
     ]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "getLiquidatablePositions",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "getOrders", data: BytesLike): Result;
 
   events: {};
@@ -227,16 +179,6 @@ export interface KeeperReader extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getLiquidatablePositions(
-      dataStore: PromiseOrValue<string>,
-      referralStorage: PromiseOrValue<string>,
-      marketPrices: MarketUtils.MarketPricesStruct[],
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      shouldValidateMinCollateralUsd: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<[string[]]>;
-
     getOrders(
       dataStore: PromiseOrValue<string>,
       start: PromiseOrValue<BigNumberish>,
@@ -244,16 +186,6 @@ export interface KeeperReader extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[Order.PropsStructOutput[]]>;
   };
-
-  getLiquidatablePositions(
-    dataStore: PromiseOrValue<string>,
-    referralStorage: PromiseOrValue<string>,
-    marketPrices: MarketUtils.MarketPricesStruct[],
-    start: PromiseOrValue<BigNumberish>,
-    end: PromiseOrValue<BigNumberish>,
-    shouldValidateMinCollateralUsd: PromiseOrValue<boolean>,
-    overrides?: CallOverrides
-  ): Promise<string[]>;
 
   getOrders(
     dataStore: PromiseOrValue<string>,
@@ -263,16 +195,6 @@ export interface KeeperReader extends BaseContract {
   ): Promise<Order.PropsStructOutput[]>;
 
   callStatic: {
-    getLiquidatablePositions(
-      dataStore: PromiseOrValue<string>,
-      referralStorage: PromiseOrValue<string>,
-      marketPrices: MarketUtils.MarketPricesStruct[],
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      shouldValidateMinCollateralUsd: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<string[]>;
-
     getOrders(
       dataStore: PromiseOrValue<string>,
       start: PromiseOrValue<BigNumberish>,
@@ -284,16 +206,6 @@ export interface KeeperReader extends BaseContract {
   filters: {};
 
   estimateGas: {
-    getLiquidatablePositions(
-      dataStore: PromiseOrValue<string>,
-      referralStorage: PromiseOrValue<string>,
-      marketPrices: MarketUtils.MarketPricesStruct[],
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      shouldValidateMinCollateralUsd: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getOrders(
       dataStore: PromiseOrValue<string>,
       start: PromiseOrValue<BigNumberish>,
@@ -303,16 +215,6 @@ export interface KeeperReader extends BaseContract {
   };
 
   populateTransaction: {
-    getLiquidatablePositions(
-      dataStore: PromiseOrValue<string>,
-      referralStorage: PromiseOrValue<string>,
-      marketPrices: MarketUtils.MarketPricesStruct[],
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      shouldValidateMinCollateralUsd: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getOrders(
       dataStore: PromiseOrValue<string>,
       start: PromiseOrValue<BigNumberish>,
