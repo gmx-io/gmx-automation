@@ -157,6 +157,8 @@ export function getContracts(
   // MockGMX_Adapter used as the contract because GMX_Adapter is not in the gmx-synthetics repo and
   // the contract is only used for an event filter in createTask_feeDistributor_bridgedGmxReceived
   // Used gmxAdapter naming instead of gmx_Adapter for more consistent naming with other contracts
+  // The GMX_Adapter contract can be found in the following link for reference:
+  // https://github.com/gmx-io/gmx-token-lz/blob/main/contracts/GMX_Adapter.sol
   const gmxAdapter = getContract<MockGMX_Adapter>({
     chainId,
     name: "gmxAdapter",
