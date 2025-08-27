@@ -24,18 +24,80 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
+export declare namespace ConfigUtils {
+  export type InitOracleConfigPriceFeedParamsStruct = {
+    feedAddress: PromiseOrValue<string>;
+    multiplier: PromiseOrValue<BigNumberish>;
+    heartbeatDuration: PromiseOrValue<BigNumberish>;
+    stablePrice: PromiseOrValue<BigNumberish>;
+  };
+
+  export type InitOracleConfigPriceFeedParamsStructOutput = [
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    feedAddress: string;
+    multiplier: BigNumber;
+    heartbeatDuration: BigNumber;
+    stablePrice: BigNumber;
+  };
+
+  export type InitOracleConfigDataStreamParamsStruct = {
+    feedId: PromiseOrValue<BytesLike>;
+    multiplier: PromiseOrValue<BigNumberish>;
+    spreadReductionFactor: PromiseOrValue<BigNumberish>;
+  };
+
+  export type InitOracleConfigDataStreamParamsStructOutput = [
+    string,
+    BigNumber,
+    BigNumber
+  ] & {
+    feedId: string;
+    multiplier: BigNumber;
+    spreadReductionFactor: BigNumber;
+  };
+
+  export type InitOracleConfigEdgeParamsStruct = {
+    feedId: PromiseOrValue<BytesLike>;
+    tokenDecimals: PromiseOrValue<BigNumberish>;
+  };
+
+  export type InitOracleConfigEdgeParamsStructOutput = [string, BigNumber] & {
+    feedId: string;
+    tokenDecimals: BigNumber;
+  };
+
+  export type InitOracleConfigParamsStruct = {
+    token: PromiseOrValue<string>;
+    priceFeed: ConfigUtils.InitOracleConfigPriceFeedParamsStruct;
+    dataStream: ConfigUtils.InitOracleConfigDataStreamParamsStruct;
+    edge: ConfigUtils.InitOracleConfigEdgeParamsStruct;
+  };
+
+  export type InitOracleConfigParamsStructOutput = [
+    string,
+    ConfigUtils.InitOracleConfigPriceFeedParamsStructOutput,
+    ConfigUtils.InitOracleConfigDataStreamParamsStructOutput,
+    ConfigUtils.InitOracleConfigEdgeParamsStructOutput
+  ] & {
+    token: string;
+    priceFeed: ConfigUtils.InitOracleConfigPriceFeedParamsStructOutput;
+    dataStream: ConfigUtils.InitOracleConfigDataStreamParamsStructOutput;
+    edge: ConfigUtils.InitOracleConfigEdgeParamsStructOutput;
+  };
+}
+
 export interface ConfigInterface extends utils.Interface {
   functions: {
-    "MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND()": FunctionFragment;
-    "MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND()": FunctionFragment;
-    "MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND()": FunctionFragment;
-    "MAX_FEE_FACTOR()": FunctionFragment;
-    "MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME()": FunctionFragment;
     "allowedBaseKeys(bytes32)": FunctionFragment;
     "allowedLimitedBaseKeys(bytes32)": FunctionFragment;
     "dataStore()": FunctionFragment;
     "eventEmitter()": FunctionFragment;
-    "initOracleProviderForToken(address,address)": FunctionFragment;
+    "initOracleConfig((address,(address,uint256,uint256,uint256),(bytes32,uint256,uint256),(bytes32,uint256)))": FunctionFragment;
+    "initOracleProviderForToken(address,address,address)": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
     "roleStore()": FunctionFragment;
     "setAddress(bytes32,bytes,address)": FunctionFragment;
@@ -44,25 +106,19 @@ export interface ConfigInterface extends utils.Interface {
     "setClaimableCollateralFactorForAccount(address,address,uint256,address,uint256)": FunctionFragment;
     "setClaimableCollateralFactorForTime(address,address,uint256,uint256)": FunctionFragment;
     "setClaimableCollateralReductionFactorForAccount(address,address,uint256,address,uint256)": FunctionFragment;
-    "setDataStream(address,bytes32,uint256,uint256)": FunctionFragment;
     "setInt(bytes32,bytes,int256)": FunctionFragment;
-    "setOracleProviderForToken(address,address)": FunctionFragment;
+    "setOracleProviderForToken(address,address,address)": FunctionFragment;
     "setPositionImpactDistributionRate(address,uint256,uint256)": FunctionFragment;
-    "setPriceFeed(address,address,uint256,uint256,uint256)": FunctionFragment;
     "setUint(bytes32,bytes,uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND"
-      | "MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND"
-      | "MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND"
-      | "MAX_FEE_FACTOR"
-      | "MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME"
       | "allowedBaseKeys"
       | "allowedLimitedBaseKeys"
       | "dataStore"
       | "eventEmitter"
+      | "initOracleConfig"
       | "initOracleProviderForToken"
       | "multicall"
       | "roleStore"
@@ -72,34 +128,12 @@ export interface ConfigInterface extends utils.Interface {
       | "setClaimableCollateralFactorForAccount"
       | "setClaimableCollateralFactorForTime"
       | "setClaimableCollateralReductionFactorForAccount"
-      | "setDataStream"
       | "setInt"
       | "setOracleProviderForToken"
       | "setPositionImpactDistributionRate"
-      | "setPriceFeed"
       | "setUint"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MAX_FEE_FACTOR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "allowedBaseKeys",
     values: [PromiseOrValue<BytesLike>]
@@ -114,8 +148,16 @@ export interface ConfigInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "initOracleConfig",
+    values: [ConfigUtils.InitOracleConfigParamsStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "initOracleProviderForToken",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "multicall",
@@ -176,15 +218,6 @@ export interface ConfigInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "setDataStream",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setInt",
     values: [
       PromiseOrValue<BytesLike>,
@@ -194,22 +227,16 @@ export interface ConfigInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setOracleProviderForToken",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "setPositionImpactDistributionRate",
     values: [
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPriceFeed",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
@@ -224,26 +251,6 @@ export interface ConfigInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MAX_FEE_FACTOR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "allowedBaseKeys",
     data: BytesLike
   ): Result;
@@ -254,6 +261,10 @@ export interface ConfigInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "dataStore", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eventEmitter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "initOracleConfig",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -277,10 +288,6 @@ export interface ConfigInterface extends utils.Interface {
     functionFragment: "setClaimableCollateralReductionFactorForAccount",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "setDataStream",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "setInt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setOracleProviderForToken",
@@ -288,10 +295,6 @@ export interface ConfigInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setPositionImpactDistributionRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setPriceFeed",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setUint", data: BytesLike): Result;
@@ -326,24 +329,6 @@ export interface Config extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    MAX_FEE_FACTOR(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     allowedBaseKeys(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -358,7 +343,13 @@ export interface Config extends BaseContract {
 
     eventEmitter(overrides?: CallOverrides): Promise<[string]>;
 
+    initOracleConfig(
+      params: ConfigUtils.InitOracleConfigParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     initOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -418,14 +409,6 @@ export interface Config extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setDataStream(
-      token: PromiseOrValue<string>,
-      feedId: PromiseOrValue<BytesLike>,
-      dataStreamMultiplier: PromiseOrValue<BigNumberish>,
-      dataStreamSpreadReductionFactor: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     setInt(
       baseKey: PromiseOrValue<BytesLike>,
       data: PromiseOrValue<BytesLike>,
@@ -434,6 +417,7 @@ export interface Config extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -446,15 +430,6 @@ export interface Config extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setPriceFeed(
-      token: PromiseOrValue<string>,
-      priceFeed: PromiseOrValue<string>,
-      priceFeedMultiplier: PromiseOrValue<BigNumberish>,
-      priceFeedHeartbeatDuration: PromiseOrValue<BigNumberish>,
-      stablePrice: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     setUint(
       baseKey: PromiseOrValue<BytesLike>,
       data: PromiseOrValue<BytesLike>,
@@ -462,24 +437,6 @@ export interface Config extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  MAX_FEE_FACTOR(overrides?: CallOverrides): Promise<BigNumber>;
-
-  MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   allowedBaseKeys(
     arg0: PromiseOrValue<BytesLike>,
@@ -495,7 +452,13 @@ export interface Config extends BaseContract {
 
   eventEmitter(overrides?: CallOverrides): Promise<string>;
 
+  initOracleConfig(
+    params: ConfigUtils.InitOracleConfigParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   initOracleProviderForToken(
+    oracle: PromiseOrValue<string>,
     token: PromiseOrValue<string>,
     provider: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -555,14 +518,6 @@ export interface Config extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setDataStream(
-    token: PromiseOrValue<string>,
-    feedId: PromiseOrValue<BytesLike>,
-    dataStreamMultiplier: PromiseOrValue<BigNumberish>,
-    dataStreamSpreadReductionFactor: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   setInt(
     baseKey: PromiseOrValue<BytesLike>,
     data: PromiseOrValue<BytesLike>,
@@ -571,6 +526,7 @@ export interface Config extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setOracleProviderForToken(
+    oracle: PromiseOrValue<string>,
     token: PromiseOrValue<string>,
     provider: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -583,15 +539,6 @@ export interface Config extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setPriceFeed(
-    token: PromiseOrValue<string>,
-    priceFeed: PromiseOrValue<string>,
-    priceFeedMultiplier: PromiseOrValue<BigNumberish>,
-    priceFeedHeartbeatDuration: PromiseOrValue<BigNumberish>,
-    stablePrice: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   setUint(
     baseKey: PromiseOrValue<BytesLike>,
     data: PromiseOrValue<BytesLike>,
@@ -600,24 +547,6 @@ export interface Config extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    MAX_FEE_FACTOR(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     allowedBaseKeys(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -632,7 +561,13 @@ export interface Config extends BaseContract {
 
     eventEmitter(overrides?: CallOverrides): Promise<string>;
 
+    initOracleConfig(
+      params: ConfigUtils.InitOracleConfigParamsStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     initOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -692,14 +627,6 @@ export interface Config extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setDataStream(
-      token: PromiseOrValue<string>,
-      feedId: PromiseOrValue<BytesLike>,
-      dataStreamMultiplier: PromiseOrValue<BigNumberish>,
-      dataStreamSpreadReductionFactor: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setInt(
       baseKey: PromiseOrValue<BytesLike>,
       data: PromiseOrValue<BytesLike>,
@@ -708,6 +635,7 @@ export interface Config extends BaseContract {
     ): Promise<void>;
 
     setOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -717,15 +645,6 @@ export interface Config extends BaseContract {
       market: PromiseOrValue<string>,
       minPositionImpactPoolAmount: PromiseOrValue<BigNumberish>,
       positionImpactPoolDistributionRate: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setPriceFeed(
-      token: PromiseOrValue<string>,
-      priceFeed: PromiseOrValue<string>,
-      priceFeedMultiplier: PromiseOrValue<BigNumberish>,
-      priceFeedHeartbeatDuration: PromiseOrValue<BigNumberish>,
-      stablePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -740,24 +659,6 @@ export interface Config extends BaseContract {
   filters: {};
 
   estimateGas: {
-    MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    MAX_FEE_FACTOR(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     allowedBaseKeys(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -772,7 +673,13 @@ export interface Config extends BaseContract {
 
     eventEmitter(overrides?: CallOverrides): Promise<BigNumber>;
 
+    initOracleConfig(
+      params: ConfigUtils.InitOracleConfigParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     initOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -832,14 +739,6 @@ export interface Config extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setDataStream(
-      token: PromiseOrValue<string>,
-      feedId: PromiseOrValue<BytesLike>,
-      dataStreamMultiplier: PromiseOrValue<BigNumberish>,
-      dataStreamSpreadReductionFactor: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     setInt(
       baseKey: PromiseOrValue<BytesLike>,
       data: PromiseOrValue<BytesLike>,
@@ -848,6 +747,7 @@ export interface Config extends BaseContract {
     ): Promise<BigNumber>;
 
     setOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -860,15 +760,6 @@ export interface Config extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setPriceFeed(
-      token: PromiseOrValue<string>,
-      priceFeed: PromiseOrValue<string>,
-      priceFeedMultiplier: PromiseOrValue<BigNumberish>,
-      priceFeedHeartbeatDuration: PromiseOrValue<BigNumberish>,
-      stablePrice: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     setUint(
       baseKey: PromiseOrValue<BytesLike>,
       data: PromiseOrValue<BytesLike>,
@@ -878,24 +769,6 @@ export interface Config extends BaseContract {
   };
 
   populateTransaction: {
-    MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MAX_FEE_FACTOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     allowedBaseKeys(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -910,7 +783,13 @@ export interface Config extends BaseContract {
 
     eventEmitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    initOracleConfig(
+      params: ConfigUtils.InitOracleConfigParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     initOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -970,14 +849,6 @@ export interface Config extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setDataStream(
-      token: PromiseOrValue<string>,
-      feedId: PromiseOrValue<BytesLike>,
-      dataStreamMultiplier: PromiseOrValue<BigNumberish>,
-      dataStreamSpreadReductionFactor: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     setInt(
       baseKey: PromiseOrValue<BytesLike>,
       data: PromiseOrValue<BytesLike>,
@@ -986,6 +857,7 @@ export interface Config extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setOracleProviderForToken(
+      oracle: PromiseOrValue<string>,
       token: PromiseOrValue<string>,
       provider: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -995,15 +867,6 @@ export interface Config extends BaseContract {
       market: PromiseOrValue<string>,
       minPositionImpactPoolAmount: PromiseOrValue<BigNumberish>,
       positionImpactPoolDistributionRate: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setPriceFeed(
-      token: PromiseOrValue<string>,
-      priceFeed: PromiseOrValue<string>,
-      priceFeedMultiplier: PromiseOrValue<BigNumberish>,
-      priceFeedHeartbeatDuration: PromiseOrValue<BigNumberish>,
-      stablePrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

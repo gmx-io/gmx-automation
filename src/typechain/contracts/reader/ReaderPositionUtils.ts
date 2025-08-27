@@ -361,16 +361,25 @@ export declare namespace ReaderPricingUtils {
     priceImpactUsd: PromiseOrValue<BigNumberish>;
     executionPrice: PromiseOrValue<BigNumberish>;
     balanceWasImproved: PromiseOrValue<boolean>;
+    proportionalPendingImpactUsd: PromiseOrValue<BigNumberish>;
+    totalImpactUsd: PromiseOrValue<BigNumberish>;
+    priceImpactDiffUsd: PromiseOrValue<BigNumberish>;
   };
 
   export type ExecutionPriceResultStructOutput = [
     BigNumber,
     BigNumber,
-    boolean
+    boolean,
+    BigNumber,
+    BigNumber,
+    BigNumber
   ] & {
     priceImpactUsd: BigNumber;
     executionPrice: BigNumber;
     balanceWasImproved: boolean;
+    proportionalPendingImpactUsd: BigNumber;
+    totalImpactUsd: BigNumber;
+    priceImpactDiffUsd: BigNumber;
   };
 }
 

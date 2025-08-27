@@ -3,8 +3,8 @@
 Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
-TX=0xcd608a468d32677d236dcdee965e3c7747cbd8ea631ff9ead5aad7628f926138 \
-INITIAL_FROM_TIMESTAMP=1750044238 \
+TX=0x138a4dacc8aa3d23e91c30f76664ea492ce51c9c196ed51c4f38905b3d0eeea2 \
+INITIAL_FROM_TIMESTAMP=1754965540 \
 SHOULD_SEND_TXN=true \
 REVERT_TX=true \
     npx hardhat run scripts/simulateTx_feeDistribution_bridgedGmxReceived.ts --network localhost
@@ -32,6 +32,7 @@ import {
 import {
   FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH,
   FEE_DISTRIBUTION_COMPLETED_HASH,
+  DISTRIBUTION_ID,
   getFeeDistributionCompletedEventData,
 } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, USD_DECIMALS, GMX_DECIMALS } from "../src/lib/number";
@@ -61,6 +62,7 @@ const shouldSendTxn = shouldSendTxnStr.toLowerCase() === "true";
 const wntPriceKey = WNT_PRICE_KEY;
 const gmxPriceKey = GMX_PRICE_KEY;
 const maxRewardsEsGmxAmountKey = MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY;
+const distributionId = DISTRIBUTION_ID;
 
 const feeDistributionBridgedGmxReceivedTopics = [
   EVENT_LOG_TOPIC,
@@ -109,6 +111,7 @@ const bridgedGmxReceivedSimulation = async (opts?: RevertOverride) => {
         wntPriceKey,
         gmxPriceKey,
         maxRewardsEsGmxAmountKey,
+        distributionId,
         shouldSendTxn,
       },
       chainId
@@ -165,7 +168,6 @@ const bridgedGmxReceivedSimulation = async (opts?: RevertOverride) => {
           wntForKeepers: formatAmount(ev.wntForKeepers, GMX_DECIMALS, 4),
           wntForChainlink: formatAmount(ev.wntForChainlink, GMX_DECIMALS, 4),
           wntForTreasury: formatAmount(ev.wntForTreasury, GMX_DECIMALS, 4),
-          wntForGlp: formatAmount(ev.wntForGlp, GMX_DECIMALS, 4),
           wntForReferralRewards: formatAmount(
             ev.wntForReferralRewards,
             GMX_DECIMALS,

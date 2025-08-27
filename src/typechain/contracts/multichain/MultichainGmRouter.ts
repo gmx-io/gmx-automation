@@ -362,6 +362,7 @@ export interface MultichainGmRouterInterface extends utils.Interface {
     "dataStore()": FunctionFragment;
     "depositHandler()": FunctionFragment;
     "depositVault()": FunctionFragment;
+    "digests(bytes32)": FunctionFragment;
     "eventEmitter()": FunctionFragment;
     "externalHandler()": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
@@ -377,7 +378,6 @@ export interface MultichainGmRouterInterface extends utils.Interface {
     "shiftHandler()": FunctionFragment;
     "shiftVault()": FunctionFragment;
     "swapHandler()": FunctionFragment;
-    "userNonces(address)": FunctionFragment;
     "withdrawalHandler()": FunctionFragment;
     "withdrawalVault()": FunctionFragment;
   };
@@ -390,6 +390,7 @@ export interface MultichainGmRouterInterface extends utils.Interface {
       | "dataStore"
       | "depositHandler"
       | "depositVault"
+      | "digests"
       | "eventEmitter"
       | "externalHandler"
       | "multicall"
@@ -405,7 +406,6 @@ export interface MultichainGmRouterInterface extends utils.Interface {
       | "shiftHandler"
       | "shiftVault"
       | "swapHandler"
-      | "userNonces"
       | "withdrawalHandler"
       | "withdrawalVault"
   ): FunctionFragment;
@@ -448,6 +448,10 @@ export interface MultichainGmRouterInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "depositVault",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "digests",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "eventEmitter",
@@ -505,10 +509,6 @@ export interface MultichainGmRouterInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "userNonces",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "withdrawalHandler",
     values?: undefined
   ): string;
@@ -538,6 +538,7 @@ export interface MultichainGmRouterInterface extends utils.Interface {
     functionFragment: "depositVault",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "digests", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eventEmitter",
     data: BytesLike
@@ -574,7 +575,6 @@ export interface MultichainGmRouterInterface extends utils.Interface {
     functionFragment: "swapHandler",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "userNonces", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "withdrawalHandler",
     data: BytesLike
@@ -663,6 +663,11 @@ export interface MultichainGmRouter extends BaseContract {
 
     depositVault(overrides?: CallOverrides): Promise<[string]>;
 
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     eventEmitter(overrides?: CallOverrides): Promise<[string]>;
 
     externalHandler(overrides?: CallOverrides): Promise<[string]>;
@@ -709,11 +714,6 @@ export interface MultichainGmRouter extends BaseContract {
 
     swapHandler(overrides?: CallOverrides): Promise<[string]>;
 
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     withdrawalHandler(overrides?: CallOverrides): Promise<[string]>;
 
     withdrawalVault(overrides?: CallOverrides): Promise<[string]>;
@@ -751,6 +751,11 @@ export interface MultichainGmRouter extends BaseContract {
   depositHandler(overrides?: CallOverrides): Promise<string>;
 
   depositVault(overrides?: CallOverrides): Promise<string>;
+
+  digests(
+    arg0: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -798,11 +803,6 @@ export interface MultichainGmRouter extends BaseContract {
 
   swapHandler(overrides?: CallOverrides): Promise<string>;
 
-  userNonces(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   withdrawalHandler(overrides?: CallOverrides): Promise<string>;
 
   withdrawalVault(overrides?: CallOverrides): Promise<string>;
@@ -840,6 +840,11 @@ export interface MultichainGmRouter extends BaseContract {
     depositHandler(overrides?: CallOverrides): Promise<string>;
 
     depositVault(overrides?: CallOverrides): Promise<string>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -886,11 +891,6 @@ export interface MultichainGmRouter extends BaseContract {
     shiftVault(overrides?: CallOverrides): Promise<string>;
 
     swapHandler(overrides?: CallOverrides): Promise<string>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     withdrawalHandler(overrides?: CallOverrides): Promise<string>;
 
@@ -942,6 +942,11 @@ export interface MultichainGmRouter extends BaseContract {
 
     depositVault(overrides?: CallOverrides): Promise<BigNumber>;
 
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     eventEmitter(overrides?: CallOverrides): Promise<BigNumber>;
 
     externalHandler(overrides?: CallOverrides): Promise<BigNumber>;
@@ -988,11 +993,6 @@ export interface MultichainGmRouter extends BaseContract {
 
     swapHandler(overrides?: CallOverrides): Promise<BigNumber>;
 
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     withdrawalHandler(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdrawalVault(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1031,6 +1031,11 @@ export interface MultichainGmRouter extends BaseContract {
     depositHandler(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     depositVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     eventEmitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1077,11 +1082,6 @@ export interface MultichainGmRouter extends BaseContract {
     shiftVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     swapHandler(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     withdrawalHandler(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

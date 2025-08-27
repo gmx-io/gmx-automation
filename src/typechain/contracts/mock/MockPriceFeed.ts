@@ -27,6 +27,8 @@ import type {
 export interface MockPriceFeedInterface extends utils.Interface {
   functions: {
     "answer()": FunctionFragment;
+    "decimals()": FunctionFragment;
+    "description()": FunctionFragment;
     "latestAnswer()": FunctionFragment;
     "latestRoundData()": FunctionFragment;
     "setAnswer(int256)": FunctionFragment;
@@ -35,12 +37,19 @@ export interface MockPriceFeedInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "answer"
+      | "decimals"
+      | "description"
       | "latestAnswer"
       | "latestRoundData"
       | "setAnswer"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "answer", values?: undefined): string;
+  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "description",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "latestAnswer",
     values?: undefined
@@ -55,6 +64,11 @@ export interface MockPriceFeedInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "answer", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "description",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "latestAnswer",
     data: BytesLike
@@ -97,6 +111,10 @@ export interface MockPriceFeed extends BaseContract {
   functions: {
     answer(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    decimals(overrides?: CallOverrides): Promise<[number]>;
+
+    description(overrides?: CallOverrides): Promise<[string]>;
+
     latestAnswer(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     latestRoundData(
@@ -111,6 +129,10 @@ export interface MockPriceFeed extends BaseContract {
 
   answer(overrides?: CallOverrides): Promise<BigNumber>;
 
+  decimals(overrides?: CallOverrides): Promise<number>;
+
+  description(overrides?: CallOverrides): Promise<string>;
+
   latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
 
   latestRoundData(
@@ -124,6 +146,10 @@ export interface MockPriceFeed extends BaseContract {
 
   callStatic: {
     answer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    decimals(overrides?: CallOverrides): Promise<number>;
+
+    description(overrides?: CallOverrides): Promise<string>;
 
     latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -142,6 +168,10 @@ export interface MockPriceFeed extends BaseContract {
   estimateGas: {
     answer(overrides?: CallOverrides): Promise<BigNumber>;
 
+    decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    description(overrides?: CallOverrides): Promise<BigNumber>;
+
     latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
 
     latestRoundData(overrides?: CallOverrides): Promise<BigNumber>;
@@ -154,6 +184,10 @@ export interface MockPriceFeed extends BaseContract {
 
   populateTransaction: {
     answer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     latestAnswer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

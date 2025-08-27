@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type * as interfaces from "./interfaces";
 export type { interfaces };
+export type { MintBurnOFTAdapter } from "./MintBurnOFTAdapter";
 export type { OFT } from "./OFT";
 export type { OFTAdapter } from "./OFTAdapter";
 export type { OFTCore } from "./OFTCore";

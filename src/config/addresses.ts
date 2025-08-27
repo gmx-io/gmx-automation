@@ -23,7 +23,7 @@ export type SupportedContractName =
   | "feeDistributor"
   | "feeDistributorVault"
   | "contributorHandler"
-  | "mockOFTAdapter";
+  | "gmxAdapter";
 
 export const isSupportedContractName = (
   contractName: string
@@ -43,7 +43,7 @@ export const isSupportedContractName = (
     "feeDistributor",
     "feeDistributorVault",
     "contributorHandler",
-    "mockOFTAdapter",
+    "gmxAdapter",
   ].includes(contractName);
 };
 
@@ -54,19 +54,19 @@ const addresses: Record<
   [LOCALHOST]: {
     dataStore: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
     config: "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
-    configSyncer: "0xefc1aB2475ACb7E60499Efb171D173be19928a05",
+    configSyncer: "0x51C65cd0Cdb1A8A8b79dfc2eE965B1bA0bb8fc89",
     eventEmitter: "0x67d269191c92Caf3cD7723F116c85e6E9bf55933",
-    feeHandler: "0xD6b040736e948621c5b6E0a494473c47a6113eA8",
-    glvReader: "0x114e375B6FCC6d6fCb68c7A1d407E652C54F25FB",
+    feeHandler: "0xcC4c41415fc68B2fBf70102742A83cDe435e0Ca7",
+    glvReader: "0xb185E9f6531BA9877741022C92CE858cDCc5760E",
     multicall3: "0x851356ae760d987E095750cCeb3bC6014560891C",
-    orderHandler: "0x5D42EBdBBa61412295D7b0302d6F50aC449Ddb4F",
-    reader: "0x572316aC11CB4bc5daf6BDae68f43EA3CCE3aE0e",
+    orderHandler: "0x49fd2BE640DB2910c2fAb69bB8531Ab6E76127ff",
+    reader: "0x4593ed9CbE6003e687e5e77368534bb04b162503",
     wnt: "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
     esGmx: "0x9A676e781A523b5d0C0e43731313A708CB607508",
-    feeDistributor: "0x51C65cd0Cdb1A8A8b79dfc2eE965B1bA0bb8fc89",
-    feeDistributorVault: "0x56fC17a65ccFEC6B7ad0aDe9BD9416CB365B9BE8",
+    feeDistributor: "0x871ACbEabBaf8Bed65c22ba7132beCFaBf8c27B5",
+    feeDistributorVault: "0x8bEe2037448F096900Fd9affc427d38aE6CC0350",
     contributorHandler: "0x0000000000000000000000000000000000000000",
-    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
+    gmxAdapter: "0x0000000000000000000000000000000000000000",
   },
   [ARBITRUM]: {
     config: "0xD1781719eDbED8940534511ac671027989e724b9",
@@ -83,7 +83,7 @@ const addresses: Record<
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
     contributorHandler: "0x0000000000000000000000000000000000000000",
-    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
+    gmxAdapter: "0x0000000000000000000000000000000000000000",
   },
   [ARBITRUM_SEPOLIA]: {
     config: "0x0000000000000000000000000000000000000000",
@@ -100,7 +100,7 @@ const addresses: Record<
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
     contributorHandler: "0x0000000000000000000000000000000000000000",
-    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
+    gmxAdapter: "0x0000000000000000000000000000000000000000",
   },
   [AVALANCHE]: {
     config: "0xEb376626D44c638Fd0C41170a40fd23a1A0622b7",
@@ -117,7 +117,7 @@ const addresses: Record<
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
     contributorHandler: "0x0000000000000000000000000000000000000000",
-    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
+    gmxAdapter: "0x0000000000000000000000000000000000000000",
   },
   [AVALANCHE_FUJI]: {
     config: "0x1518ab348e7187d9CDCAB6Ba4ea3e37E187eB8D7",
@@ -134,7 +134,7 @@ const addresses: Record<
     feeDistributor: "0x0000000000000000000000000000000000000000",
     feeDistributorVault: "0x0000000000000000000000000000000000000000",
     contributorHandler: "0x0000000000000000000000000000000000000000",
-    mockOFTAdapter: "0x0000000000000000000000000000000000000000",
+    gmxAdapter: "0x0000000000000000000000000000000000000000",
   },
 };
 

@@ -4,3 +4,4 @@
 /* eslint-disable */
 export type { DataStore } from "./DataStore";
 export type { Keys } from "./Keys";
+export type { Keys2 } from "./Keys2";

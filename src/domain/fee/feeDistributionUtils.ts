@@ -15,18 +15,14 @@ type FeeDistributionCompletedEventData = {
   wntForKeepers: BigNumber;
   wntForChainlink: BigNumber;
   wntForTreasury: BigNumber;
-  wntForGlp: BigNumber;
   wntForReferralRewards: BigNumber;
   esGmxForReferralRewards: BigNumber;
 };
 
-type FeeDistributionEsGmxReferralRewardsSentEventData = {
-  esGmxAmount: BigNumber;
-  updatedBonusRewards: BigNumber;
-};
-
-type FeeDistributionWntReferralRewardsSentEventData = {
-  wntAmount: BigNumber;
+type FeeDistributionTotalEsGmxRewardsIncreasedEventData = {
+  account: string;
+  amount: BigNumber;
+  totalEsGmxRewards: BigNumber;
 };
 
 export const getFeeDistributionDataReceivedEventData = (
@@ -56,34 +52,22 @@ export const getFeeDistributionCompletedEventData = (
     wntForKeepers: eventData.getUint("wntForKeepers"),
     wntForChainlink: eventData.getUint("wntForChainlink"),
     wntForTreasury: eventData.getUint("wntForTreasury"),
-    wntForGlp: eventData.getUint("wntForGlp"),
     wntForReferralRewards: eventData.getUint("wntForReferralRewards"),
     esGmxForReferralRewards: eventData.getUint("esGmxForReferralRewards"),
   };
 };
 
-export const getFeeDistributionEsGmxReferralRewardsSentEventData = (
+export const getFeeDistributionTotalEsGmxRewardsIncreasedEventData = (
   log: Log,
   eventEmitter: EventEmitter
-): FeeDistributionEsGmxReferralRewardsSentEventData => {
+): FeeDistributionTotalEsGmxRewardsIncreasedEventData => {
   const event = eventEmitter.interface.parseLog(log);
   const eventData = parseLogToEventData(event);
 
   return {
-    esGmxAmount: eventData.getUint("esGmxAmount"),
-    updatedBonusRewards: eventData.getUint("updatedBonusRewards"),
-  };
-};
-
-export const getFeeDistributionWntReferralRewardsSentEventData = (
-  log: Log,
-  eventEmitter: EventEmitter
-): FeeDistributionWntReferralRewardsSentEventData => {
-  const event = eventEmitter.interface.parseLog(log);
-  const eventData = parseLogToEventData(event);
-
-  return {
-    wntAmount: eventData.getUint("wntAmount"),
+    account: eventData.getAddress("account"),
+    amount: eventData.getUint("amount"),
+    totalEsGmxRewards: eventData.getUint("totalEsGmxRewards"),
   };
 };
 
@@ -109,10 +93,8 @@ export const FEE_DISTRIBUTION_COMPLETED_HASH = ethers.utils.id(
   "FeeDistributionCompleted"
 );
 
-export const ES_GMX_REFERRAL_REWARDS_SENT_HASH = ethers.utils.id(
-  "EsGmxReferralRewardsSent"
+export const TOTAL_ES_GMX_REWARDS_INCREASED_HASH = ethers.utils.id(
+  "TotalEsGmxRewardsIncreased"
 );
 
-export const WNT_REFERRAL_REWARDS_SENT_HASH = ethers.utils.id(
-  "WntReferralRewardsSent"
-);
+export const DISTRIBUTION_ID = "1";

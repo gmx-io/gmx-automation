@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export { MarketFactory__factory } from "./MarketFactory__factory";
-export { MarketPositionImpactPoolUtils__factory } from "./MarketPositionImpactPoolUtils__factory";
 export { MarketStoreUtils__factory } from "./MarketStoreUtils__factory";
 export { MarketToken__factory } from "./MarketToken__factory";
 export { MarketUtils__factory } from "./MarketUtils__factory";

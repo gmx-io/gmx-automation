@@ -23,6 +23,7 @@ import type {
 export interface RoleInterface extends utils.Interface {
   functions: {
     "ADL_KEEPER()": FunctionFragment;
+    "CLAIM_ADMIN()": FunctionFragment;
     "CONFIG_KEEPER()": FunctionFragment;
     "CONTRIBUTOR_DISTRIBUTOR()": FunctionFragment;
     "CONTRIBUTOR_KEEPER()": FunctionFragment;
@@ -46,6 +47,7 @@ export interface RoleInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "ADL_KEEPER"
+      | "CLAIM_ADMIN"
       | "CONFIG_KEEPER"
       | "CONTRIBUTOR_DISTRIBUTOR"
       | "CONTRIBUTOR_KEEPER"
@@ -68,6 +70,10 @@ export interface RoleInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "ADL_KEEPER",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "CLAIM_ADMIN",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -144,6 +150,10 @@ export interface RoleInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "ADL_KEEPER", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "CLAIM_ADMIN",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "CONFIG_KEEPER",
     data: BytesLike
@@ -240,6 +250,8 @@ export interface Role extends BaseContract {
   functions: {
     ADL_KEEPER(overrides?: CallOverrides): Promise<[string]>;
 
+    CLAIM_ADMIN(overrides?: CallOverrides): Promise<[string]>;
+
     CONFIG_KEEPER(overrides?: CallOverrides): Promise<[string]>;
 
     CONTRIBUTOR_DISTRIBUTOR(overrides?: CallOverrides): Promise<[string]>;
@@ -279,6 +291,8 @@ export interface Role extends BaseContract {
 
   ADL_KEEPER(overrides?: CallOverrides): Promise<string>;
 
+  CLAIM_ADMIN(overrides?: CallOverrides): Promise<string>;
+
   CONFIG_KEEPER(overrides?: CallOverrides): Promise<string>;
 
   CONTRIBUTOR_DISTRIBUTOR(overrides?: CallOverrides): Promise<string>;
@@ -317,6 +331,8 @@ export interface Role extends BaseContract {
 
   callStatic: {
     ADL_KEEPER(overrides?: CallOverrides): Promise<string>;
+
+    CLAIM_ADMIN(overrides?: CallOverrides): Promise<string>;
 
     CONFIG_KEEPER(overrides?: CallOverrides): Promise<string>;
 
@@ -360,6 +376,8 @@ export interface Role extends BaseContract {
   estimateGas: {
     ADL_KEEPER(overrides?: CallOverrides): Promise<BigNumber>;
 
+    CLAIM_ADMIN(overrides?: CallOverrides): Promise<BigNumber>;
+
     CONFIG_KEEPER(overrides?: CallOverrides): Promise<BigNumber>;
 
     CONTRIBUTOR_DISTRIBUTOR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -399,6 +417,8 @@ export interface Role extends BaseContract {
 
   populateTransaction: {
     ADL_KEEPER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    CLAIM_ADMIN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     CONFIG_KEEPER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
