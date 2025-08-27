@@ -153,9 +153,13 @@ export function getContracts(
     provider,
     abi: ContributorHandlerAbi,
   });
-  const gmx_Adapter = getContract<MockGMX_Adapter>({
+
+  // MockGMX_Adapter used as the contract because GMX_Adapter is not in the gmx-synthetics repo and
+  // the contract is only used for an event filter in createTask_feeDistributor_bridgedGmxReceived
+  // Used gmxAdapter naming instead of gmx_Adapter for more consistent naming with other contracts
+  const gmxAdapter = getContract<MockGMX_Adapter>({
     chainId,
-    name: "gmx_Adapter",
+    name: "gmxAdapter",
     provider,
     abi: MockGMX_AdapterAbi,
   });
@@ -174,7 +178,7 @@ export function getContracts(
     feeDistributor,
     feeDistributorVault,
     contributorHandler,
-    gmx_Adapter,
+    gmxAdapter,
   };
 
   return contracts;
