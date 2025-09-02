@@ -99,7 +99,7 @@ export const feeDistribution = async (
         provider.getBlock("latest"),
         contracts.dataStore.getUint(maxRewardsEsGmxAmountKey),
         processPeriodV1("prev", chainId),
-        processPeriodV2("prev", chainId).then((v) => v.mul(10).div(100)),
+        processPeriodV2("prev", chainId),
       ]);
     const toTimestamp = latestBlock.timestamp;
 

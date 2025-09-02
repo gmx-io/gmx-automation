@@ -26,6 +26,12 @@ export const REWARD_THRESHOLD = expandDecimals(1, 28); // 1 cent
 export const ESGMX_REWARDS_THRESHOLD = expandDecimals(1, 16); // 0.01 esGMX
 export const ZERO = bigNumberify(0);
 
+export const AFFILIATE_TIERS_COUNT = 1000; // for referral rewards affiliate tiers query
+export const CHUNKS_COUNT = 6; // for trader and affiliate referral rewards queries
+export const CHUNK_SIZE = 10_000; // for trader and affiliate referral rewards queries
+export const ESGMX_REWARDS_DIVISOR = 5; // for tier 3, 1/5 of the 25% total rewards or 5%
+export const BATCH_SIZE = 150; // max batch size for depositReferralRewards
+
 export function formatAmount(
   amount: BigNumberish,
   decimals = 30,

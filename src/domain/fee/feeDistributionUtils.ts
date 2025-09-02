@@ -97,4 +97,4 @@ export const TOTAL_ES_GMX_REWARDS_INCREASED_HASH = ethers.utils.id(
   "TotalEsGmxRewardsIncreased"
 );
 
-export const DISTRIBUTION_ID = "1";
+export const MOCK_DISTRIBUTION_ID = "1";

@@ -5,6 +5,7 @@ import hre from "hardhat";
 import assert from "node:assert";
 import { initCreateTask, logTaskCreation, run } from "./utils/createTaskUtils";
 import { getAddress } from "../src/config/addresses";
+import { validateInitialFromTimestamp } from "../src/utils/date";
 import { EVENT_LOG_TOPIC } from "../src/lib/events";
 import {
   WNT_PRICE_KEY,
@@ -24,11 +25,10 @@ const main = async () => {
     process.env.INITIAL_FROM_TIMESTAMP,
     "no INITIAL_FROM_TIMESTAMP in .env"
   );
-  assert.ok(
-    process.env.DISTRIBUTION_ID,
-    "no DISTRIBUTION_ID in .env"
-  );
+  assert.ok(process.env.DISTRIBUTION_ID, "no DISTRIBUTION_ID in .env");
   assert.ok(process.env.SHOULD_SEND_TXN, "no SHOULD_SEND_TXN in .env");
+
+  validateInitialFromTimestamp(Number(process.env.INITIAL_FROM_TIMESTAMP));
 
   const { logger, chainId, automate, web3Function } = await initCreateTask();
 
