@@ -6,6 +6,8 @@ import type * as interfaces from "./interfaces";
 export type { interfaces };
 import type * as libs from "./libs";
 export type { libs };
+import type * as utils from "./utils";
+export type { utils };
 export type { OApp } from "./OApp";
 export type { OAppCore } from "./OAppCore";
 export type { OAppReceiver } from "./OAppReceiver";

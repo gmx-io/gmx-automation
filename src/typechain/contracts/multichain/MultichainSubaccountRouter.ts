@@ -36,6 +36,7 @@ export type SubaccountApprovalStruct = {
   maxAllowedCount: PromiseOrValue<BigNumberish>;
   actionType: PromiseOrValue<BytesLike>;
   nonce: PromiseOrValue<BigNumberish>;
+  desChainId: PromiseOrValue<BigNumberish>;
   deadline: PromiseOrValue<BigNumberish>;
   integrationId: PromiseOrValue<BytesLike>;
   signature: PromiseOrValue<BytesLike>;
@@ -49,6 +50,7 @@ export type SubaccountApprovalStructOutput = [
   string,
   BigNumber,
   BigNumber,
+  BigNumber,
   string,
   string
 ] & {
@@ -58,6 +60,7 @@ export type SubaccountApprovalStructOutput = [
   maxAllowedCount: BigNumber;
   actionType: string;
   nonce: BigNumber;
+  desChainId: BigNumber;
   deadline: BigNumber;
   integrationId: string;
   signature: string;
@@ -361,10 +364,11 @@ export declare namespace IBaseOrderUtils {
 
 export interface MultichainSubaccountRouterInterface extends utils.Interface {
   functions: {
-    "batch(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,uint256,address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))": FunctionFragment;
-    "cancelOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,uint256,address,bytes32)": FunctionFragment;
-    "createOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,uint256,address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))": FunctionFragment;
+    "batch(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,uint256,address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))": FunctionFragment;
+    "cancelOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,uint256,address,bytes32)": FunctionFragment;
+    "createOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,uint256,address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))": FunctionFragment;
     "dataStore()": FunctionFragment;
+    "digests(bytes32)": FunctionFragment;
     "eventEmitter()": FunctionFragment;
     "externalHandler()": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
@@ -380,8 +384,7 @@ export interface MultichainSubaccountRouterInterface extends utils.Interface {
     "sendWnt(address,uint256)": FunctionFragment;
     "subaccountApprovalNonces(address)": FunctionFragment;
     "swapHandler()": FunctionFragment;
-    "updateOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,uint256,address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))": FunctionFragment;
-    "userNonces(address)": FunctionFragment;
+    "updateOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,uint256,address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))": FunctionFragment;
   };
 
   getFunction(
@@ -390,6 +393,7 @@ export interface MultichainSubaccountRouterInterface extends utils.Interface {
       | "cancelOrder"
       | "createOrder"
       | "dataStore"
+      | "digests"
       | "eventEmitter"
       | "externalHandler"
       | "multicall"
@@ -406,7 +410,6 @@ export interface MultichainSubaccountRouterInterface extends utils.Interface {
       | "subaccountApprovalNonces"
       | "swapHandler"
       | "updateOrder"
-      | "userNonces"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -443,6 +446,10 @@ export interface MultichainSubaccountRouterInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "dataStore", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "digests",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "eventEmitter",
     values?: undefined
@@ -514,10 +521,6 @@ export interface MultichainSubaccountRouterInterface extends utils.Interface {
       IRelayUtils.UpdateOrderParamsStruct
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "userNonces",
-    values: [PromiseOrValue<string>]
-  ): string;
 
   decodeFunctionResult(functionFragment: "batch", data: BytesLike): Result;
   decodeFunctionResult(
@@ -529,6 +532,7 @@ export interface MultichainSubaccountRouterInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "dataStore", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "digests", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eventEmitter",
     data: BytesLike
@@ -572,7 +576,6 @@ export interface MultichainSubaccountRouterInterface extends utils.Interface {
     functionFragment: "updateOrder",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "userNonces", data: BytesLike): Result;
 
   events: {
     "TokenTransferReverted(string,bytes)": EventFragment;
@@ -652,6 +655,11 @@ export interface MultichainSubaccountRouter extends BaseContract {
 
     dataStore(overrides?: CallOverrides): Promise<[string]>;
 
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     eventEmitter(overrides?: CallOverrides): Promise<[string]>;
 
     externalHandler(overrides?: CallOverrides): Promise<[string]>;
@@ -716,11 +724,6 @@ export interface MultichainSubaccountRouter extends BaseContract {
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
   };
 
   batch(
@@ -754,6 +757,11 @@ export interface MultichainSubaccountRouter extends BaseContract {
   ): Promise<ContractTransaction>;
 
   dataStore(overrides?: CallOverrides): Promise<string>;
+
+  digests(
+    arg0: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -820,11 +828,6 @@ export interface MultichainSubaccountRouter extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  userNonces(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   callStatic: {
     batch(
       relayParams: IRelayUtils.RelayParamsStruct,
@@ -857,6 +860,11 @@ export interface MultichainSubaccountRouter extends BaseContract {
     ): Promise<string>;
 
     dataStore(overrides?: CallOverrides): Promise<string>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -922,11 +930,6 @@ export interface MultichainSubaccountRouter extends BaseContract {
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -972,6 +975,11 @@ export interface MultichainSubaccountRouter extends BaseContract {
     ): Promise<BigNumber>;
 
     dataStore(overrides?: CallOverrides): Promise<BigNumber>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     eventEmitter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1037,11 +1045,6 @@ export interface MultichainSubaccountRouter extends BaseContract {
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1076,6 +1079,11 @@ export interface MultichainSubaccountRouter extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     dataStore(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     eventEmitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1140,11 +1148,6 @@ export interface MultichainSubaccountRouter extends BaseContract {
       subaccount: PromiseOrValue<string>,
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

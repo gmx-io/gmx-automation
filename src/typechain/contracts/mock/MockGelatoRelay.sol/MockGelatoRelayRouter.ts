@@ -304,6 +304,7 @@ export interface MockGelatoRelayRouterInterface extends utils.Interface {
     "cancelOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,bytes32)": FunctionFragment;
     "createOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))": FunctionFragment;
     "dataStore()": FunctionFragment;
+    "digests(bytes32)": FunctionFragment;
     "eventEmitter()": FunctionFragment;
     "externalHandler()": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
@@ -321,7 +322,6 @@ export interface MockGelatoRelayRouterInterface extends utils.Interface {
     "testNestedSignature((uint256,bool),address,bytes,uint256)": FunctionFragment;
     "testSimpleSignature(address,bytes,uint256)": FunctionFragment;
     "updateOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))": FunctionFragment;
-    "userNonces(address)": FunctionFragment;
   };
 
   getFunction(
@@ -330,6 +330,7 @@ export interface MockGelatoRelayRouterInterface extends utils.Interface {
       | "cancelOrder"
       | "createOrder"
       | "dataStore"
+      | "digests"
       | "eventEmitter"
       | "externalHandler"
       | "multicall"
@@ -347,7 +348,6 @@ export interface MockGelatoRelayRouterInterface extends utils.Interface {
       | "testNestedSignature"
       | "testSimpleSignature"
       | "updateOrder"
-      | "userNonces"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -375,6 +375,10 @@ export interface MockGelatoRelayRouterInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "dataStore", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "digests",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "eventEmitter",
     values?: undefined
@@ -461,10 +465,6 @@ export interface MockGelatoRelayRouterInterface extends utils.Interface {
       IRelayUtils.UpdateOrderParamsStruct
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "userNonces",
-    values: [PromiseOrValue<string>]
-  ): string;
 
   decodeFunctionResult(functionFragment: "batch", data: BytesLike): Result;
   decodeFunctionResult(
@@ -476,6 +476,7 @@ export interface MockGelatoRelayRouterInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "dataStore", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "digests", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eventEmitter",
     data: BytesLike
@@ -523,7 +524,6 @@ export interface MockGelatoRelayRouterInterface extends utils.Interface {
     functionFragment: "updateOrder",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "userNonces", data: BytesLike): Result;
 
   events: {
     "TokenTransferReverted(string,bytes)": EventFragment;
@@ -593,6 +593,11 @@ export interface MockGelatoRelayRouter extends BaseContract {
     ): Promise<ContractTransaction>;
 
     dataStore(overrides?: CallOverrides): Promise<[string]>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     eventEmitter(overrides?: CallOverrides): Promise<[string]>;
 
@@ -671,11 +676,6 @@ export interface MockGelatoRelayRouter extends BaseContract {
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
   };
 
   batch(
@@ -700,6 +700,11 @@ export interface MockGelatoRelayRouter extends BaseContract {
   ): Promise<ContractTransaction>;
 
   dataStore(overrides?: CallOverrides): Promise<string>;
+
+  digests(
+    arg0: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -779,11 +784,6 @@ export interface MockGelatoRelayRouter extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  userNonces(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   callStatic: {
     batch(
       relayParams: IRelayUtils.RelayParamsStruct,
@@ -807,6 +807,11 @@ export interface MockGelatoRelayRouter extends BaseContract {
     ): Promise<string>;
 
     dataStore(overrides?: CallOverrides): Promise<string>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -885,11 +890,6 @@ export interface MockGelatoRelayRouter extends BaseContract {
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -926,6 +926,11 @@ export interface MockGelatoRelayRouter extends BaseContract {
     ): Promise<BigNumber>;
 
     dataStore(overrides?: CallOverrides): Promise<BigNumber>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     eventEmitter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1004,11 +1009,6 @@ export interface MockGelatoRelayRouter extends BaseContract {
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1034,6 +1034,11 @@ export interface MockGelatoRelayRouter extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     dataStore(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     eventEmitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1111,11 +1116,6 @@ export interface MockGelatoRelayRouter extends BaseContract {
       account: PromiseOrValue<string>,
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

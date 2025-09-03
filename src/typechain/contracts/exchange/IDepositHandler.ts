@@ -96,7 +96,6 @@ export declare namespace IExecuteDepositUtils {
     startingGas: PromiseOrValue<BigNumberish>;
     swapPricingType: PromiseOrValue<BigNumberish>;
     includeVirtualInventoryImpact: PromiseOrValue<boolean>;
-    srcChainId: PromiseOrValue<BigNumberish>;
   };
 
   export type ExecuteDepositParamsStructOutput = [
@@ -111,8 +110,7 @@ export declare namespace IExecuteDepositUtils {
     string,
     BigNumber,
     number,
-    boolean,
-    BigNumber
+    boolean
   ] & {
     dataStore: string;
     eventEmitter: string;
@@ -126,7 +124,6 @@ export declare namespace IExecuteDepositUtils {
     startingGas: BigNumber;
     swapPricingType: number;
     includeVirtualInventoryImpact: boolean;
-    srcChainId: BigNumber;
   };
 }
 
@@ -258,7 +255,7 @@ export interface IDepositHandlerInterface extends utils.Interface {
   functions: {
     "cancelDeposit(bytes32)": FunctionFragment;
     "createDeposit(address,uint256,((address,address,address,address,address,address,address[],address[]),uint256,bool,uint256,uint256,bytes32[]))": FunctionFragment;
-    "executeDepositFromController((address,address,address,address,address,address,address,bytes32,address,uint256,uint8,bool,uint256),((address,address,address,address,address,address,address,address[],address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bool),bytes32[]))": FunctionFragment;
+    "executeDepositFromController((address,address,address,address,address,address,address,bytes32,address,uint256,uint8,bool),((address,address,address,address,address,address,address,address[],address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bool),bytes32[]))": FunctionFragment;
     "simulateExecuteDeposit(bytes32,(address[],(uint256,uint256)[],uint256,uint256))": FunctionFragment;
   };
 

@@ -191,11 +191,6 @@ const _abi = [
             name: "includeVirtualInventoryImpact",
             type: "bool",
           },
-          {
-            internalType: "uint256",
-            name: "srcChainId",
-            type: "uint256",
-          },
         ],
         internalType: "struct IExecuteDepositUtils.ExecuteDepositParams",
         name: "executeDepositParams",

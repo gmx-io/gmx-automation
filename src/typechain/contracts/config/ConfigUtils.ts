@@ -24,24 +24,64 @@ import type {
 
 export interface ConfigUtilsInterface extends utils.Interface {
   functions: {
-    "validateRange(DataStore,bytes32,bytes,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND()": FunctionFragment;
+    "MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND()": FunctionFragment;
+    "MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND()": FunctionFragment;
+    "MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME()": FunctionFragment;
+    "validateRange(DataStore,bytes32,bytes,uint256)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "validateRange"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND"
+      | "MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND"
+      | "MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND"
+      | "MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME"
+      | "validateRange"
+  ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "validateRange",
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BytesLike>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "validateRange",
     data: BytesLike
@@ -77,38 +117,77 @@ export interface ConfigUtils extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     validateRange(
       dataStore: PromiseOrValue<string>,
       baseKey: PromiseOrValue<BytesLike>,
       data: PromiseOrValue<BytesLike>,
       value: PromiseOrValue<BigNumberish>,
-      maxAllowedMaxFundingFactorPerSecond: PromiseOrValue<BigNumberish>,
-      maxAllowedFundingIncreaseFactorPerSecond: PromiseOrValue<BigNumberish>,
-      maxAllowedFundingDecreaseFactorPerSecond: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[void]>;
   };
+
+  MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   validateRange(
     dataStore: PromiseOrValue<string>,
     baseKey: PromiseOrValue<BytesLike>,
     data: PromiseOrValue<BytesLike>,
     value: PromiseOrValue<BigNumberish>,
-    maxAllowedMaxFundingFactorPerSecond: PromiseOrValue<BigNumberish>,
-    maxAllowedFundingIncreaseFactorPerSecond: PromiseOrValue<BigNumberish>,
-    maxAllowedFundingDecreaseFactorPerSecond: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<void>;
 
   callStatic: {
+    MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     validateRange(
       dataStore: PromiseOrValue<string>,
       baseKey: PromiseOrValue<BytesLike>,
       data: PromiseOrValue<BytesLike>,
       value: PromiseOrValue<BigNumberish>,
-      maxAllowedMaxFundingFactorPerSecond: PromiseOrValue<BigNumberish>,
-      maxAllowedFundingIncreaseFactorPerSecond: PromiseOrValue<BigNumberish>,
-      maxAllowedFundingDecreaseFactorPerSecond: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -116,27 +195,53 @@ export interface ConfigUtils extends BaseContract {
   filters: {};
 
   estimateGas: {
+    MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     validateRange(
       dataStore: PromiseOrValue<string>,
       baseKey: PromiseOrValue<BytesLike>,
       data: PromiseOrValue<BytesLike>,
       value: PromiseOrValue<BigNumberish>,
-      maxAllowedMaxFundingFactorPerSecond: PromiseOrValue<BigNumberish>,
-      maxAllowedFundingIncreaseFactorPerSecond: PromiseOrValue<BigNumberish>,
-      maxAllowedFundingDecreaseFactorPerSecond: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    MAX_ALLOWED_FUNDING_DECREASE_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    MAX_ALLOWED_FUNDING_INCREASE_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    MAX_ALLOWED_MAX_FUNDING_FACTOR_PER_SECOND(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    MIN_POSITION_IMPACT_POOL_DISTRIBUTION_TIME(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     validateRange(
       dataStore: PromiseOrValue<string>,
       baseKey: PromiseOrValue<BytesLike>,
       data: PromiseOrValue<BytesLike>,
       value: PromiseOrValue<BigNumberish>,
-      maxAllowedMaxFundingFactorPerSecond: PromiseOrValue<BigNumberish>,
-      maxAllowedFundingIncreaseFactorPerSecond: PromiseOrValue<BigNumberish>,
-      maxAllowedFundingDecreaseFactorPerSecond: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

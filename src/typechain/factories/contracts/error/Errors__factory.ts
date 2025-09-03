@@ -351,6 +351,17 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "existingDistributionId",
+        type: "uint256",
+      },
+    ],
+    name: "DuplicateClaimTerms",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "index",
         type: "uint256",
       },
@@ -375,6 +386,17 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "EdgeDataStreamIdAlreadyExistsForToken",
+    type: "error",
+  },
+  {
     inputs: [],
     name: "EmptyAccount",
     type: "error",
@@ -393,6 +415,11 @@ const _abi = [
       },
     ],
     name: "EmptyAddressInMarketTokenBalanceValidation",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "EmptyAmount",
     type: "error",
   },
   {
@@ -420,6 +447,17 @@ const _abi = [
   {
     inputs: [],
     name: "EmptyClaimFeesMarket",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "EmptyClaimableAmount",
     type: "error",
   },
   {
@@ -1317,6 +1355,17 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "InsufficientFunds",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "remainingCostUsd",
         type: "uint256",
@@ -1445,22 +1494,6 @@ const _abi = [
       },
     ],
     name: "InsufficientMarketTokens",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "minPositionImpactPoolAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "int256",
-        name: "totalPendingImpactAmount",
-        type: "int256",
-      },
-    ],
-    name: "InsufficientMinPositionImpactPoolAmount",
     type: "error",
   },
   {
@@ -1760,6 +1793,33 @@ const _abi = [
       },
     ],
     name: "InvalidClaimFundingFeesInput",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "recoveredSigner",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "expectedSigner",
+        type: "address",
+      },
+    ],
+    name: "InvalidClaimTermsSignature",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "expectedSigner",
+        type: "address",
+      },
+    ],
+    name: "InvalidClaimTermsSignatureForContract",
     type: "error",
   },
   {
@@ -2593,6 +2653,17 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "string",
+        name: "reason",
+        type: "string",
+      },
+    ],
+    name: "InvalidParams",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "spender",
         type: "address",
@@ -2749,6 +2820,32 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "string",
+        name: "signatureType",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "recovered",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "recoveredFromMinified",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "expectedSigner",
+        type: "address",
+      },
+    ],
+    name: "InvalidRecoveredSigner",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "token",
         type: "address",
@@ -2831,6 +2928,17 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "desChainId",
+        type: "uint256",
+      },
+    ],
+    name: "InvalidSubaccountApprovalDesChainId",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "storedNonce",
         type: "uint256",
       },
@@ -2906,6 +3014,17 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "InvalidToken",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "tokenIn",
         type: "address",
       },
@@ -2947,17 +3066,12 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "storedUserNonce",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "userNonce",
-        type: "uint256",
+        internalType: "bytes32",
+        name: "digest",
+        type: "bytes32",
       },
     ],
-    name: "InvalidUserNonce",
+    name: "InvalidUserDigest",
     type: "error",
   },
   {
@@ -3166,6 +3280,22 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "tokensForReferralRewards",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "maxEsGmxReferralRewards",
+        type: "uint256",
+      },
+    ],
+    name: "MaxEsGmxReferralRewardsAmountExceeded",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "maxFundingFactorPerSecond",
         type: "uint256",
       },
@@ -3308,6 +3438,27 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "cumulativeTransferAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "tokensForReferralRewards",
+        type: "uint256",
+      },
+    ],
+    name: "MaxReferralRewardsExceeded",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "feeUsd",
         type: "uint256",
@@ -3409,6 +3560,54 @@ const _abi = [
       },
     ],
     name: "MaxTotalContributorTokenAmountExceeded",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "maxWntFromTreasury",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "additionalWntFromTreasury",
+        type: "uint256",
+      },
+    ],
+    name: "MaxWntFromTreasuryExceeded",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "wntReferralRewardsInUsd",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "maxWntReferralRewardsInUsdAmount",
+        type: "uint256",
+      },
+    ],
+    name: "MaxWntReferralRewardsInUsdAmountExceeded",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "wntReferralRewardsInUsd",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "maxWntReferralRewardsInUsd",
+        type: "uint256",
+      },
+    ],
+    name: "MaxWntReferralRewardsInUsdExceeded",
     type: "error",
   },
   {
@@ -3589,6 +3788,11 @@ const _abi = [
   },
   {
     inputs: [
+      {
+        internalType: "address",
+        name: "oracle",
+        type: "address",
+      },
       {
         internalType: "address",
         name: "token",
@@ -3879,69 +4083,6 @@ const _abi = [
       },
     ],
     name: "ReductionExceedsLentAmount",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "addressArrayLength",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "maxBatchSize",
-        type: "uint256",
-      },
-    ],
-    name: "ReferralRewardsAmountExceedsMaxBatchSize",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "addressArrayLength",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amountArrayLength",
-        type: "uint256",
-      },
-    ],
-    name: "ReferralRewardsArrayMismatch",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenReferralRewards",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "maxTokenReferralRewards",
-        type: "uint256",
-      },
-    ],
-    name: "ReferralRewardsThresholdBreached",
     type: "error",
   },
   {
@@ -4255,17 +4396,6 @@ const _abi = [
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "target",
-        type: "address",
-      },
-    ],
-    name: "TargetIsNotAContract",
-    type: "error",
-  },
-  {
     inputs: [],
     name: "ThereMustBeAtLeastOneRoleAdmin",
     type: "error",
@@ -4299,27 +4429,6 @@ const _abi = [
       },
     ],
     name: "TokenTransferError",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "treasuryWntAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "wntGlpShortfall",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "maxTreasuryWntShortfall",
-        type: "uint256",
-      },
-    ],
-    name: "TreasuryFeeThresholdBreached",
     type: "error",
   },
   {
@@ -4606,41 +4715,14 @@ const _abi = [
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "wntReferralRewardsInUsd",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "wntReferralRewardsInUsdLimit",
-        type: "uint256",
-      },
-    ],
-    name: "WntReferralRewardsInUsdLimitExceeded",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "wntReferralRewardsInUsd",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "maxWntReferralRewardsInUsd",
-        type: "uint256",
-      },
-    ],
-    name: "WntReferralRewardsInUsdThresholdBreached",
+    inputs: [],
+    name: "ZeroTreasuryAddress",
     type: "error",
   },
 ] as const;
 
 const _bytecode =
-  "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220c28dee3f91e713106aa65f702c1333c26345f63a1aafa8b1a77d632296605d1564736f6c63430008140033";
+  "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212201a6e587388641e37ddbef695c80d9af89bae9846bf8abcff269588ed25fafcb664736f6c634300081d0033";
 
 type ErrorsConstructorParams =
   | [signer?: Signer]

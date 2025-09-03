@@ -185,6 +185,7 @@ export declare namespace IRelayUtils {
   export type BridgeOutParamsStruct = {
     token: PromiseOrValue<string>;
     amount: PromiseOrValue<BigNumberish>;
+    minAmountOut: PromiseOrValue<BigNumberish>;
     provider: PromiseOrValue<string>;
     data: PromiseOrValue<BytesLike>;
   };
@@ -192,17 +193,25 @@ export declare namespace IRelayUtils {
   export type BridgeOutParamsStructOutput = [
     string,
     BigNumber,
+    BigNumber,
     string,
     string
-  ] & { token: string; amount: BigNumber; provider: string; data: string };
+  ] & {
+    token: string;
+    amount: BigNumber;
+    minAmountOut: BigNumber;
+    provider: string;
+    data: string;
+  };
 }
 
 export interface MultichainTransferRouterInterface extends utils.Interface {
   functions: {
     "bridgeIn(address,address)": FunctionFragment;
-    "bridgeOut(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,(address,uint256,address,bytes))": FunctionFragment;
-    "bridgeOutFromController(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,(address,uint256,address,bytes))": FunctionFragment;
+    "bridgeOut(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,(address,uint256,uint256,address,bytes))": FunctionFragment;
+    "bridgeOutFromController(address,uint256,uint256,uint256,(address,uint256,uint256,address,bytes))": FunctionFragment;
     "dataStore()": FunctionFragment;
+    "digests(bytes32)": FunctionFragment;
     "eventEmitter()": FunctionFragment;
     "externalHandler()": FunctionFragment;
     "initialize(address)": FunctionFragment;
@@ -218,8 +227,7 @@ export interface MultichainTransferRouterInterface extends utils.Interface {
     "sendTokens(address,address,uint256)": FunctionFragment;
     "sendWnt(address,uint256)": FunctionFragment;
     "swapHandler()": FunctionFragment;
-    "transferOut((address,uint256,address,bytes))": FunctionFragment;
-    "userNonces(address)": FunctionFragment;
+    "transferOut((address,uint256,uint256,address,bytes))": FunctionFragment;
   };
 
   getFunction(
@@ -228,6 +236,7 @@ export interface MultichainTransferRouterInterface extends utils.Interface {
       | "bridgeOut"
       | "bridgeOutFromController"
       | "dataStore"
+      | "digests"
       | "eventEmitter"
       | "externalHandler"
       | "initialize"
@@ -244,7 +253,6 @@ export interface MultichainTransferRouterInterface extends utils.Interface {
       | "sendWnt"
       | "swapHandler"
       | "transferOut"
-      | "userNonces"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -263,13 +271,18 @@ export interface MultichainTransferRouterInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "bridgeOutFromController",
     values: [
-      IRelayUtils.RelayParamsStruct,
       PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       IRelayUtils.BridgeOutParamsStruct
     ]
   ): string;
   encodeFunctionData(functionFragment: "dataStore", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "digests",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "eventEmitter",
     values?: undefined
@@ -329,10 +342,6 @@ export interface MultichainTransferRouterInterface extends utils.Interface {
     functionFragment: "transferOut",
     values: [IRelayUtils.BridgeOutParamsStruct]
   ): string;
-  encodeFunctionData(
-    functionFragment: "userNonces",
-    values: [PromiseOrValue<string>]
-  ): string;
 
   decodeFunctionResult(functionFragment: "bridgeIn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "bridgeOut", data: BytesLike): Result;
@@ -341,6 +350,7 @@ export interface MultichainTransferRouterInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "dataStore", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "digests", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eventEmitter",
     data: BytesLike
@@ -381,7 +391,6 @@ export interface MultichainTransferRouterInterface extends utils.Interface {
     functionFragment: "transferOut",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "userNonces", data: BytesLike): Result;
 
   events: {
     "Initialized(uint8)": EventFragment;
@@ -453,14 +462,20 @@ export interface MultichainTransferRouter extends BaseContract {
     ): Promise<ContractTransaction>;
 
     bridgeOutFromController(
-      relayParams: IRelayUtils.RelayParamsStruct,
       account: PromiseOrValue<string>,
       srcChainId: PromiseOrValue<BigNumberish>,
+      desChainId: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     dataStore(overrides?: CallOverrides): Promise<[string]>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     eventEmitter(overrides?: CallOverrides): Promise<[string]>;
 
@@ -515,11 +530,6 @@ export interface MultichainTransferRouter extends BaseContract {
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
   };
 
   bridgeIn(
@@ -537,14 +547,20 @@ export interface MultichainTransferRouter extends BaseContract {
   ): Promise<ContractTransaction>;
 
   bridgeOutFromController(
-    relayParams: IRelayUtils.RelayParamsStruct,
     account: PromiseOrValue<string>,
     srcChainId: PromiseOrValue<BigNumberish>,
+    desChainId: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
     params: IRelayUtils.BridgeOutParamsStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   dataStore(overrides?: CallOverrides): Promise<string>;
+
+  digests(
+    arg0: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -600,11 +616,6 @@ export interface MultichainTransferRouter extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  userNonces(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   callStatic: {
     bridgeIn(
       account: PromiseOrValue<string>,
@@ -621,14 +632,20 @@ export interface MultichainTransferRouter extends BaseContract {
     ): Promise<void>;
 
     bridgeOutFromController(
-      relayParams: IRelayUtils.RelayParamsStruct,
       account: PromiseOrValue<string>,
       srcChainId: PromiseOrValue<BigNumberish>,
+      desChainId: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
     dataStore(overrides?: CallOverrides): Promise<string>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -683,11 +700,6 @@ export interface MultichainTransferRouter extends BaseContract {
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -720,14 +732,20 @@ export interface MultichainTransferRouter extends BaseContract {
     ): Promise<BigNumber>;
 
     bridgeOutFromController(
-      relayParams: IRelayUtils.RelayParamsStruct,
       account: PromiseOrValue<string>,
       srcChainId: PromiseOrValue<BigNumberish>,
+      desChainId: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     dataStore(overrides?: CallOverrides): Promise<BigNumber>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     eventEmitter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -782,11 +800,6 @@ export interface MultichainTransferRouter extends BaseContract {
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -805,14 +818,20 @@ export interface MultichainTransferRouter extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     bridgeOutFromController(
-      relayParams: IRelayUtils.RelayParamsStruct,
       account: PromiseOrValue<string>,
       srcChainId: PromiseOrValue<BigNumberish>,
+      desChainId: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     dataStore(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     eventEmitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -868,11 +887,6 @@ export interface MultichainTransferRouter extends BaseContract {
     transferOut(
       params: IRelayUtils.BridgeOutParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

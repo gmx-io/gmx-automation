@@ -59,11 +59,14 @@ export interface KeysInterface extends utils.Interface {
     "CLAIMABLE_FEE_AMOUNT()": FunctionFragment;
     "CLAIMABLE_FUNDING_AMOUNT()": FunctionFragment;
     "CLAIMABLE_FUNDING_AMOUNT_PER_SIZE()": FunctionFragment;
+    "CLAIMABLE_FUNDS_AMOUNT()": FunctionFragment;
     "CLAIMABLE_UI_FEE_AMOUNT()": FunctionFragment;
     "CLAIMED_COLLATERAL_AMOUNT()": FunctionFragment;
     "CLAIM_AFFILIATE_REWARDS_FEATURE_DISABLED()": FunctionFragment;
     "CLAIM_COLLATERAL_FEATURE_DISABLED()": FunctionFragment;
     "CLAIM_FUNDING_FEES_FEATURE_DISABLED()": FunctionFragment;
+    "CLAIM_TERMS()": FunctionFragment;
+    "CLAIM_TERMS_BACKREF()": FunctionFragment;
     "CLAIM_UI_FEES_FEATURE_DISABLED()": FunctionFragment;
     "COLLATERAL_SUM()": FunctionFragment;
     "CONTRIBUTOR_ACCOUNT_LIST()": FunctionFragment;
@@ -77,9 +80,11 @@ export interface KeysInterface extends utils.Interface {
     "CREATE_GLV_DEPOSIT_GAS_LIMIT()": FunctionFragment;
     "CREATE_GLV_SHIFT_FEATURE_DISABLED()": FunctionFragment;
     "CREATE_GLV_WITHDRAWAL_FEATURE_DISABLED()": FunctionFragment;
+    "CREATE_GLV_WITHDRAWAL_GAS_LIMIT()": FunctionFragment;
     "CREATE_ORDER_FEATURE_DISABLED()": FunctionFragment;
     "CREATE_SHIFT_FEATURE_DISABLED()": FunctionFragment;
     "CREATE_WITHDRAWAL_FEATURE_DISABLED()": FunctionFragment;
+    "CREATE_WITHDRAWAL_GAS_LIMIT()": FunctionFragment;
     "CUMULATIVE_BORROWING_FACTOR()": FunctionFragment;
     "CUMULATIVE_BORROWING_FACTOR_UPDATED_AT()": FunctionFragment;
     "DATA_STREAM_ID()": FunctionFragment;
@@ -91,6 +96,7 @@ export interface KeysInterface extends utils.Interface {
     "DEPOSIT_GAS_LIMIT()": FunctionFragment;
     "DEPOSIT_LIST()": FunctionFragment;
     "EDGE_DATA_STREAM_ID()": FunctionFragment;
+    "EDGE_DATA_STREAM_TOKEN_DECIMALS()": FunctionFragment;
     "EID_TO_SRC_CHAIN_ID()": FunctionFragment;
     "ESTIMATED_GAS_FEE_BASE_AMOUNT_V2_1()": FunctionFragment;
     "ESTIMATED_GAS_FEE_MULTIPLIER_FACTOR()": FunctionFragment;
@@ -108,33 +114,8 @@ export interface KeysInterface extends utils.Interface {
     "EXECUTION_GAS_FEE_MULTIPLIER_FACTOR()": FunctionFragment;
     "EXECUTION_GAS_FEE_PER_ORACLE_PRICE()": FunctionFragment;
     "FEE_BATCH_LIST()": FunctionFragment;
-    "FEE_DISTRIBUTOR_ADDRESS_INFO()": FunctionFragment;
-    "FEE_DISTRIBUTOR_AMOUNT_THRESHOLD()": FunctionFragment;
-    "FEE_DISTRIBUTOR_BRIDGE_SLIPPAGE_FACTOR()": FunctionFragment;
-    "FEE_DISTRIBUTOR_CHAINLINK_FACTOR()": FunctionFragment;
-    "FEE_DISTRIBUTOR_CHAIN_ID()": FunctionFragment;
-    "FEE_DISTRIBUTOR_DISTRIBUTION_DAY()": FunctionFragment;
-    "FEE_DISTRIBUTOR_DISTRIBUTION_TIMESTAMP()": FunctionFragment;
-    "FEE_DISTRIBUTOR_FEE_AMOUNT_GMX()": FunctionFragment;
-    "FEE_DISTRIBUTOR_FEE_AMOUNT_USD()": FunctionFragment;
-    "FEE_DISTRIBUTOR_GAS_LIMIT()": FunctionFragment;
-    "FEE_DISTRIBUTOR_GMX_PRICE()": FunctionFragment;
-    "FEE_DISTRIBUTOR_KEEPER_COSTS()": FunctionFragment;
-    "FEE_DISTRIBUTOR_KEEPER_GLP_FACTOR()": FunctionFragment;
-    "FEE_DISTRIBUTOR_LAYERZERO_CHAIN_ID()": FunctionFragment;
-    "FEE_DISTRIBUTOR_MAX_READ_RESPONSE_DELAY()": FunctionFragment;
-    "FEE_DISTRIBUTOR_READ_RESPONSE_TIMESTAMP()": FunctionFragment;
-    "FEE_DISTRIBUTOR_REFERRAL_REWARDS_AMOUNT()": FunctionFragment;
-    "FEE_DISTRIBUTOR_REFERRAL_REWARDS_ESGMX_LIMIT()": FunctionFragment;
-    "FEE_DISTRIBUTOR_REFERRAL_REWARDS_SENT()": FunctionFragment;
-    "FEE_DISTRIBUTOR_REFERRAL_REWARDS_WNT_USD_LIMIT()": FunctionFragment;
-    "FEE_DISTRIBUTOR_STAKED_GMX()": FunctionFragment;
-    "FEE_DISTRIBUTOR_STATE()": FunctionFragment;
     "FEE_DISTRIBUTOR_SWAP_FEE_BATCH()": FunctionFragment;
     "FEE_DISTRIBUTOR_SWAP_TOKEN_INDEX()": FunctionFragment;
-    "FEE_DISTRIBUTOR_TOTAL_FEE_AMOUNT_GMX()": FunctionFragment;
-    "FEE_DISTRIBUTOR_TOTAL_STAKED_GMX()": FunctionFragment;
-    "FEE_DISTRIBUTOR_WNT_PRICE()": FunctionFragment;
     "FEE_RECEIVER()": FunctionFragment;
     "FUNDING_DECREASE_FACTOR_PER_SECOND()": FunctionFragment;
     "FUNDING_EXPONENT_FACTOR()": FunctionFragment;
@@ -145,6 +126,7 @@ export interface KeysInterface extends utils.Interface {
     "GASLESS_FEATURE_DISABLED()": FunctionFragment;
     "GELATO_RELAY_FEE_BASE_AMOUNT()": FunctionFragment;
     "GELATO_RELAY_FEE_MULTIPLIER_FACTOR()": FunctionFragment;
+    "GENERAL_CLAIM_FEATURE_DISABLED()": FunctionFragment;
     "GLV_DEPOSIT_GAS_LIMIT()": FunctionFragment;
     "GLV_DEPOSIT_LIST()": FunctionFragment;
     "GLV_LIST()": FunctionFragment;
@@ -222,12 +204,7 @@ export interface KeysInterface extends utils.Interface {
     "MIN_PNL_FACTOR_AFTER_ADL()": FunctionFragment;
     "MIN_POSITION_IMPACT_POOL_AMOUNT()": FunctionFragment;
     "MIN_POSITION_SIZE_USD()": FunctionFragment;
-    "MULTICHAIN_AUTHORIZED_ORIGINATORS()": FunctionFragment;
     "MULTICHAIN_BALANCE()": FunctionFragment;
-    "MULTICHAIN_CONFIRMATIONS()": FunctionFragment;
-    "MULTICHAIN_GUID_TO_ORIGINATOR()": FunctionFragment;
-    "MULTICHAIN_PEERS()": FunctionFragment;
-    "MULTICHAIN_READ_CHANNEL()": FunctionFragment;
     "NATIVE_TOKEN_TRANSFER_GAS_LIMIT()": FunctionFragment;
     "NONCE()": FunctionFragment;
     "OPEN_INTEREST()": FunctionFragment;
@@ -296,6 +273,7 @@ export interface KeysInterface extends utils.Interface {
     "THRESHOLD_FOR_STABLE_FUNDING()": FunctionFragment;
     "TOKEN_TRANSFER_GAS_LIMIT()": FunctionFragment;
     "TOTAL_BORROWING()": FunctionFragment;
+    "TOTAL_CLAIMABLE_FUNDS_AMOUNT()": FunctionFragment;
     "TOTAL_PENDING_IMPACT_AMOUNT()": FunctionFragment;
     "UI_DEPOSIT_FEE_TYPE()": FunctionFragment;
     "UI_FEE_FACTOR()": FunctionFragment;
@@ -355,11 +333,14 @@ export interface KeysInterface extends utils.Interface {
       | "CLAIMABLE_FEE_AMOUNT"
       | "CLAIMABLE_FUNDING_AMOUNT"
       | "CLAIMABLE_FUNDING_AMOUNT_PER_SIZE"
+      | "CLAIMABLE_FUNDS_AMOUNT"
       | "CLAIMABLE_UI_FEE_AMOUNT"
       | "CLAIMED_COLLATERAL_AMOUNT"
       | "CLAIM_AFFILIATE_REWARDS_FEATURE_DISABLED"
       | "CLAIM_COLLATERAL_FEATURE_DISABLED"
       | "CLAIM_FUNDING_FEES_FEATURE_DISABLED"
+      | "CLAIM_TERMS"
+      | "CLAIM_TERMS_BACKREF"
       | "CLAIM_UI_FEES_FEATURE_DISABLED"
       | "COLLATERAL_SUM"
       | "CONTRIBUTOR_ACCOUNT_LIST"
@@ -373,9 +354,11 @@ export interface KeysInterface extends utils.Interface {
       | "CREATE_GLV_DEPOSIT_GAS_LIMIT"
       | "CREATE_GLV_SHIFT_FEATURE_DISABLED"
       | "CREATE_GLV_WITHDRAWAL_FEATURE_DISABLED"
+      | "CREATE_GLV_WITHDRAWAL_GAS_LIMIT"
       | "CREATE_ORDER_FEATURE_DISABLED"
       | "CREATE_SHIFT_FEATURE_DISABLED"
       | "CREATE_WITHDRAWAL_FEATURE_DISABLED"
+      | "CREATE_WITHDRAWAL_GAS_LIMIT"
       | "CUMULATIVE_BORROWING_FACTOR"
       | "CUMULATIVE_BORROWING_FACTOR_UPDATED_AT"
       | "DATA_STREAM_ID"
@@ -387,6 +370,7 @@ export interface KeysInterface extends utils.Interface {
       | "DEPOSIT_GAS_LIMIT"
       | "DEPOSIT_LIST"
       | "EDGE_DATA_STREAM_ID"
+      | "EDGE_DATA_STREAM_TOKEN_DECIMALS"
       | "EID_TO_SRC_CHAIN_ID"
       | "ESTIMATED_GAS_FEE_BASE_AMOUNT_V2_1"
       | "ESTIMATED_GAS_FEE_MULTIPLIER_FACTOR"
@@ -404,33 +388,8 @@ export interface KeysInterface extends utils.Interface {
       | "EXECUTION_GAS_FEE_MULTIPLIER_FACTOR"
       | "EXECUTION_GAS_FEE_PER_ORACLE_PRICE"
       | "FEE_BATCH_LIST"
-      | "FEE_DISTRIBUTOR_ADDRESS_INFO"
-      | "FEE_DISTRIBUTOR_AMOUNT_THRESHOLD"
-      | "FEE_DISTRIBUTOR_BRIDGE_SLIPPAGE_FACTOR"
-      | "FEE_DISTRIBUTOR_CHAINLINK_FACTOR"
-      | "FEE_DISTRIBUTOR_CHAIN_ID"
-      | "FEE_DISTRIBUTOR_DISTRIBUTION_DAY"
-      | "FEE_DISTRIBUTOR_DISTRIBUTION_TIMESTAMP"
-      | "FEE_DISTRIBUTOR_FEE_AMOUNT_GMX"
-      | "FEE_DISTRIBUTOR_FEE_AMOUNT_USD"
-      | "FEE_DISTRIBUTOR_GAS_LIMIT"
-      | "FEE_DISTRIBUTOR_GMX_PRICE"
-      | "FEE_DISTRIBUTOR_KEEPER_COSTS"
-      | "FEE_DISTRIBUTOR_KEEPER_GLP_FACTOR"
-      | "FEE_DISTRIBUTOR_LAYERZERO_CHAIN_ID"
-      | "FEE_DISTRIBUTOR_MAX_READ_RESPONSE_DELAY"
-      | "FEE_DISTRIBUTOR_READ_RESPONSE_TIMESTAMP"
-      | "FEE_DISTRIBUTOR_REFERRAL_REWARDS_AMOUNT"
-      | "FEE_DISTRIBUTOR_REFERRAL_REWARDS_ESGMX_LIMIT"
-      | "FEE_DISTRIBUTOR_REFERRAL_REWARDS_SENT"
-      | "FEE_DISTRIBUTOR_REFERRAL_REWARDS_WNT_USD_LIMIT"
-      | "FEE_DISTRIBUTOR_STAKED_GMX"
-      | "FEE_DISTRIBUTOR_STATE"
       | "FEE_DISTRIBUTOR_SWAP_FEE_BATCH"
       | "FEE_DISTRIBUTOR_SWAP_TOKEN_INDEX"
-      | "FEE_DISTRIBUTOR_TOTAL_FEE_AMOUNT_GMX"
-      | "FEE_DISTRIBUTOR_TOTAL_STAKED_GMX"
-      | "FEE_DISTRIBUTOR_WNT_PRICE"
       | "FEE_RECEIVER"
       | "FUNDING_DECREASE_FACTOR_PER_SECOND"
       | "FUNDING_EXPONENT_FACTOR"
@@ -441,6 +400,7 @@ export interface KeysInterface extends utils.Interface {
       | "GASLESS_FEATURE_DISABLED"
       | "GELATO_RELAY_FEE_BASE_AMOUNT"
       | "GELATO_RELAY_FEE_MULTIPLIER_FACTOR"
+      | "GENERAL_CLAIM_FEATURE_DISABLED"
       | "GLV_DEPOSIT_GAS_LIMIT"
       | "GLV_DEPOSIT_LIST"
       | "GLV_LIST"
@@ -518,12 +478,7 @@ export interface KeysInterface extends utils.Interface {
       | "MIN_PNL_FACTOR_AFTER_ADL"
       | "MIN_POSITION_IMPACT_POOL_AMOUNT"
       | "MIN_POSITION_SIZE_USD"
-      | "MULTICHAIN_AUTHORIZED_ORIGINATORS"
       | "MULTICHAIN_BALANCE"
-      | "MULTICHAIN_CONFIRMATIONS"
-      | "MULTICHAIN_GUID_TO_ORIGINATOR"
-      | "MULTICHAIN_PEERS"
-      | "MULTICHAIN_READ_CHANNEL"
       | "NATIVE_TOKEN_TRANSFER_GAS_LIMIT"
       | "NONCE"
       | "OPEN_INTEREST"
@@ -592,6 +547,7 @@ export interface KeysInterface extends utils.Interface {
       | "THRESHOLD_FOR_STABLE_FUNDING"
       | "TOKEN_TRANSFER_GAS_LIMIT"
       | "TOTAL_BORROWING"
+      | "TOTAL_CLAIMABLE_FUNDS_AMOUNT"
       | "TOTAL_PENDING_IMPACT_AMOUNT"
       | "UI_DEPOSIT_FEE_TYPE"
       | "UI_FEE_FACTOR"
@@ -761,6 +717,10 @@ export interface KeysInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "CLAIMABLE_FUNDS_AMOUNT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "CLAIMABLE_UI_FEE_AMOUNT",
     values?: undefined
   ): string;
@@ -778,6 +738,14 @@ export interface KeysInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "CLAIM_FUNDING_FEES_FEATURE_DISABLED",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "CLAIM_TERMS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "CLAIM_TERMS_BACKREF",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -833,6 +801,10 @@ export interface KeysInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "CREATE_GLV_WITHDRAWAL_GAS_LIMIT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "CREATE_ORDER_FEATURE_DISABLED",
     values?: undefined
   ): string;
@@ -842,6 +814,10 @@ export interface KeysInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "CREATE_WITHDRAWAL_FEATURE_DISABLED",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "CREATE_WITHDRAWAL_GAS_LIMIT",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -886,6 +862,10 @@ export interface KeysInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "EDGE_DATA_STREAM_ID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "EDGE_DATA_STREAM_TOKEN_DECIMALS",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -957,111 +937,11 @@ export interface KeysInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_ADDRESS_INFO",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_AMOUNT_THRESHOLD",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_BRIDGE_SLIPPAGE_FACTOR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_CHAINLINK_FACTOR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_CHAIN_ID",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_DISTRIBUTION_DAY",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_DISTRIBUTION_TIMESTAMP",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_FEE_AMOUNT_GMX",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_FEE_AMOUNT_USD",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_GAS_LIMIT",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_GMX_PRICE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_KEEPER_COSTS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_KEEPER_GLP_FACTOR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_LAYERZERO_CHAIN_ID",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_MAX_READ_RESPONSE_DELAY",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_READ_RESPONSE_TIMESTAMP",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_REFERRAL_REWARDS_AMOUNT",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_REFERRAL_REWARDS_ESGMX_LIMIT",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_REFERRAL_REWARDS_SENT",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_REFERRAL_REWARDS_WNT_USD_LIMIT",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_STAKED_GMX",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_STATE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "FEE_DISTRIBUTOR_SWAP_FEE_BATCH",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "FEE_DISTRIBUTOR_SWAP_TOKEN_INDEX",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_TOTAL_FEE_AMOUNT_GMX",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_TOTAL_STAKED_GMX",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "FEE_DISTRIBUTOR_WNT_PRICE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -1102,6 +982,10 @@ export interface KeysInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "GELATO_RELAY_FEE_MULTIPLIER_FACTOR",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "GENERAL_CLAIM_FEATURE_DISABLED",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -1410,27 +1294,7 @@ export interface KeysInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "MULTICHAIN_AUTHORIZED_ORIGINATORS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "MULTICHAIN_BALANCE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MULTICHAIN_CONFIRMATIONS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MULTICHAIN_GUID_TO_ORIGINATOR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MULTICHAIN_PEERS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MULTICHAIN_READ_CHANNEL",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -1703,6 +1567,10 @@ export interface KeysInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "TOTAL_CLAIMABLE_FUNDS_AMOUNT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "TOTAL_PENDING_IMPACT_AMOUNT",
     values?: undefined
   ): string;
@@ -1921,6 +1789,10 @@ export interface KeysInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "CLAIMABLE_FUNDS_AMOUNT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "CLAIMABLE_UI_FEE_AMOUNT",
     data: BytesLike
   ): Result;
@@ -1938,6 +1810,14 @@ export interface KeysInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "CLAIM_FUNDING_FEES_FEATURE_DISABLED",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "CLAIM_TERMS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "CLAIM_TERMS_BACKREF",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1993,6 +1873,10 @@ export interface KeysInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "CREATE_GLV_WITHDRAWAL_GAS_LIMIT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "CREATE_ORDER_FEATURE_DISABLED",
     data: BytesLike
   ): Result;
@@ -2002,6 +1886,10 @@ export interface KeysInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "CREATE_WITHDRAWAL_FEATURE_DISABLED",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "CREATE_WITHDRAWAL_GAS_LIMIT",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -2046,6 +1934,10 @@ export interface KeysInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "EDGE_DATA_STREAM_ID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "EDGE_DATA_STREAM_TOKEN_DECIMALS",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -2117,111 +2009,11 @@ export interface KeysInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_ADDRESS_INFO",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_AMOUNT_THRESHOLD",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_BRIDGE_SLIPPAGE_FACTOR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_CHAINLINK_FACTOR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_CHAIN_ID",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_DISTRIBUTION_DAY",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_DISTRIBUTION_TIMESTAMP",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_FEE_AMOUNT_GMX",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_FEE_AMOUNT_USD",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_GAS_LIMIT",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_GMX_PRICE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_KEEPER_COSTS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_KEEPER_GLP_FACTOR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_LAYERZERO_CHAIN_ID",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_MAX_READ_RESPONSE_DELAY",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_READ_RESPONSE_TIMESTAMP",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_REFERRAL_REWARDS_AMOUNT",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_REFERRAL_REWARDS_ESGMX_LIMIT",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_REFERRAL_REWARDS_SENT",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_REFERRAL_REWARDS_WNT_USD_LIMIT",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_STAKED_GMX",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_STATE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "FEE_DISTRIBUTOR_SWAP_FEE_BATCH",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "FEE_DISTRIBUTOR_SWAP_TOKEN_INDEX",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_TOTAL_FEE_AMOUNT_GMX",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_TOTAL_STAKED_GMX",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "FEE_DISTRIBUTOR_WNT_PRICE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -2262,6 +2054,10 @@ export interface KeysInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "GELATO_RELAY_FEE_MULTIPLIER_FACTOR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "GENERAL_CLAIM_FEATURE_DISABLED",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -2570,27 +2366,7 @@ export interface KeysInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "MULTICHAIN_AUTHORIZED_ORIGINATORS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "MULTICHAIN_BALANCE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MULTICHAIN_CONFIRMATIONS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MULTICHAIN_GUID_TO_ORIGINATOR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MULTICHAIN_PEERS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MULTICHAIN_READ_CHANNEL",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -2854,6 +2630,10 @@ export interface KeysInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "TOTAL_CLAIMABLE_FUNDS_AMOUNT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "TOTAL_PENDING_IMPACT_AMOUNT",
     data: BytesLike
   ): Result;
@@ -3045,6 +2825,8 @@ export interface Keys extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    CLAIMABLE_FUNDS_AMOUNT(overrides?: CallOverrides): Promise<[string]>;
+
     CLAIMABLE_UI_FEE_AMOUNT(overrides?: CallOverrides): Promise<[string]>;
 
     CLAIMED_COLLATERAL_AMOUNT(overrides?: CallOverrides): Promise<[string]>;
@@ -3060,6 +2842,10 @@ export interface Keys extends BaseContract {
     CLAIM_FUNDING_FEES_FEATURE_DISABLED(
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    CLAIM_TERMS(overrides?: CallOverrides): Promise<[string]>;
+
+    CLAIM_TERMS_BACKREF(overrides?: CallOverrides): Promise<[string]>;
 
     CLAIM_UI_FEES_FEATURE_DISABLED(
       overrides?: CallOverrides
@@ -3097,6 +2883,10 @@ export interface Keys extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    CREATE_GLV_WITHDRAWAL_GAS_LIMIT(
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     CREATE_ORDER_FEATURE_DISABLED(overrides?: CallOverrides): Promise<[string]>;
 
     CREATE_SHIFT_FEATURE_DISABLED(overrides?: CallOverrides): Promise<[string]>;
@@ -3104,6 +2894,8 @@ export interface Keys extends BaseContract {
     CREATE_WITHDRAWAL_FEATURE_DISABLED(
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    CREATE_WITHDRAWAL_GAS_LIMIT(overrides?: CallOverrides): Promise<[string]>;
 
     CUMULATIVE_BORROWING_FACTOR(overrides?: CallOverrides): Promise<[string]>;
 
@@ -3130,6 +2922,10 @@ export interface Keys extends BaseContract {
     DEPOSIT_LIST(overrides?: CallOverrides): Promise<[string]>;
 
     EDGE_DATA_STREAM_ID(overrides?: CallOverrides): Promise<[string]>;
+
+    EDGE_DATA_STREAM_TOKEN_DECIMALS(
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     EID_TO_SRC_CHAIN_ID(overrides?: CallOverrides): Promise<[string]>;
 
@@ -3193,80 +2989,6 @@ export interface Keys extends BaseContract {
 
     FEE_BATCH_LIST(overrides?: CallOverrides): Promise<[string]>;
 
-    FEE_DISTRIBUTOR_ADDRESS_INFO(overrides?: CallOverrides): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_AMOUNT_THRESHOLD(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_BRIDGE_SLIPPAGE_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_CHAINLINK_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_CHAIN_ID(overrides?: CallOverrides): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_DISTRIBUTION_DAY(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_DISTRIBUTION_TIMESTAMP(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_FEE_AMOUNT_GMX(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_FEE_AMOUNT_USD(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_GAS_LIMIT(overrides?: CallOverrides): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_GMX_PRICE(overrides?: CallOverrides): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_KEEPER_COSTS(overrides?: CallOverrides): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_KEEPER_GLP_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_LAYERZERO_CHAIN_ID(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_MAX_READ_RESPONSE_DELAY(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_READ_RESPONSE_TIMESTAMP(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_AMOUNT(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_ESGMX_LIMIT(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_SENT(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_WNT_USD_LIMIT(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_STAKED_GMX(overrides?: CallOverrides): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_STATE(overrides?: CallOverrides): Promise<[string]>;
-
     FEE_DISTRIBUTOR_SWAP_FEE_BATCH(
       overrides?: CallOverrides
     ): Promise<[string]>;
@@ -3274,16 +2996,6 @@ export interface Keys extends BaseContract {
     FEE_DISTRIBUTOR_SWAP_TOKEN_INDEX(
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_TOTAL_FEE_AMOUNT_GMX(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_TOTAL_STAKED_GMX(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    FEE_DISTRIBUTOR_WNT_PRICE(overrides?: CallOverrides): Promise<[string]>;
 
     FEE_RECEIVER(overrides?: CallOverrides): Promise<[string]>;
 
@@ -3308,6 +3020,10 @@ export interface Keys extends BaseContract {
     GELATO_RELAY_FEE_BASE_AMOUNT(overrides?: CallOverrides): Promise<[string]>;
 
     GELATO_RELAY_FEE_MULTIPLIER_FACTOR(
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    GENERAL_CLAIM_FEATURE_DISABLED(
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -3517,19 +3233,7 @@ export interface Keys extends BaseContract {
 
     MIN_POSITION_SIZE_USD(overrides?: CallOverrides): Promise<[string]>;
 
-    MULTICHAIN_AUTHORIZED_ORIGINATORS(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     MULTICHAIN_BALANCE(overrides?: CallOverrides): Promise<[string]>;
-
-    MULTICHAIN_CONFIRMATIONS(overrides?: CallOverrides): Promise<[string]>;
-
-    MULTICHAIN_GUID_TO_ORIGINATOR(overrides?: CallOverrides): Promise<[string]>;
-
-    MULTICHAIN_PEERS(overrides?: CallOverrides): Promise<[string]>;
-
-    MULTICHAIN_READ_CHANNEL(overrides?: CallOverrides): Promise<[string]>;
 
     NATIVE_TOKEN_TRANSFER_GAS_LIMIT(
       overrides?: CallOverrides
@@ -3693,6 +3397,8 @@ export interface Keys extends BaseContract {
 
     TOTAL_BORROWING(overrides?: CallOverrides): Promise<[string]>;
 
+    TOTAL_CLAIMABLE_FUNDS_AMOUNT(overrides?: CallOverrides): Promise<[string]>;
+
     TOTAL_PENDING_IMPACT_AMOUNT(overrides?: CallOverrides): Promise<[string]>;
 
     UI_DEPOSIT_FEE_TYPE(overrides?: CallOverrides): Promise<[string]>;
@@ -3818,6 +3524,8 @@ export interface Keys extends BaseContract {
 
   CLAIMABLE_FUNDING_AMOUNT_PER_SIZE(overrides?: CallOverrides): Promise<string>;
 
+  CLAIMABLE_FUNDS_AMOUNT(overrides?: CallOverrides): Promise<string>;
+
   CLAIMABLE_UI_FEE_AMOUNT(overrides?: CallOverrides): Promise<string>;
 
   CLAIMED_COLLATERAL_AMOUNT(overrides?: CallOverrides): Promise<string>;
@@ -3831,6 +3539,10 @@ export interface Keys extends BaseContract {
   CLAIM_FUNDING_FEES_FEATURE_DISABLED(
     overrides?: CallOverrides
   ): Promise<string>;
+
+  CLAIM_TERMS(overrides?: CallOverrides): Promise<string>;
+
+  CLAIM_TERMS_BACKREF(overrides?: CallOverrides): Promise<string>;
 
   CLAIM_UI_FEES_FEATURE_DISABLED(overrides?: CallOverrides): Promise<string>;
 
@@ -3862,6 +3574,8 @@ export interface Keys extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  CREATE_GLV_WITHDRAWAL_GAS_LIMIT(overrides?: CallOverrides): Promise<string>;
+
   CREATE_ORDER_FEATURE_DISABLED(overrides?: CallOverrides): Promise<string>;
 
   CREATE_SHIFT_FEATURE_DISABLED(overrides?: CallOverrides): Promise<string>;
@@ -3869,6 +3583,8 @@ export interface Keys extends BaseContract {
   CREATE_WITHDRAWAL_FEATURE_DISABLED(
     overrides?: CallOverrides
   ): Promise<string>;
+
+  CREATE_WITHDRAWAL_GAS_LIMIT(overrides?: CallOverrides): Promise<string>;
 
   CUMULATIVE_BORROWING_FACTOR(overrides?: CallOverrides): Promise<string>;
 
@@ -3895,6 +3611,8 @@ export interface Keys extends BaseContract {
   DEPOSIT_LIST(overrides?: CallOverrides): Promise<string>;
 
   EDGE_DATA_STREAM_ID(overrides?: CallOverrides): Promise<string>;
+
+  EDGE_DATA_STREAM_TOKEN_DECIMALS(overrides?: CallOverrides): Promise<string>;
 
   EID_TO_SRC_CHAIN_ID(overrides?: CallOverrides): Promise<string>;
 
@@ -3952,79 +3670,9 @@ export interface Keys extends BaseContract {
 
   FEE_BATCH_LIST(overrides?: CallOverrides): Promise<string>;
 
-  FEE_DISTRIBUTOR_ADDRESS_INFO(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_AMOUNT_THRESHOLD(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_BRIDGE_SLIPPAGE_FACTOR(
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  FEE_DISTRIBUTOR_CHAINLINK_FACTOR(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_CHAIN_ID(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_DISTRIBUTION_DAY(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_DISTRIBUTION_TIMESTAMP(
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  FEE_DISTRIBUTOR_FEE_AMOUNT_GMX(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_FEE_AMOUNT_USD(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_GAS_LIMIT(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_GMX_PRICE(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_KEEPER_COSTS(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_KEEPER_GLP_FACTOR(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_LAYERZERO_CHAIN_ID(
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  FEE_DISTRIBUTOR_MAX_READ_RESPONSE_DELAY(
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  FEE_DISTRIBUTOR_READ_RESPONSE_TIMESTAMP(
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  FEE_DISTRIBUTOR_REFERRAL_REWARDS_AMOUNT(
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  FEE_DISTRIBUTOR_REFERRAL_REWARDS_ESGMX_LIMIT(
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  FEE_DISTRIBUTOR_REFERRAL_REWARDS_SENT(
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  FEE_DISTRIBUTOR_REFERRAL_REWARDS_WNT_USD_LIMIT(
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  FEE_DISTRIBUTOR_STAKED_GMX(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_STATE(overrides?: CallOverrides): Promise<string>;
-
   FEE_DISTRIBUTOR_SWAP_FEE_BATCH(overrides?: CallOverrides): Promise<string>;
 
   FEE_DISTRIBUTOR_SWAP_TOKEN_INDEX(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_TOTAL_FEE_AMOUNT_GMX(
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  FEE_DISTRIBUTOR_TOTAL_STAKED_GMX(overrides?: CallOverrides): Promise<string>;
-
-  FEE_DISTRIBUTOR_WNT_PRICE(overrides?: CallOverrides): Promise<string>;
 
   FEE_RECEIVER(overrides?: CallOverrides): Promise<string>;
 
@@ -4051,6 +3699,8 @@ export interface Keys extends BaseContract {
   GELATO_RELAY_FEE_MULTIPLIER_FACTOR(
     overrides?: CallOverrides
   ): Promise<string>;
+
+  GENERAL_CLAIM_FEATURE_DISABLED(overrides?: CallOverrides): Promise<string>;
 
   GLV_DEPOSIT_GAS_LIMIT(overrides?: CallOverrides): Promise<string>;
 
@@ -4232,17 +3882,7 @@ export interface Keys extends BaseContract {
 
   MIN_POSITION_SIZE_USD(overrides?: CallOverrides): Promise<string>;
 
-  MULTICHAIN_AUTHORIZED_ORIGINATORS(overrides?: CallOverrides): Promise<string>;
-
   MULTICHAIN_BALANCE(overrides?: CallOverrides): Promise<string>;
-
-  MULTICHAIN_CONFIRMATIONS(overrides?: CallOverrides): Promise<string>;
-
-  MULTICHAIN_GUID_TO_ORIGINATOR(overrides?: CallOverrides): Promise<string>;
-
-  MULTICHAIN_PEERS(overrides?: CallOverrides): Promise<string>;
-
-  MULTICHAIN_READ_CHANNEL(overrides?: CallOverrides): Promise<string>;
 
   NATIVE_TOKEN_TRANSFER_GAS_LIMIT(overrides?: CallOverrides): Promise<string>;
 
@@ -4390,6 +4030,8 @@ export interface Keys extends BaseContract {
 
   TOTAL_BORROWING(overrides?: CallOverrides): Promise<string>;
 
+  TOTAL_CLAIMABLE_FUNDS_AMOUNT(overrides?: CallOverrides): Promise<string>;
+
   TOTAL_PENDING_IMPACT_AMOUNT(overrides?: CallOverrides): Promise<string>;
 
   UI_DEPOSIT_FEE_TYPE(overrides?: CallOverrides): Promise<string>;
@@ -4515,6 +4157,8 @@ export interface Keys extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    CLAIMABLE_FUNDS_AMOUNT(overrides?: CallOverrides): Promise<string>;
+
     CLAIMABLE_UI_FEE_AMOUNT(overrides?: CallOverrides): Promise<string>;
 
     CLAIMED_COLLATERAL_AMOUNT(overrides?: CallOverrides): Promise<string>;
@@ -4530,6 +4174,10 @@ export interface Keys extends BaseContract {
     CLAIM_FUNDING_FEES_FEATURE_DISABLED(
       overrides?: CallOverrides
     ): Promise<string>;
+
+    CLAIM_TERMS(overrides?: CallOverrides): Promise<string>;
+
+    CLAIM_TERMS_BACKREF(overrides?: CallOverrides): Promise<string>;
 
     CLAIM_UI_FEES_FEATURE_DISABLED(overrides?: CallOverrides): Promise<string>;
 
@@ -4563,6 +4211,8 @@ export interface Keys extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    CREATE_GLV_WITHDRAWAL_GAS_LIMIT(overrides?: CallOverrides): Promise<string>;
+
     CREATE_ORDER_FEATURE_DISABLED(overrides?: CallOverrides): Promise<string>;
 
     CREATE_SHIFT_FEATURE_DISABLED(overrides?: CallOverrides): Promise<string>;
@@ -4570,6 +4220,8 @@ export interface Keys extends BaseContract {
     CREATE_WITHDRAWAL_FEATURE_DISABLED(
       overrides?: CallOverrides
     ): Promise<string>;
+
+    CREATE_WITHDRAWAL_GAS_LIMIT(overrides?: CallOverrides): Promise<string>;
 
     CUMULATIVE_BORROWING_FACTOR(overrides?: CallOverrides): Promise<string>;
 
@@ -4596,6 +4248,8 @@ export interface Keys extends BaseContract {
     DEPOSIT_LIST(overrides?: CallOverrides): Promise<string>;
 
     EDGE_DATA_STREAM_ID(overrides?: CallOverrides): Promise<string>;
+
+    EDGE_DATA_STREAM_TOKEN_DECIMALS(overrides?: CallOverrides): Promise<string>;
 
     EID_TO_SRC_CHAIN_ID(overrides?: CallOverrides): Promise<string>;
 
@@ -4655,91 +4309,11 @@ export interface Keys extends BaseContract {
 
     FEE_BATCH_LIST(overrides?: CallOverrides): Promise<string>;
 
-    FEE_DISTRIBUTOR_ADDRESS_INFO(overrides?: CallOverrides): Promise<string>;
-
-    FEE_DISTRIBUTOR_AMOUNT_THRESHOLD(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_BRIDGE_SLIPPAGE_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_CHAINLINK_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_CHAIN_ID(overrides?: CallOverrides): Promise<string>;
-
-    FEE_DISTRIBUTOR_DISTRIBUTION_DAY(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_DISTRIBUTION_TIMESTAMP(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_FEE_AMOUNT_GMX(overrides?: CallOverrides): Promise<string>;
-
-    FEE_DISTRIBUTOR_FEE_AMOUNT_USD(overrides?: CallOverrides): Promise<string>;
-
-    FEE_DISTRIBUTOR_GAS_LIMIT(overrides?: CallOverrides): Promise<string>;
-
-    FEE_DISTRIBUTOR_GMX_PRICE(overrides?: CallOverrides): Promise<string>;
-
-    FEE_DISTRIBUTOR_KEEPER_COSTS(overrides?: CallOverrides): Promise<string>;
-
-    FEE_DISTRIBUTOR_KEEPER_GLP_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_LAYERZERO_CHAIN_ID(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_MAX_READ_RESPONSE_DELAY(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_READ_RESPONSE_TIMESTAMP(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_AMOUNT(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_ESGMX_LIMIT(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_SENT(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_WNT_USD_LIMIT(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_STAKED_GMX(overrides?: CallOverrides): Promise<string>;
-
-    FEE_DISTRIBUTOR_STATE(overrides?: CallOverrides): Promise<string>;
-
     FEE_DISTRIBUTOR_SWAP_FEE_BATCH(overrides?: CallOverrides): Promise<string>;
 
     FEE_DISTRIBUTOR_SWAP_TOKEN_INDEX(
       overrides?: CallOverrides
     ): Promise<string>;
-
-    FEE_DISTRIBUTOR_TOTAL_FEE_AMOUNT_GMX(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_TOTAL_STAKED_GMX(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    FEE_DISTRIBUTOR_WNT_PRICE(overrides?: CallOverrides): Promise<string>;
 
     FEE_RECEIVER(overrides?: CallOverrides): Promise<string>;
 
@@ -4766,6 +4340,8 @@ export interface Keys extends BaseContract {
     GELATO_RELAY_FEE_MULTIPLIER_FACTOR(
       overrides?: CallOverrides
     ): Promise<string>;
+
+    GENERAL_CLAIM_FEATURE_DISABLED(overrides?: CallOverrides): Promise<string>;
 
     GLV_DEPOSIT_GAS_LIMIT(overrides?: CallOverrides): Promise<string>;
 
@@ -4959,19 +4535,7 @@ export interface Keys extends BaseContract {
 
     MIN_POSITION_SIZE_USD(overrides?: CallOverrides): Promise<string>;
 
-    MULTICHAIN_AUTHORIZED_ORIGINATORS(
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     MULTICHAIN_BALANCE(overrides?: CallOverrides): Promise<string>;
-
-    MULTICHAIN_CONFIRMATIONS(overrides?: CallOverrides): Promise<string>;
-
-    MULTICHAIN_GUID_TO_ORIGINATOR(overrides?: CallOverrides): Promise<string>;
-
-    MULTICHAIN_PEERS(overrides?: CallOverrides): Promise<string>;
-
-    MULTICHAIN_READ_CHANNEL(overrides?: CallOverrides): Promise<string>;
 
     NATIVE_TOKEN_TRANSFER_GAS_LIMIT(overrides?: CallOverrides): Promise<string>;
 
@@ -5121,6 +4685,8 @@ export interface Keys extends BaseContract {
 
     TOTAL_BORROWING(overrides?: CallOverrides): Promise<string>;
 
+    TOTAL_CLAIMABLE_FUNDS_AMOUNT(overrides?: CallOverrides): Promise<string>;
+
     TOTAL_PENDING_IMPACT_AMOUNT(overrides?: CallOverrides): Promise<string>;
 
     UI_DEPOSIT_FEE_TYPE(overrides?: CallOverrides): Promise<string>;
@@ -5261,6 +4827,8 @@ export interface Keys extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    CLAIMABLE_FUNDS_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
+
     CLAIMABLE_UI_FEE_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
     CLAIMED_COLLATERAL_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
@@ -5276,6 +4844,10 @@ export interface Keys extends BaseContract {
     CLAIM_FUNDING_FEES_FEATURE_DISABLED(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    CLAIM_TERMS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    CLAIM_TERMS_BACKREF(overrides?: CallOverrides): Promise<BigNumber>;
 
     CLAIM_UI_FEES_FEATURE_DISABLED(
       overrides?: CallOverrides
@@ -5313,6 +4885,10 @@ export interface Keys extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    CREATE_GLV_WITHDRAWAL_GAS_LIMIT(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     CREATE_ORDER_FEATURE_DISABLED(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -5324,6 +4900,8 @@ export interface Keys extends BaseContract {
     CREATE_WITHDRAWAL_FEATURE_DISABLED(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    CREATE_WITHDRAWAL_GAS_LIMIT(overrides?: CallOverrides): Promise<BigNumber>;
 
     CUMULATIVE_BORROWING_FACTOR(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -5350,6 +4928,10 @@ export interface Keys extends BaseContract {
     DEPOSIT_LIST(overrides?: CallOverrides): Promise<BigNumber>;
 
     EDGE_DATA_STREAM_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    EDGE_DATA_STREAM_TOKEN_DECIMALS(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     EID_TO_SRC_CHAIN_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -5413,80 +4995,6 @@ export interface Keys extends BaseContract {
 
     FEE_BATCH_LIST(overrides?: CallOverrides): Promise<BigNumber>;
 
-    FEE_DISTRIBUTOR_ADDRESS_INFO(overrides?: CallOverrides): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_AMOUNT_THRESHOLD(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_BRIDGE_SLIPPAGE_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_CHAINLINK_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_CHAIN_ID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_DISTRIBUTION_DAY(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_DISTRIBUTION_TIMESTAMP(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_FEE_AMOUNT_GMX(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_FEE_AMOUNT_USD(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_GAS_LIMIT(overrides?: CallOverrides): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_GMX_PRICE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_KEEPER_COSTS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_KEEPER_GLP_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_LAYERZERO_CHAIN_ID(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_MAX_READ_RESPONSE_DELAY(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_READ_RESPONSE_TIMESTAMP(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_AMOUNT(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_ESGMX_LIMIT(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_SENT(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_WNT_USD_LIMIT(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_STAKED_GMX(overrides?: CallOverrides): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_STATE(overrides?: CallOverrides): Promise<BigNumber>;
-
     FEE_DISTRIBUTOR_SWAP_FEE_BATCH(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -5494,16 +5002,6 @@ export interface Keys extends BaseContract {
     FEE_DISTRIBUTOR_SWAP_TOKEN_INDEX(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_TOTAL_FEE_AMOUNT_GMX(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_TOTAL_STAKED_GMX(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    FEE_DISTRIBUTOR_WNT_PRICE(overrides?: CallOverrides): Promise<BigNumber>;
 
     FEE_RECEIVER(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -5528,6 +5026,10 @@ export interface Keys extends BaseContract {
     GELATO_RELAY_FEE_BASE_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
     GELATO_RELAY_FEE_MULTIPLIER_FACTOR(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    GENERAL_CLAIM_FEATURE_DISABLED(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -5741,21 +5243,7 @@ export interface Keys extends BaseContract {
 
     MIN_POSITION_SIZE_USD(overrides?: CallOverrides): Promise<BigNumber>;
 
-    MULTICHAIN_AUTHORIZED_ORIGINATORS(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     MULTICHAIN_BALANCE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MULTICHAIN_CONFIRMATIONS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MULTICHAIN_GUID_TO_ORIGINATOR(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    MULTICHAIN_PEERS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MULTICHAIN_READ_CHANNEL(overrides?: CallOverrides): Promise<BigNumber>;
 
     NATIVE_TOKEN_TRANSFER_GAS_LIMIT(
       overrides?: CallOverrides
@@ -5922,6 +5410,8 @@ export interface Keys extends BaseContract {
     TOKEN_TRANSFER_GAS_LIMIT(overrides?: CallOverrides): Promise<BigNumber>;
 
     TOTAL_BORROWING(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TOTAL_CLAIMABLE_FUNDS_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
     TOTAL_PENDING_IMPACT_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -6111,6 +5601,10 @@ export interface Keys extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    CLAIMABLE_FUNDS_AMOUNT(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     CLAIMABLE_UI_FEE_AMOUNT(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -6128,6 +5622,12 @@ export interface Keys extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     CLAIM_FUNDING_FEES_FEATURE_DISABLED(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    CLAIM_TERMS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    CLAIM_TERMS_BACKREF(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -6181,6 +5681,10 @@ export interface Keys extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    CREATE_GLV_WITHDRAWAL_GAS_LIMIT(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     CREATE_ORDER_FEATURE_DISABLED(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -6190,6 +5694,10 @@ export interface Keys extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     CREATE_WITHDRAWAL_FEATURE_DISABLED(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    CREATE_WITHDRAWAL_GAS_LIMIT(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -6226,6 +5734,10 @@ export interface Keys extends BaseContract {
     DEPOSIT_LIST(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     EDGE_DATA_STREAM_ID(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    EDGE_DATA_STREAM_TOKEN_DECIMALS(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -6295,111 +5807,11 @@ export interface Keys extends BaseContract {
 
     FEE_BATCH_LIST(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    FEE_DISTRIBUTOR_ADDRESS_INFO(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_AMOUNT_THRESHOLD(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_BRIDGE_SLIPPAGE_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_CHAINLINK_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_CHAIN_ID(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_DISTRIBUTION_DAY(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_DISTRIBUTION_TIMESTAMP(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_FEE_AMOUNT_GMX(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_FEE_AMOUNT_USD(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_GAS_LIMIT(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_GMX_PRICE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_KEEPER_COSTS(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_KEEPER_GLP_FACTOR(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_LAYERZERO_CHAIN_ID(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_MAX_READ_RESPONSE_DELAY(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_READ_RESPONSE_TIMESTAMP(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_AMOUNT(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_ESGMX_LIMIT(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_SENT(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_REFERRAL_REWARDS_WNT_USD_LIMIT(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_STAKED_GMX(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_STATE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     FEE_DISTRIBUTOR_SWAP_FEE_BATCH(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     FEE_DISTRIBUTOR_SWAP_TOKEN_INDEX(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_TOTAL_FEE_AMOUNT_GMX(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_TOTAL_STAKED_GMX(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    FEE_DISTRIBUTOR_WNT_PRICE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -6436,6 +5848,10 @@ export interface Keys extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     GELATO_RELAY_FEE_MULTIPLIER_FACTOR(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    GENERAL_CLAIM_FEATURE_DISABLED(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -6721,25 +6137,7 @@ export interface Keys extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    MULTICHAIN_AUTHORIZED_ORIGINATORS(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     MULTICHAIN_BALANCE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MULTICHAIN_CONFIRMATIONS(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MULTICHAIN_GUID_TO_ORIGINATOR(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MULTICHAIN_PEERS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    MULTICHAIN_READ_CHANNEL(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -6978,6 +6376,10 @@ export interface Keys extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     TOTAL_BORROWING(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    TOTAL_CLAIMABLE_FUNDS_AMOUNT(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     TOTAL_PENDING_IMPACT_AMOUNT(
       overrides?: CallOverrides

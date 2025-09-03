@@ -29,6 +29,7 @@ export type SubaccountApprovalStruct = {
   maxAllowedCount: PromiseOrValue<BigNumberish>;
   actionType: PromiseOrValue<BytesLike>;
   nonce: PromiseOrValue<BigNumberish>;
+  desChainId: PromiseOrValue<BigNumberish>;
   deadline: PromiseOrValue<BigNumberish>;
   integrationId: PromiseOrValue<BytesLike>;
   signature: PromiseOrValue<BytesLike>;
@@ -42,6 +43,7 @@ export type SubaccountApprovalStructOutput = [
   string,
   BigNumber,
   BigNumber,
+  BigNumber,
   string,
   string
 ] & {
@@ -51,6 +53,7 @@ export type SubaccountApprovalStructOutput = [
   maxAllowedCount: BigNumber;
   actionType: string;
   nonce: BigNumber;
+  desChainId: BigNumber;
   deadline: BigNumber;
   integrationId: string;
   signature: string;
@@ -220,6 +223,7 @@ export declare namespace IRelayUtils {
   export type BridgeOutParamsStruct = {
     token: PromiseOrValue<string>;
     amount: PromiseOrValue<BigNumberish>;
+    minAmountOut: PromiseOrValue<BigNumberish>;
     provider: PromiseOrValue<string>;
     data: PromiseOrValue<BytesLike>;
   };
@@ -227,9 +231,16 @@ export declare namespace IRelayUtils {
   export type BridgeOutParamsStructOutput = [
     string,
     BigNumber,
+    BigNumber,
     string,
     string
-  ] & { token: string; amount: BigNumber; provider: string; data: string };
+  ] & {
+    token: string;
+    amount: BigNumber;
+    minAmountOut: BigNumber;
+    provider: string;
+    data: string;
+  };
 
   export type TransferRequestsStruct = {
     tokens: PromiseOrValue<string>[];
@@ -645,17 +656,18 @@ export interface RelayUtilsInterface extends utils.Interface {
     "DOMAIN_SEPARATOR_NAME_HASH()": FunctionFragment;
     "DOMAIN_SEPARATOR_TYPEHASH()": FunctionFragment;
     "DOMAIN_SEPARATOR_VERSION_HASH()": FunctionFragment;
+    "MINIFIED_TYPEHASH()": FunctionFragment;
     "REMOVE_SUBACCOUNT_TYPEHASH()": FunctionFragment;
     "SET_TRADER_REFERRAL_CODE_TYPEHASH()": FunctionFragment;
     "SUBACCOUNT_APPROVAL_TYPEHASH()": FunctionFragment;
     "TRANSFER_REQUESTS_TYPEHASH()": FunctionFragment;
     "UPDATE_ORDER_PARAMS_TYPEHASH()": FunctionFragment;
     "UPDATE_ORDER_TYPEHASH()": FunctionFragment;
-    "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))": FunctionFragment;
+    "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))": FunctionFragment;
     "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))": FunctionFragment;
-    "getBridgeOutStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,uint256,address,bytes))": FunctionFragment;
+    "getBridgeOutStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,uint256,uint256,address,bytes))": FunctionFragment;
     "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),bytes32)": FunctionFragment;
-    "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,bytes32)": FunctionFragment;
+    "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,bytes32)": FunctionFragment;
     "getClaimAffiliateRewardsStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address[],address[],address)": FunctionFragment;
     "getClaimCollateralStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address[],address[],uint256[],address)": FunctionFragment;
     "getClaimFundingFeesStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address[],address[],address)": FunctionFragment;
@@ -663,16 +675,16 @@ export interface RelayUtilsInterface extends utils.Interface {
     "getCreateGlvDepositStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address[],address[],uint256[]),((address,address,address,address,address,address,address,address[],address[]),uint256,uint256,uint256,bool,bool,bytes32[]))": FunctionFragment;
     "getCreateGlvWithdrawalStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address[],address[],uint256[]),((address,address,address,address,address,address[],address[]),uint256,uint256,bool,uint256,uint256,bytes32[]))": FunctionFragment;
     "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))": FunctionFragment;
-    "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))": FunctionFragment;
+    "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))": FunctionFragment;
     "getCreateShiftStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address[],address[],uint256[]),((address,address,address,address,address),uint256,uint256,uint256,bytes32[]))": FunctionFragment;
     "getCreateWithdrawalStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address[],address[],uint256[]),((address,address,address,address,address[],address[]),uint256,uint256,bool,uint256,uint256,bytes32[]))": FunctionFragment;
     "getDomainSeparator(uint256)": FunctionFragment;
     "getRemoveSubaccountStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address)": FunctionFragment;
-    "getSubaccountApprovalStructHash((address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes))": FunctionFragment;
+    "getSubaccountApprovalStructHash((address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes))": FunctionFragment;
     "getTraderReferralCodeStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),bytes32)": FunctionFragment;
-    "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))": FunctionFragment;
+    "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))": FunctionFragment;
     "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))": FunctionFragment;
-    "validateSignature(bytes32,bytes,address,string)": FunctionFragment;
+    "validateSignature(bytes32,bytes32,bytes,address,string)": FunctionFragment;
   };
 
   getFunction(
@@ -700,17 +712,18 @@ export interface RelayUtilsInterface extends utils.Interface {
       | "DOMAIN_SEPARATOR_NAME_HASH"
       | "DOMAIN_SEPARATOR_TYPEHASH"
       | "DOMAIN_SEPARATOR_VERSION_HASH"
+      | "MINIFIED_TYPEHASH"
       | "REMOVE_SUBACCOUNT_TYPEHASH"
       | "SET_TRADER_REFERRAL_CODE_TYPEHASH"
       | "SUBACCOUNT_APPROVAL_TYPEHASH"
       | "TRANSFER_REQUESTS_TYPEHASH"
       | "UPDATE_ORDER_PARAMS_TYPEHASH"
       | "UPDATE_ORDER_TYPEHASH"
-      | "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"
+      | "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"
       | "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"
       | "getBridgeOutStructHash"
       | "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),bytes32)"
-      | "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,bytes32)"
+      | "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,bytes32)"
       | "getClaimAffiliateRewardsStructHash"
       | "getClaimCollateralStructHash"
       | "getClaimFundingFeesStructHash"
@@ -718,14 +731,14 @@ export interface RelayUtilsInterface extends utils.Interface {
       | "getCreateGlvDepositStructHash"
       | "getCreateGlvWithdrawalStructHash"
       | "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"
-      | "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"
+      | "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"
       | "getCreateShiftStructHash"
       | "getCreateWithdrawalStructHash"
       | "getDomainSeparator"
       | "getRemoveSubaccountStructHash"
       | "getSubaccountApprovalStructHash"
       | "getTraderReferralCodeStructHash"
-      | "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"
+      | "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"
       | "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"
       | "validateSignature"
   ): FunctionFragment;
@@ -823,6 +836,10 @@ export interface RelayUtilsInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "MINIFIED_TYPEHASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "REMOVE_SUBACCOUNT_TYPEHASH",
     values?: undefined
   ): string;
@@ -847,7 +864,7 @@ export interface RelayUtilsInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))",
+    functionFragment: "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))",
     values: [
       IRelayUtils.RelayParamsStruct,
       SubaccountApprovalStruct,
@@ -868,7 +885,7 @@ export interface RelayUtilsInterface extends utils.Interface {
     values: [IRelayUtils.RelayParamsStruct, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,bytes32)",
+    functionFragment: "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,bytes32)",
     values: [
       IRelayUtils.RelayParamsStruct,
       SubaccountApprovalStruct,
@@ -936,7 +953,7 @@ export interface RelayUtilsInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))",
+    functionFragment: "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))",
     values: [
       IRelayUtils.RelayParamsStruct,
       SubaccountApprovalStruct,
@@ -977,7 +994,7 @@ export interface RelayUtilsInterface extends utils.Interface {
     values: [IRelayUtils.RelayParamsStruct, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))",
+    functionFragment: "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))",
     values: [
       IRelayUtils.RelayParamsStruct,
       SubaccountApprovalStruct,
@@ -992,6 +1009,7 @@ export interface RelayUtilsInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "validateSignature",
     values: [
+      PromiseOrValue<BytesLike>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<string>,
@@ -1092,6 +1110,10 @@ export interface RelayUtilsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "MINIFIED_TYPEHASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "REMOVE_SUBACCOUNT_TYPEHASH",
     data: BytesLike
   ): Result;
@@ -1116,7 +1138,7 @@ export interface RelayUtilsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))",
+    functionFragment: "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1132,7 +1154,7 @@ export interface RelayUtilsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,bytes32)",
+    functionFragment: "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,bytes32)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1164,7 +1186,7 @@ export interface RelayUtilsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))",
+    functionFragment: "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1192,7 +1214,7 @@ export interface RelayUtilsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))",
+    functionFragment: "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1296,6 +1318,8 @@ export interface RelayUtils extends BaseContract {
 
     DOMAIN_SEPARATOR_VERSION_HASH(overrides?: CallOverrides): Promise<[string]>;
 
+    MINIFIED_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
+
     REMOVE_SUBACCOUNT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
     SET_TRADER_REFERRAL_CODE_TYPEHASH(
@@ -1310,7 +1334,7 @@ export interface RelayUtils extends BaseContract {
 
     UPDATE_ORDER_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
-    "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"(
+    "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -1336,7 +1360,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,bytes32)"(
+    "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,bytes32)"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -1396,7 +1420,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"(
+    "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -1440,7 +1464,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"(
+    "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -1455,6 +1479,7 @@ export interface RelayUtils extends BaseContract {
     ): Promise<[string]>;
 
     validateSignature(
+      domainSeparator: PromiseOrValue<BytesLike>,
       digest: PromiseOrValue<BytesLike>,
       signature: PromiseOrValue<BytesLike>,
       expectedSigner: PromiseOrValue<string>,
@@ -1515,6 +1540,8 @@ export interface RelayUtils extends BaseContract {
 
   DOMAIN_SEPARATOR_VERSION_HASH(overrides?: CallOverrides): Promise<string>;
 
+  MINIFIED_TYPEHASH(overrides?: CallOverrides): Promise<string>;
+
   REMOVE_SUBACCOUNT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
   SET_TRADER_REFERRAL_CODE_TYPEHASH(overrides?: CallOverrides): Promise<string>;
@@ -1527,7 +1554,7 @@ export interface RelayUtils extends BaseContract {
 
   UPDATE_ORDER_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-  "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"(
+  "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"(
     relayParams: IRelayUtils.RelayParamsStruct,
     subaccountApproval: SubaccountApprovalStruct,
     account: PromiseOrValue<string>,
@@ -1553,7 +1580,7 @@ export interface RelayUtils extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,bytes32)"(
+  "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,bytes32)"(
     relayParams: IRelayUtils.RelayParamsStruct,
     subaccountApproval: SubaccountApprovalStruct,
     account: PromiseOrValue<string>,
@@ -1613,7 +1640,7 @@ export interface RelayUtils extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"(
+  "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"(
     relayParams: IRelayUtils.RelayParamsStruct,
     subaccountApproval: SubaccountApprovalStruct,
     account: PromiseOrValue<string>,
@@ -1657,7 +1684,7 @@ export interface RelayUtils extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"(
+  "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"(
     relayParams: IRelayUtils.RelayParamsStruct,
     subaccountApproval: SubaccountApprovalStruct,
     account: PromiseOrValue<string>,
@@ -1672,6 +1699,7 @@ export interface RelayUtils extends BaseContract {
   ): Promise<string>;
 
   validateSignature(
+    domainSeparator: PromiseOrValue<BytesLike>,
     digest: PromiseOrValue<BytesLike>,
     signature: PromiseOrValue<BytesLike>,
     expectedSigner: PromiseOrValue<string>,
@@ -1736,6 +1764,8 @@ export interface RelayUtils extends BaseContract {
 
     DOMAIN_SEPARATOR_VERSION_HASH(overrides?: CallOverrides): Promise<string>;
 
+    MINIFIED_TYPEHASH(overrides?: CallOverrides): Promise<string>;
+
     REMOVE_SUBACCOUNT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
     SET_TRADER_REFERRAL_CODE_TYPEHASH(
@@ -1750,7 +1780,7 @@ export interface RelayUtils extends BaseContract {
 
     UPDATE_ORDER_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-    "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"(
+    "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -1776,7 +1806,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,bytes32)"(
+    "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,bytes32)"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -1836,7 +1866,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"(
+    "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -1880,7 +1910,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"(
+    "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -1895,6 +1925,7 @@ export interface RelayUtils extends BaseContract {
     ): Promise<string>;
 
     validateSignature(
+      domainSeparator: PromiseOrValue<BytesLike>,
       digest: PromiseOrValue<BytesLike>,
       signature: PromiseOrValue<BytesLike>,
       expectedSigner: PromiseOrValue<string>,
@@ -1972,6 +2003,8 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    MINIFIED_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
+
     REMOVE_SUBACCOUNT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
     SET_TRADER_REFERRAL_CODE_TYPEHASH(
@@ -1986,7 +2019,7 @@ export interface RelayUtils extends BaseContract {
 
     UPDATE_ORDER_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"(
+    "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -2012,7 +2045,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,bytes32)"(
+    "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,bytes32)"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -2072,7 +2105,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"(
+    "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -2116,7 +2149,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"(
+    "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -2131,6 +2164,7 @@ export interface RelayUtils extends BaseContract {
     ): Promise<BigNumber>;
 
     validateSignature(
+      domainSeparator: PromiseOrValue<BytesLike>,
       digest: PromiseOrValue<BytesLike>,
       signature: PromiseOrValue<BytesLike>,
       expectedSigner: PromiseOrValue<string>,
@@ -2230,6 +2264,8 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    MINIFIED_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     REMOVE_SUBACCOUNT_TYPEHASH(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2254,7 +2290,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"(
+    "getBatchStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[])[],(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256)[],bytes32[]))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -2280,7 +2316,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,bytes32)"(
+    "getCancelOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,bytes32)"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -2340,7 +2376,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"(
+    "getCreateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -2384,7 +2420,7 @@ export interface RelayUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"(
+    "getUpdateOrderStructHash(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),(address,bool,uint256,uint256,bytes32,uint256,uint256,uint256,bytes32,bytes),address,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))"(
       relayParams: IRelayUtils.RelayParamsStruct,
       subaccountApproval: SubaccountApprovalStruct,
       account: PromiseOrValue<string>,
@@ -2399,6 +2435,7 @@ export interface RelayUtils extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     validateSignature(
+      domainSeparator: PromiseOrValue<BytesLike>,
       digest: PromiseOrValue<BytesLike>,
       signature: PromiseOrValue<BytesLike>,
       expectedSigner: PromiseOrValue<string>,

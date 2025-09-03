@@ -331,6 +331,7 @@ export interface MultichainOrderRouterInterface extends utils.Interface {
     "cancelOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,bytes32)": FunctionFragment;
     "createOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,((address,address,address,address,address,address,address[]),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint8,uint8,bool,bool,bool,bytes32,bytes32[]))": FunctionFragment;
     "dataStore()": FunctionFragment;
+    "digests(bytes32)": FunctionFragment;
     "eventEmitter()": FunctionFragment;
     "externalHandler()": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
@@ -347,7 +348,6 @@ export interface MultichainOrderRouterInterface extends utils.Interface {
     "setTraderReferralCode(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,bytes32)": FunctionFragment;
     "swapHandler()": FunctionFragment;
     "updateOrder(((address[],address[],bytes[]),(address[],uint256[],address[],bytes[],address[],address[]),(address,address,uint256,uint256,uint8,bytes32,bytes32,address)[],(address,uint256,address[]),uint256,uint256,bytes,uint256),address,uint256,(bytes32,uint256,uint256,uint256,uint256,uint256,bool,uint256))": FunctionFragment;
-    "userNonces(address)": FunctionFragment;
   };
 
   getFunction(
@@ -356,6 +356,7 @@ export interface MultichainOrderRouterInterface extends utils.Interface {
       | "cancelOrder"
       | "createOrder"
       | "dataStore"
+      | "digests"
       | "eventEmitter"
       | "externalHandler"
       | "multicall"
@@ -372,7 +373,6 @@ export interface MultichainOrderRouterInterface extends utils.Interface {
       | "setTraderReferralCode"
       | "swapHandler"
       | "updateOrder"
-      | "userNonces"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -403,6 +403,10 @@ export interface MultichainOrderRouterInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "dataStore", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "digests",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "eventEmitter",
     values?: undefined
@@ -472,10 +476,6 @@ export interface MultichainOrderRouterInterface extends utils.Interface {
       IRelayUtils.UpdateOrderParamsStruct
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "userNonces",
-    values: [PromiseOrValue<string>]
-  ): string;
 
   decodeFunctionResult(functionFragment: "batch", data: BytesLike): Result;
   decodeFunctionResult(
@@ -487,6 +487,7 @@ export interface MultichainOrderRouterInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "dataStore", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "digests", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eventEmitter",
     data: BytesLike
@@ -530,7 +531,6 @@ export interface MultichainOrderRouterInterface extends utils.Interface {
     functionFragment: "updateOrder",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "userNonces", data: BytesLike): Result;
 
   events: {
     "TokenTransferReverted(string,bytes)": EventFragment;
@@ -604,6 +604,11 @@ export interface MultichainOrderRouter extends BaseContract {
 
     dataStore(overrides?: CallOverrides): Promise<[string]>;
 
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     eventEmitter(overrides?: CallOverrides): Promise<[string]>;
 
     externalHandler(overrides?: CallOverrides): Promise<[string]>;
@@ -663,11 +668,6 @@ export interface MultichainOrderRouter extends BaseContract {
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
   };
 
   batch(
@@ -695,6 +695,11 @@ export interface MultichainOrderRouter extends BaseContract {
   ): Promise<ContractTransaction>;
 
   dataStore(overrides?: CallOverrides): Promise<string>;
+
+  digests(
+    arg0: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -756,11 +761,6 @@ export interface MultichainOrderRouter extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  userNonces(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   callStatic: {
     batch(
       relayParams: IRelayUtils.RelayParamsStruct,
@@ -787,6 +787,11 @@ export interface MultichainOrderRouter extends BaseContract {
     ): Promise<string>;
 
     dataStore(overrides?: CallOverrides): Promise<string>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     eventEmitter(overrides?: CallOverrides): Promise<string>;
 
@@ -847,11 +852,6 @@ export interface MultichainOrderRouter extends BaseContract {
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -891,6 +891,11 @@ export interface MultichainOrderRouter extends BaseContract {
     ): Promise<BigNumber>;
 
     dataStore(overrides?: CallOverrides): Promise<BigNumber>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     eventEmitter(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -951,11 +956,6 @@ export interface MultichainOrderRouter extends BaseContract {
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -984,6 +984,11 @@ export interface MultichainOrderRouter extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     dataStore(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    digests(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     eventEmitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1043,11 +1048,6 @@ export interface MultichainOrderRouter extends BaseContract {
       srcChainId: PromiseOrValue<BigNumberish>,
       params: IRelayUtils.UpdateOrderParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    userNonces(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }
