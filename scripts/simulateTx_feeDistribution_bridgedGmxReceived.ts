@@ -32,7 +32,7 @@ import {
 import {
   FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH,
   FEE_DISTRIBUTION_COMPLETED_HASH,
-  MOCK_DISTRIBUTION_ID,
+  DISTRIBUTION_ID,
   getFeeDistributionCompletedEventData,
 } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, USD_DECIMALS, GMX_DECIMALS } from "../src/lib/number";
@@ -62,7 +62,7 @@ const shouldSendTxn = shouldSendTxnStr.toLowerCase() === "true";
 const wntPriceKey = WNT_PRICE_KEY;
 const gmxPriceKey = GMX_PRICE_KEY;
 const maxRewardsEsGmxAmountKey = MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY;
-const distributionId = MOCK_DISTRIBUTION_ID;
+const distributionId = DISTRIBUTION_ID;
 
 const feeDistributionBridgedGmxReceivedTopics = [
   EVENT_LOG_TOPIC,

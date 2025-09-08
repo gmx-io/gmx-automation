@@ -33,7 +33,7 @@ import {
 import {
   FEE_DISTRIBUTION_COMPLETED_HASH,
   TOTAL_ES_GMX_REWARDS_INCREASED_HASH,
-  MOCK_DISTRIBUTION_ID,
+  DISTRIBUTION_ID,
   getFeeDistributionTotalEsGmxRewardsIncreasedEventData,
   getFeeDistributorEventName,
 } from "../src/domain/fee/feeDistributionUtils";
@@ -64,7 +64,7 @@ const feeSurplus = feeSurplusStr.toLowerCase() === "true";
 const wntPriceKey = WNT_PRICE_KEY;
 const gmxPriceKey = GMX_PRICE_KEY;
 const maxRewardsEsGmxAmountKey = MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY;
-const distributionId = MOCK_DISTRIBUTION_ID;
+const distributionId = DISTRIBUTION_ID;
 
 const distributeSimulation = async () => {
   const chainId = (await ethers.provider.getNetwork()).chainId;

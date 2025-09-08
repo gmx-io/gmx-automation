@@ -1,5 +1,6 @@
 import { ethers, BigNumber } from "ethers";
 import { parseLogToEventData, parseLogToEventNameHash } from "../../lib/events";
+import { bigNumberify } from "../../lib/number";
 import { Log } from "hardhat-deploy/dist/types";
 import { EventEmitter } from "../../typechain";
 
@@ -97,4 +98,6 @@ export const TOTAL_ES_GMX_REWARDS_INCREASED_HASH = ethers.utils.id(
   "TotalEsGmxRewardsIncreased"
 );
 
-export const MOCK_DISTRIBUTION_ID = "1";
+export const DISTRIBUTION_ID = bigNumberify(
+  ethers.utils.id("FEE_DISTRIBUTION")
+).toString();
