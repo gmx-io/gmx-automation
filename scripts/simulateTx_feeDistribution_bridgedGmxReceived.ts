@@ -3,8 +3,8 @@
 Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
-TX=0x138a4dacc8aa3d23e91c30f76664ea492ce51c9c196ed51c4f38905b3d0eeea2 \
-INITIAL_FROM_TIMESTAMP=1754965540 \
+TX=0x29502ee7cde8fc608fe621f2bc0f1526261bbe585340b41f0e34ada5f15b0f87 \
+INITIAL_FROM_TIMESTAMP=1757050463 \
 SHOULD_SEND_TXN=true \
 REVERT_TX=true \
     npx hardhat run scripts/simulateTx_feeDistribution_bridgedGmxReceived.ts --network localhost
@@ -32,7 +32,7 @@ import {
 import {
   FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH,
   FEE_DISTRIBUTION_COMPLETED_HASH,
-  MOCK_DISTRIBUTION_ID,
+  DISTRIBUTION_ID,
   getFeeDistributionCompletedEventData,
 } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, USD_DECIMALS, GMX_DECIMALS } from "../src/lib/number";
@@ -62,7 +62,7 @@ const shouldSendTxn = shouldSendTxnStr.toLowerCase() === "true";
 const wntPriceKey = WNT_PRICE_KEY;
 const gmxPriceKey = GMX_PRICE_KEY;
 const maxRewardsEsGmxAmountKey = MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY;
-const distributionId = MOCK_DISTRIBUTION_ID;
+const distributionId = DISTRIBUTION_ID;
 
 const feeDistributionBridgedGmxReceivedTopics = [
   EVENT_LOG_TOPIC,

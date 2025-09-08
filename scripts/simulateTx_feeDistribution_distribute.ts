@@ -3,8 +3,8 @@
 Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
-TX=0xb2746f4714fd7b8e6931fb7c546af8054915de38def5d3f96013e732c370f099 \
-INITIAL_FROM_TIMESTAMP=1754965540 \
+TX=0x1b558201ca91fa11dbd8b5b805cb40f7ac3b3d3a34c14a86a47c1306e504c70d \
+INITIAL_FROM_TIMESTAMP=1757050463 \
 SHOULD_SEND_TXN=true \
 REVERT_TX=true \
 FEE_SURPLUS=true \
@@ -33,7 +33,7 @@ import {
 import {
   FEE_DISTRIBUTION_COMPLETED_HASH,
   TOTAL_ES_GMX_REWARDS_INCREASED_HASH,
-  MOCK_DISTRIBUTION_ID,
+  DISTRIBUTION_ID,
   getFeeDistributionTotalEsGmxRewardsIncreasedEventData,
   getFeeDistributorEventName,
 } from "../src/domain/fee/feeDistributionUtils";
@@ -64,7 +64,7 @@ const feeSurplus = feeSurplusStr.toLowerCase() === "true";
 const wntPriceKey = WNT_PRICE_KEY;
 const gmxPriceKey = GMX_PRICE_KEY;
 const maxRewardsEsGmxAmountKey = MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY;
-const distributionId = MOCK_DISTRIBUTION_ID;
+const distributionId = DISTRIBUTION_ID;
 
 const distributeSimulation = async () => {
   const chainId = (await ethers.provider.getNetwork()).chainId;

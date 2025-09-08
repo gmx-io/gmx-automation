@@ -16,6 +16,7 @@ import {
   FEE_DISTRIBUTION_DATA_RECEIVED_HASH,
   FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH,
   FEE_DISTRIBUTION_COMPLETED_HASH,
+  DISTRIBUTION_ID,
 } from "../src/domain/fee/feeDistributionUtils";
 
 const { w3f } = hre;
@@ -25,7 +26,6 @@ const main = async () => {
     process.env.INITIAL_FROM_TIMESTAMP,
     "no INITIAL_FROM_TIMESTAMP in .env"
   );
-  assert.ok(process.env.DISTRIBUTION_ID, "no DISTRIBUTION_ID in .env");
   assert.ok(process.env.SHOULD_SEND_TXN, "no SHOULD_SEND_TXN in .env");
 
   validateInitialFromTimestamp(Number(process.env.INITIAL_FROM_TIMESTAMP));
@@ -50,7 +50,7 @@ const main = async () => {
       wntPriceKey: WNT_PRICE_KEY,
       gmxPriceKey: GMX_PRICE_KEY,
       maxRewardsEsGmxAmountKey: MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY,
-      distributionId: process.env.DISTRIBUTION_ID,
+      distributionId: DISTRIBUTION_ID,
       shouldSendTxn: process.env.SHOULD_SEND_TXN,
     },
     trigger: {
