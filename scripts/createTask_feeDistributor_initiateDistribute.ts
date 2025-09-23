@@ -17,7 +17,7 @@ const main = async () => {
     execAbi: feeDistributor.interface.format("json") as string,
     trigger: {
       type: TriggerType.CRON,
-      cron: "0 0 * * WED",
+      cron: "0 0 * * 3",
     },
     name: "FeeDistributor.initiateDistribute()",
     dedicatedMsgSender: true,

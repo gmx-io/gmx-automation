@@ -112,6 +112,7 @@ type OutputData = {
 type PositionFeesInfoWithPeriods = {
   totalBorrowingFeeUsd: string;
   totalPositionFeeUsd: string;
+  totalLiquidationFeeUsd: string;
 };
 
 type SwapFeesInfoWithPeriods = {
@@ -151,13 +152,18 @@ async function getAffiliatesTiers(
 export async function getDistributionData(
   logger: Logger,
   chainId: SupportedChainId,
-  fromTimestamp: number,
-  toTimestamp: number,
+  relativePeriodName: RelativePeriodName,
   gmxPrice: BigNumber,
   maxEsGmxRewards: BigNumber
 ): Promise<OutputData> {
   const affiliateCondition = "";
   const referralCondition = "";
+  const [start, end] = getPeriod(relativePeriodName) ?? [];
+  if (!start || !end) {
+    throw new Error(`Invalid period name: ${relativePeriodName}`);
+  }
+  const fromTimestamp = dateToSeconds(start);
+  const toTimestamp = dateToSeconds(end);
 
   const getAffiliateStatsQuery = (
     skip: number
@@ -589,6 +595,7 @@ export async function processPeriodV2(
       position: positionFeesInfoWithPeriods(where: { ${where} }) {
         totalBorrowingFeeUsd
         totalPositionFeeUsd
+        totalLiquidationFeeUsd
       }
       swap: swapFeesInfoWithPeriods(where: { ${where} }) {
         totalFeeReceiverUsd
@@ -604,7 +611,10 @@ export async function processPeriodV2(
   const swapStats = data.swap as SwapFeesInfoWithPeriods[];
 
   const positionFees = positionStats.reduce((acc, stat) => {
-    return acc.add(stat.totalBorrowingFeeUsd).add(stat.totalPositionFeeUsd);
+    return acc
+      .add(stat.totalBorrowingFeeUsd)
+      .add(stat.totalPositionFeeUsd)
+      .add(stat.totalLiquidationFeeUsd);
   }, ZERO);
 
   const swapFees = swapStats.reduce((acc, stat) => {

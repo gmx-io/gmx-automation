@@ -4,7 +4,6 @@ Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
 TX=0x1b558201ca91fa11dbd8b5b805cb40f7ac3b3d3a34c14a86a47c1306e504c70d \
-INITIAL_FROM_TIMESTAMP=1757050463 \
 SHOULD_SEND_TXN=true \
 REVERT_TX=true \
     npx hardhat run scripts/simulateTx_feeDistribution_processLzReceive.ts --network localhost
@@ -45,14 +44,12 @@ export type RevertOverride = {
 const logger: Logger = getLogger(false);
 const txHash = process.env.TX;
 
-const initialFromTimestamp = process.env.INITIAL_FROM_TIMESTAMP;
 const shouldSendTxnStr = process.env.SHOULD_SEND_TXN;
 const revertTxStr = process.env.REVERT_TX;
 
 const gelatoMsgSenderPrivateKey = process.env.GELATO_MSG_SENDER_PRIVATE_KEY;
 
 assert(txHash, "TX is not set");
-assert(initialFromTimestamp, "INITIAL_FROM_TIMESTAMP is not set");
 assert(shouldSendTxnStr, "SHOULD_SEND_TXN is not set");
 assert(revertTxStr, "REVERT_TX is not set");
 assert(gelatoMsgSenderPrivateKey, "GELATO_MSG_SENDER_PRIVATE_KEY is not set");
@@ -107,7 +104,6 @@ const processLzReceiveSimulation = async (opts?: RevertOverride) => {
     const gelatoContext = createEventContext(
       log,
       {
-        initialFromTimestamp,
         wntPriceKey,
         gmxPriceKey,
         maxRewardsEsGmxAmountKey,

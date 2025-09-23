@@ -20,30 +20,16 @@ import {
 export const feeDistribution = async (
   context: Context<Web3FunctionEventContext>
 ): Promise<Web3FunctionResult> => {
-  const {
-    logger,
-    log,
-    userArgs,
-    storage,
-    contracts,
-    multiChainProvider,
-    gelatoArgs,
-  } = context;
-  const provider = multiChainProvider.default();
+  const { logger, log, userArgs, storage, contracts, gelatoArgs } = context;
   const eventName = getFeeDistributorEventName(log, contracts.eventEmitter);
   const chainId = gelatoArgs.chainId as SupportedChainId;
   const {
-    initialFromTimestamp,
     wntPriceKey,
     gmxPriceKey,
     maxRewardsEsGmxAmountKey,
     distributionId,
     shouldSendTxn,
   } = userArgs;
-
-  if (typeof initialFromTimestamp !== "string") {
-    throw new Error("initialFromTimestamp must be a string");
-  }
 
   if (typeof wntPriceKey !== "string") {
     throw new Error("wntPriceKey must be a hex string");
@@ -79,11 +65,6 @@ export const feeDistribution = async (
       storage.delete("gmxPrice"),
     ]);
 
-    const rawFromTimestamp = await storage.get("fromTimestamp");
-
-    const fromTimestamp =
-      Number(rawFromTimestamp) || Number(initialFromTimestamp);
-
     [wntPrice, gmxPrice] = await Promise.all([
       contracts.dataStore.getUint(wntPriceKey),
       contracts.dataStore.getUint(gmxPriceKey),
@@ -94,28 +75,22 @@ export const feeDistribution = async (
       storage.set("gmxPrice", gmxPrice.toString()),
     ]);
 
-    const [latestBlock, maxEsGmxRewards, feesV1Usd, feesV2Usd] =
-      await Promise.all([
-        provider.getBlock("latest"),
-        contracts.dataStore.getUint(maxRewardsEsGmxAmountKey),
-        processPeriodV1("prev", chainId),
-        processPeriodV2("prev", chainId),
-      ]);
-    const toTimestamp = latestBlock.timestamp;
+    const relativePeriodName = "prev";
+    const [maxEsGmxRewards, feesV1Usd, feesV2Usd] = await Promise.all([
+      contracts.dataStore.getUint(maxRewardsEsGmxAmountKey),
+      processPeriodV1(relativePeriodName, chainId),
+      processPeriodV2(relativePeriodName, chainId),
+    ]);
 
     const output = await getDistributionData(
       logger,
       chainId,
-      fromTimestamp,
-      toTimestamp,
+      relativePeriodName,
       gmxPrice,
       maxEsGmxRewards
     );
 
-    await Promise.all([
-      storage.set("fromTimestamp", (toTimestamp + 1).toString()),
-      storage.set("distributionData", JSON.stringify(output, null, 4)),
-    ]);
+    await storage.set("distributionData", JSON.stringify(output, null, 4));
 
     return {
       canExec: true,
@@ -180,6 +155,16 @@ export const feeDistribution = async (
     return {
       canExec: false,
       message: "Referral rewards not sent",
+    };
+  } else if (
+    eventName === "FeeDistributionDataReceived" &&
+    getFeeDistributionDataReceivedEventData(log, contracts.eventEmitter)
+      .isBridgingCompleted!
+  ) {
+    return {
+      canExec: false,
+      message:
+        "FeeDistributionDataReceived seen; bridging not completed — waiting",
     };
   } else {
     return {

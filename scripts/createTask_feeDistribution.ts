@@ -5,7 +5,6 @@ import hre from "hardhat";
 import assert from "node:assert";
 import { initCreateTask, logTaskCreation, run } from "./utils/createTaskUtils";
 import { getAddress } from "../src/config/addresses";
-import { validateInitialFromTimestamp } from "../src/utils/date";
 import { EVENT_LOG_TOPIC } from "../src/lib/events";
 import {
   WNT_PRICE_KEY,
@@ -28,8 +27,6 @@ const main = async () => {
   );
   assert.ok(process.env.SHOULD_SEND_TXN, "no SHOULD_SEND_TXN in .env");
 
-  validateInitialFromTimestamp(Number(process.env.INITIAL_FROM_TIMESTAMP));
-
   const { logger, chainId, automate, web3Function } = await initCreateTask();
 
   const feeDistributionW3f = w3f.get("feeDistribution");
@@ -46,7 +43,6 @@ const main = async () => {
     name: "FeeDistribution",
     web3FunctionHash: cid,
     web3FunctionArgs: {
-      initialFromTimestamp: process.env.INITIAL_FROM_TIMESTAMP,
       wntPriceKey: WNT_PRICE_KEY,
       gmxPriceKey: GMX_PRICE_KEY,
       maxRewardsEsGmxAmountKey: MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY,
