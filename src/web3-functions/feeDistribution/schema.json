@@ -7,7 +7,6 @@
     "wntPriceKey": "string",
     "gmxPriceKey": "string",
     "maxRewardsEsGmxAmountKey": "string",
-    "distributionId": "string",
-    "shouldSendTxn": "boolean"
+    "distributionId": "string"
   }
 }

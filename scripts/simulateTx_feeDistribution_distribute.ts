@@ -4,7 +4,6 @@ Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
 TX=0x1b558201ca91fa11dbd8b5b805cb40f7ac3b3d3a34c14a86a47c1306e504c70d \
-SHOULD_SEND_TXN=true \
 REVERT_TX=true \
 FEE_SURPLUS=true \
     npx hardhat run scripts/simulateTx_feeDistribution_distribute.ts --network localhost
@@ -43,18 +42,15 @@ import { createSecrets, createStorage, flushStorage } from "../src/lib/storage";
 
 const logger: Logger = getLogger(false);
 
-const shouldSendTxnStr = process.env.SHOULD_SEND_TXN;
 const revertTxStr = process.env.REVERT_TX;
 const feeSurplusStr = process.env.FEE_SURPLUS;
 
 const gelatoMsgSenderPrivateKey = process.env.GELATO_MSG_SENDER_PRIVATE_KEY;
 
-assert(shouldSendTxnStr, "SHOULD_SEND_TXN is not set");
 assert(revertTxStr, "REVERT_TX is not set");
 assert(feeSurplusStr, "FEE_SURPLUS is not set");
 assert(gelatoMsgSenderPrivateKey, "GELATO_MSG_SENDER_PRIVATE_KEY is not set");
 
-const shouldSendTxn = shouldSendTxnStr.toLowerCase() === "true";
 const revertTx = revertTxStr.toLowerCase() === "true";
 const feeSurplus = feeSurplusStr.toLowerCase() === "true";
 
@@ -135,7 +131,6 @@ const distributeSimulation = async () => {
         gmxPriceKey,
         maxRewardsEsGmxAmountKey,
         distributionId,
-        shouldSendTxn,
       },
       chainId
     );

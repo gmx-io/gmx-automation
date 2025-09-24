@@ -4,7 +4,6 @@ Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
 TX=0x29502ee7cde8fc608fe621f2bc0f1526261bbe585340b41f0e34ada5f15b0f87 \
-SHOULD_SEND_TXN=true \
 REVERT_TX=true \
     npx hardhat run scripts/simulateTx_feeDistribution_bridgedGmxReceived.ts --network localhost
 ```
@@ -44,17 +43,13 @@ export type RevertOverride = {
 const logger: Logger = getLogger(false);
 const txHash = process.env.TX;
 
-const shouldSendTxnStr = process.env.SHOULD_SEND_TXN;
 const revertTxStr = process.env.REVERT_TX;
 
 const gelatoMsgSenderPrivateKey = process.env.GELATO_MSG_SENDER_PRIVATE_KEY;
 
 assert(txHash, "TX is not set");
-assert(shouldSendTxnStr, "SHOULD_SEND_TXN is not set");
 assert(revertTxStr, "REVERT_TX is not set");
 assert(gelatoMsgSenderPrivateKey, "GELATO_MSG_SENDER_PRIVATE_KEY is not set");
-
-const shouldSendTxn = shouldSendTxnStr.toLowerCase() === "true";
 
 const wntPriceKey = WNT_PRICE_KEY;
 const gmxPriceKey = GMX_PRICE_KEY;
@@ -108,7 +103,6 @@ const bridgedGmxReceivedSimulation = async (opts?: RevertOverride) => {
         gmxPriceKey,
         maxRewardsEsGmxAmountKey,
         distributionId,
-        shouldSendTxn,
       },
       chainId
     );

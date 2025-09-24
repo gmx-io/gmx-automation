@@ -32,6 +32,8 @@ export const CHUNK_SIZE = 10_000; // for trader and affiliate referral rewards q
 export const ESGMX_REWARDS_DIVISOR = 5; // for tier 3, 1/5 of the 25% total rewards or 5%
 export const BATCH_SIZE = 150; // max batch size for depositReferralRewards
 
+export const BLOCK_CONFIRMATIONS = 2; // number of block confirmations to wait after event trigger received
+
 export function formatAmount(
   amount: BigNumberish,
   decimals = 30,

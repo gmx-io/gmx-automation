@@ -23,13 +23,8 @@ export const feeDistribution = async (
   const { logger, log, userArgs, storage, contracts, gelatoArgs } = context;
   const eventName = getFeeDistributorEventName(log, contracts.eventEmitter);
   const chainId = gelatoArgs.chainId as SupportedChainId;
-  const {
-    wntPriceKey,
-    gmxPriceKey,
-    maxRewardsEsGmxAmountKey,
-    distributionId,
-    shouldSendTxn,
-  } = userArgs;
+  const { wntPriceKey, gmxPriceKey, maxRewardsEsGmxAmountKey, distributionId } =
+    userArgs;
 
   if (typeof wntPriceKey !== "string") {
     throw new Error("wntPriceKey must be a hex string");
@@ -45,10 +40,6 @@ export const feeDistribution = async (
 
   if (typeof distributionId !== "string") {
     throw new Error("distributionId must be a string");
-  }
-
-  if (typeof shouldSendTxn !== "boolean") {
-    throw new Error("shouldSendTxn must be a bool");
   }
 
   let wntPrice: BigNumber, gmxPrice: BigNumber;
@@ -132,7 +123,6 @@ export const feeDistribution = async (
     const referralRewardsRawCallData = await referralRewardsCalls({
       logger: logger,
       feeDistributorVault: contracts.feeDistributorVault.address,
-      shouldSendTxn: shouldSendTxn,
       wntPrice: wntPrice,
       feeDistributor: contracts.feeDistributor,
       wnt: contracts.wnt,
@@ -146,15 +136,9 @@ export const feeDistribution = async (
       data: c.data,
     }));
 
-    if (shouldSendTxn) {
-      return {
-        canExec: true,
-        callData: referralRewardsCallData,
-      };
-    }
     return {
-      canExec: false,
-      message: "Referral rewards not sent",
+      canExec: true,
+      callData: referralRewardsCallData,
     };
   } else if (
     eventName === "FeeDistributionDataReceived" &&

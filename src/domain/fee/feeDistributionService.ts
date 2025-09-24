@@ -87,7 +87,6 @@ type ReferralOutput = {
 type ReferralRewardsCallsParams = {
   logger: Logger;
   feeDistributorVault: string;
-  shouldSendTxn: boolean;
   wntPrice: BigNumber;
   feeDistributor: ethers.Contract;
   wnt: ethers.Contract;
@@ -667,7 +666,6 @@ async function processBatch(
 export async function referralRewardsCalls({
   logger,
   feeDistributorVault,
-  shouldSendTxn,
   wntPrice,
   feeDistributor,
   wnt,
@@ -750,10 +748,6 @@ export async function referralRewardsCalls({
     throw new Error(
       `Insufficient balance, required: ${totalNativeAmount.toString()}, available: ${balance.toString()}`
     );
-  }
-
-  if (!shouldSendTxn) {
-    return calls;
   }
 
   if (affiliateAccounts.length === 0) {

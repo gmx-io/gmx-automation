@@ -2,6 +2,5 @@
   "wntPriceKey": "",
   "gmxPriceKey": "",
   "maxRewardsEsGmxAmountKey": "",
-  "distributionId": "",
-  "shouldSendTxn": ""
+  "distributionId": ""
 }

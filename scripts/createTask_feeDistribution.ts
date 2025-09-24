@@ -2,10 +2,10 @@ import "@nomiclabs/hardhat-ethers";
 import "@gelatonetwork/web3-functions-sdk/hardhat-plugin";
 import { TriggerType } from "@gelatonetwork/automate-sdk";
 import hre from "hardhat";
-import assert from "node:assert";
 import { initCreateTask, logTaskCreation, run } from "./utils/createTaskUtils";
 import { getAddress } from "../src/config/addresses";
 import { EVENT_LOG_TOPIC } from "../src/lib/events";
+import { BLOCK_CONFIRMATIONS } from "../src/lib/number";
 import {
   WNT_PRICE_KEY,
   GMX_PRICE_KEY,
@@ -21,12 +21,6 @@ import {
 const { w3f } = hre;
 
 const main = async () => {
-  assert.ok(
-    process.env.INITIAL_FROM_TIMESTAMP,
-    "no INITIAL_FROM_TIMESTAMP in .env"
-  );
-  assert.ok(process.env.SHOULD_SEND_TXN, "no SHOULD_SEND_TXN in .env");
-
   const { logger, chainId, automate, web3Function } = await initCreateTask();
 
   const feeDistributionW3f = w3f.get("feeDistribution");
@@ -47,7 +41,6 @@ const main = async () => {
       gmxPriceKey: GMX_PRICE_KEY,
       maxRewardsEsGmxAmountKey: MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY,
       distributionId: DISTRIBUTION_ID,
-      shouldSendTxn: process.env.SHOULD_SEND_TXN,
     },
     trigger: {
       type: TriggerType.EVENT,
@@ -62,7 +55,7 @@ const main = async () => {
           ],
         ],
       },
-      blockConfirmations: 0,
+      blockConfirmations: BLOCK_CONFIRMATIONS,
     },
   });
 
