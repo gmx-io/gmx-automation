@@ -12,9 +12,7 @@ import {
   MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY,
 } from "../src/lib/keys/keys";
 import {
-  FEE_DISTRIBUTION_DATA_RECEIVED_HASH,
-  FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH,
-  FEE_DISTRIBUTION_COMPLETED_HASH,
+  FEE_DISTRIBUTION_EVENT_HASH,
   DISTRIBUTION_ID,
 } from "../src/domain/fee/feeDistributionUtils";
 
@@ -46,14 +44,7 @@ const main = async () => {
       type: TriggerType.EVENT,
       filter: {
         address: getAddress(chainId, "eventEmitter"),
-        topics: [
-          [EVENT_LOG_TOPIC],
-          [
-            FEE_DISTRIBUTION_DATA_RECEIVED_HASH,
-            FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH,
-            FEE_DISTRIBUTION_COMPLETED_HASH,
-          ],
-        ],
+        topics: [[EVENT_LOG_TOPIC], [FEE_DISTRIBUTION_EVENT_HASH]],
       },
       blockConfirmations: BLOCK_CONFIRMATIONS,
     },

@@ -1,13 +1,5 @@
 import { BigNumber, BigNumberish, ethers } from "ethers";
 
-export type ReplaceBigNumberWithString<T> = {
-  [K in keyof T]: T[K] extends BigNumber
-    ? string
-    : T[K] extends object
-    ? ReplaceBigNumberWithString<T[K]>
-    : T[K];
-};
-
 export const MAX_UINT8 = "255"; // 2^8 - 1
 export const MAX_UINT32 = "4294967295"; // 2^32 - 1
 export const MAX_UINT64 = "18446744073709551615"; // 2^64 - 1

@@ -5,10 +5,18 @@ import {
 } from "@gelatonetwork/web3-functions-sdk/*";
 import { SupportedChainId } from "../../config/chains";
 import { Context } from "../../lib/gelato";
-import { bigNumberify } from "../../lib/number";
+import { ZERO, bigNumberify } from "../../lib/number";
 import {
   getFeeDistributionDataReceivedEventData,
-  getFeeDistributorEventName,
+  getFeeDistributorEventDescription,
+  DISTRIBUTION_DATA,
+  WNT_PRICE,
+  GMX_PRICE,
+  RELATIVE_PERIOD_NAME,
+  FEE_DISTRIBUTION_INITIATED,
+  FEE_DISTRIBUTION_DATA_RECEIVED,
+  FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED,
+  FEE_DISTRIBUTION_COMPLETED,
 } from "../../domain/fee/feeDistributionUtils";
 import {
   processPeriodV1,
@@ -21,7 +29,10 @@ export const feeDistribution = async (
   context: Context<Web3FunctionEventContext>
 ): Promise<Web3FunctionResult> => {
   const { logger, log, userArgs, storage, contracts, gelatoArgs } = context;
-  const eventName = getFeeDistributorEventName(log, contracts.eventEmitter);
+  const eventDescription = getFeeDistributorEventDescription(
+    log,
+    contracts.eventEmitter
+  );
   const chainId = gelatoArgs.chainId as SupportedChainId;
   const { wntPriceKey, gmxPriceKey, maxRewardsEsGmxAmountKey, distributionId } =
     userArgs;
@@ -45,15 +56,15 @@ export const feeDistribution = async (
   let wntPrice: BigNumber, gmxPrice: BigNumber;
 
   if (
-    (eventName === "FeeDistributionDataReceived" &&
+    (eventDescription === FEE_DISTRIBUTION_DATA_RECEIVED &&
       getFeeDistributionDataReceivedEventData(log, contracts.eventEmitter)
-        .isBridgingCompleted) ||
-    eventName === "FeeDistributionBridgedGmxReceived"
+        .totalGmxBridgedOut > ZERO) ||
+    eventDescription === FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED
   ) {
     await Promise.all([
-      storage.delete("distributionData"),
-      storage.delete("wntPrice"),
-      storage.delete("gmxPrice"),
+      storage.delete(DISTRIBUTION_DATA),
+      storage.delete(WNT_PRICE),
+      storage.delete(GMX_PRICE),
     ]);
 
     [wntPrice, gmxPrice] = await Promise.all([
@@ -62,26 +73,25 @@ export const feeDistribution = async (
     ]);
 
     await Promise.all([
-      storage.set("wntPrice", wntPrice.toString()),
-      storage.set("gmxPrice", gmxPrice.toString()),
+      storage.set(WNT_PRICE, wntPrice.toString()),
+      storage.set(GMX_PRICE, gmxPrice.toString()),
     ]);
 
-    const relativePeriodName = "prev";
     const [maxEsGmxRewards, feesV1Usd, feesV2Usd] = await Promise.all([
       contracts.dataStore.getUint(maxRewardsEsGmxAmountKey),
-      processPeriodV1(relativePeriodName, chainId),
-      processPeriodV2(relativePeriodName, chainId),
+      processPeriodV1(RELATIVE_PERIOD_NAME, chainId),
+      processPeriodV2(RELATIVE_PERIOD_NAME, chainId),
     ]);
 
     const output = await getDistributionData(
       logger,
       chainId,
-      relativePeriodName,
+      RELATIVE_PERIOD_NAME,
       gmxPrice,
       maxEsGmxRewards
     );
 
-    await storage.set("distributionData", JSON.stringify(output, null, 4));
+    await storage.set(DISTRIBUTION_DATA, JSON.stringify(output, null, 4));
 
     return {
       canExec: true,
@@ -100,11 +110,11 @@ export const feeDistribution = async (
         },
       ],
     };
-  } else if (eventName === "FeeDistributionCompleted") {
+  } else if (eventDescription === FEE_DISTRIBUTION_COMPLETED) {
     const [wntPriceStr, gmxPriceStr, dataStr] = await Promise.all([
-      storage.get("wntPrice"),
-      storage.get("gmxPrice"),
-      storage.get("distributionData"),
+      storage.get(WNT_PRICE),
+      storage.get(GMX_PRICE),
+      storage.get(DISTRIBUTION_DATA),
     ]);
 
     if (!wntPriceStr) {
@@ -129,6 +139,7 @@ export const feeDistribution = async (
       esGmx: contracts.esGmx,
       dataStr: dataStr,
       distributionId: distributionId,
+      useBatchSize: false,
     });
 
     const referralRewardsCallData = referralRewardsRawCallData.map((c) => ({
@@ -140,20 +151,22 @@ export const feeDistribution = async (
       canExec: true,
       callData: referralRewardsCallData,
     };
-  } else if (
-    eventName === "FeeDistributionDataReceived" &&
-    getFeeDistributionDataReceivedEventData(log, contracts.eventEmitter)
-      .isBridgingCompleted!
-  ) {
+  } else if (eventDescription === FEE_DISTRIBUTION_INITIATED) {
     return {
       canExec: false,
       message:
-        "FeeDistributionDataReceived seen; bridging not completed — waiting",
+        "FeeDistributionInitiated seen; fee distribution initiated for the week",
+    };
+  } else if (eventDescription === FEE_DISTRIBUTION_DATA_RECEIVED) {
+    return {
+      canExec: false,
+      message:
+        "FeeDistributionDataReceived seen; waiting to receive bridged GMX",
     };
   } else {
     return {
       canExec: false,
-      message: `No relevant event found: ${eventName}`,
+      message: `No relevant event found: ${eventDescription}`,
     };
   }
 };

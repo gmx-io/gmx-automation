@@ -19,7 +19,7 @@ import {
   FeeDistributor,
   FeeDistributorVault,
   ContributorHandler,
-  MockGMX_Adapter,
+  IOFT,
 } from "../typechain";
 
 import { abi as ConfigAbi } from "../abi/Config.json";
@@ -36,7 +36,7 @@ import { abi as EsGmxAbi } from "../abi/EsGmx.json";
 import { abi as FeeDistributorAbi } from "../abi/FeeDistributor.json";
 import { abi as FeeDistributorVaultAbi } from "../abi/FeeDistributorVault.json";
 import { abi as ContributorHandlerAbi } from "../abi/ContributorHandler.json";
-import { abi as MockGMX_AdapterAbi } from "../abi/MockGMX_Adapter.json";
+import { abi as IOFTAbi } from "../abi/IOFT.json";
 
 function getContract<T = Contract>({
   chainId,
@@ -154,16 +154,13 @@ export function getContracts(
     abi: ContributorHandlerAbi,
   });
 
-  // MockGMX_Adapter used as the contract because GMX_Adapter is not in the gmx-synthetics repo and
+  // IOFT used as the contract because GMX_Adapter contracts are not in the gmx-synthetics repo and
   // the contract is only used for an event filter in createTask_feeDistributor_bridgedGmxReceived
-  // Used gmxAdapter naming instead of gmx_Adapter for more consistent naming with other contracts
-  // The GMX_Adapter contract can be found in the following link for reference:
-  // https://github.com/gmx-io/gmx-token-lz/blob/main/contracts/GMX_Adapter.sol
-  const gmxAdapter = getContract<MockGMX_Adapter>({
+  const gmxAdapter = getContract<IOFT>({
     chainId,
     name: "gmxAdapter",
     provider,
-    abi: MockGMX_AdapterAbi,
+    abi: IOFTAbi,
   });
   const contracts = {
     dataStore,

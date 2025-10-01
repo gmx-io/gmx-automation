@@ -93,6 +93,7 @@ type ReferralRewardsCallsParams = {
   esGmx: ethers.Contract;
   dataStr: string;
   distributionId: string;
+  useBatchSize: boolean;
 };
 
 type OutputData = {
@@ -289,19 +290,19 @@ export async function getDistributionData(
     {}
   );
 
-  if (allAffiliatesRebateUsd.eq(0)) {
+  const hasV1AffiliateRebates = allAffiliatesRebateUsd.gt(ZERO);
+
+  if (!hasV1AffiliateRebates) {
     logger.warn(
-      "No V1 rebates on %s; continuing to compute esGMX rewards (v1+v2)",
+      "No V1 affiliate rebates on %s; continuing to compute esGMX rewards (v1+v2)",
       chainId
     );
   }
 
-  const hasV1Rebates = !allAffiliatesRebateUsd.eq(0);
-
   Object.entries(affiliatesRebatesData).forEach(([account, data]) => {
     data.allAffiliatesRebateUsd = allAffiliatesRebateUsd;
     data.account = account;
-    data.share = hasV1Rebates
+    data.share = hasV1AffiliateRebates
       ? data.rebateUsd.mul(SHARE_DIVISOR).div(allAffiliatesRebateUsd)
       : ZERO;
   });
@@ -470,7 +471,11 @@ export async function getDistributionData(
     {}
   );
 
-  const hasV1ReferralDiscounts = !allReferralsDiscountUsd.eq(0);
+  const hasV1ReferralDiscounts = allReferralsDiscountUsd.gt(ZERO);
+
+  if (!hasV1ReferralDiscounts) {
+    logger.warn("No V1 referral discounts on %s", chainId);
+  }
 
   Object.entries(referralDiscountData).forEach(([account, data]) => {
     data.allReferralsDiscountUsd = allReferralsDiscountUsd;
@@ -629,6 +634,7 @@ async function processBatch(
   logger: Logger,
   accounts: string[],
   amounts: BigNumber[],
+  useBatchSize: boolean,
   handler: (batch: [string, BigNumber][]) => Promise<void>
 ): Promise<void> {
   if (accounts.length !== amounts.length) {
@@ -645,7 +651,7 @@ async function processBatch(
   for (let i = 0; i < accounts.length; i++) {
     currentBatch.push([accounts[i]!, amounts[i]!]);
 
-    if (currentBatch.length === BATCH_SIZE) {
+    if (currentBatch.length === BATCH_SIZE && useBatchSize) {
       logger.log(
         "handling current batch",
         i,
@@ -672,6 +678,7 @@ export async function referralRewardsCalls({
   esGmx,
   dataStr,
   distributionId,
+  useBatchSize,
 }: ReferralRewardsCallsParams): Promise<{ to: string; data: string }[]> {
   const calls: Array<{ to: string; data: string }> = [];
 
@@ -759,6 +766,7 @@ export async function referralRewardsCalls({
       logger,
       affiliateAccounts,
       affiliateAmounts,
+      useBatchSize,
       async (currentBatch: [string, BigNumber][]) => {
         const params = currentBatch.map(([account, amount]) => ({
           account,
@@ -783,6 +791,7 @@ export async function referralRewardsCalls({
       logger,
       discountAccounts,
       discountAmounts,
+      useBatchSize,
       async (currentBatch: [string, BigNumber][]) => {
         const params = currentBatch.map(([account, amount]) => ({
           account,
@@ -805,6 +814,7 @@ export async function referralRewardsCalls({
       logger,
       esGmxAccounts,
       esGmxAmounts,
+      useBatchSize,
       async (currentBatch: [string, BigNumber][]) => {
         const params = currentBatch.map(([account, amount]) => ({
           account,
