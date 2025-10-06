@@ -16,7 +16,7 @@ import {
   BATCH_SIZE,
 } from "../../lib/number";
 import { SubgraphService } from "../../domain/subgraphService";
-import { dateToSeconds, getPeriod, RelativePeriodName } from "../../utils/date";
+import { RelativePeriodName, getPeriod } from "../../utils/date";
 import { Logger } from "../../lib/logger";
 import { SupportedChainId } from "../../config/chains";
 
@@ -91,22 +91,9 @@ type ReferralRewardsCallsParams = {
   feeDistributor: ethers.Contract;
   wnt: ethers.Contract;
   esGmx: ethers.Contract;
-  dataStr: string;
+  data: OutputData;
   distributionId: string;
   useBatchSize: boolean;
-};
-
-type OutputData = {
-  fromTimestamp: number;
-  toTimestamp: number;
-  chainId: SupportedChainId;
-  totalReferralVolume: string;
-  totalRebateUsd: string;
-  shareDivisor: string;
-  affiliates: AffiliateOutput[];
-  referrals: ReferralOutput[];
-  gmxPrice: string;
-  totalEsGmxRewards: string;
 };
 
 type PositionFeesInfoWithPeriods = {
@@ -118,6 +105,18 @@ type PositionFeesInfoWithPeriods = {
 type SwapFeesInfoWithPeriods = {
   totalFeeReceiverUsd: string;
   totalFeeUsdForPool: string;
+};
+
+export type OutputData = {
+  fromTimestamp: number;
+  toTimestamp: number;
+  chainId: SupportedChainId;
+  totalReferralVolume: string;
+  totalRebateUsd: string;
+  shareDivisor: string;
+  affiliates: AffiliateOutput[];
+  referrals: ReferralOutput[];
+  totalEsGmxRewards: string;
 };
 
 // functions used to retrieve and calculate referral rewards
@@ -158,12 +157,7 @@ export async function getDistributionData(
 ): Promise<OutputData> {
   const affiliateCondition = "";
   const referralCondition = "";
-  const [start, end] = getPeriod(relativePeriodName) ?? [];
-  if (!start || !end) {
-    throw new Error(`Invalid period name: ${relativePeriodName}`);
-  }
-  const fromTimestamp = dateToSeconds(start);
-  const toTimestamp = dateToSeconds(end);
+  const [fromTimestamp, toTimestamp] = getPeriod(relativePeriodName);
 
   const getAffiliateStatsQuery = (
     skip: number
@@ -361,7 +355,6 @@ export async function getDistributionData(
     shareDivisor: SHARE_DIVISOR.toString(),
     affiliates: [],
     referrals: [],
-    gmxPrice: gmxPrice.toString(),
     totalEsGmxRewards: totalEsGmxRewards.toString(),
   };
 
@@ -536,14 +529,9 @@ export async function processPeriodV1(
   relativePeriodName: RelativePeriodName,
   chainId: SupportedChainId
 ): Promise<BigNumber> {
-  const [start, end] = getPeriod(relativePeriodName) ?? [];
-  if (!start || !end) {
-    throw new Error(`Invalid period name: ${relativePeriodName}`);
-  }
+  const [fromTimestamp, toTimestamp] = getPeriod(relativePeriodName);
 
-  const where = `id_gte: ${dateToSeconds(start)}, id_lt: ${dateToSeconds(
-    end
-  )}, period: daily`;
+  const where = `id_gte: ${fromTimestamp}, id_lt: ${toTimestamp}, period: daily`;
   const gql = `
     {
       feeStats(where: { ${where} }) {
@@ -586,14 +574,9 @@ export async function processPeriodV2(
   relativePeriodName: RelativePeriodName,
   chainId: SupportedChainId
 ): Promise<BigNumber> {
-  const [start, end] = getPeriod(relativePeriodName) ?? [];
-  if (!start || !end) {
-    throw new Error(`Invalid period name: ${relativePeriodName}`);
-  }
+  const [fromTimestamp, toTimestamp] = getPeriod(relativePeriodName);
 
-  const where = `id_gte: ${dateToSeconds(start)}, id_lt: ${dateToSeconds(
-    end
-  )},  period: "1d"`;
+  const where = `id_gte: ${fromTimestamp}, id_lt: ${toTimestamp},  period: "1d"`;
   const gql = `
     query {
       position: positionFeesInfoWithPeriods(where: { ${where} }) {
@@ -676,16 +659,11 @@ export async function referralRewardsCalls({
   feeDistributor,
   wnt,
   esGmx,
-  dataStr,
+  data,
   distributionId,
   useBatchSize,
 }: ReferralRewardsCallsParams): Promise<{ to: string; data: string }[]> {
   const calls: Array<{ to: string; data: string }> = [];
-
-  if (!dataStr) {
-    throw new Error("dataStr is required");
-  }
-  const data: OutputData = JSON.parse(dataStr) as OutputData;
   const affiliatesData = data.affiliates as AffiliateOutput[];
   const discountsData = data.referrals as ReferralOutput[];
 

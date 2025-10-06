@@ -4,14 +4,19 @@ import { ethers } from "hardhat";
 import { Log } from "@ethersproject/providers";
 import { Web3FunctionEventContext } from "@gelatonetwork/web3-functions-sdk/*";
 import { ZERO } from "../../src/lib/number";
-import { SupportedChainId } from "../../src/config/chains";
+import { isSupportedChainId, SupportedChainId } from "../../src/config/chains";
 import { getRpcProviderUrl } from "../../src/config/providers";
+import { getContracts } from "../../src/lib/contracts";
 import { Context, wrapContext } from "../../src/lib/gelato";
 import { EVENT_LOG_TOPIC, EVENT_LOG1_TOPIC } from "../../src/lib/events";
 import {
   FEE_DISTRIBUTION_EVENT_HASH,
   TOTAL_ES_GMX_REWARDS_INCREASED_HASH,
 } from "../../src/domain/fee/feeDistributionUtils";
+
+export type RevertOverride = {
+  disableRevert: boolean;
+};
 
 const storagePath = path.resolve(
   __dirname,
@@ -65,6 +70,23 @@ export function createStorage() {
 
 export async function flushStorage() {
   fs.writeFileSync(storagePath, JSON.stringify(fileStore, null, 2));
+}
+
+export async function initSimulateTx() {
+  const chainId = (await ethers.provider.getNetwork()).chainId;
+
+  if (!isSupportedChainId(chainId)) {
+    throw new Error(`Unsupported chainId: ${chainId}`);
+  }
+
+  const provider = new ethers.providers.JsonRpcProvider(
+    getRpcProviderUrl(chainId),
+    chainId
+  );
+
+  const { eventEmitter } = getContracts(chainId, provider);
+
+  return { chainId, provider, eventEmitter };
 }
 
 export function createEventContext(

@@ -105,10 +105,6 @@ export const getFeeDistributorEventDescription = (
 
 export const DISTRIBUTION_DATA = "distributionData";
 
-export const WNT_PRICE = "wntPrice";
-
-export const GMX_PRICE = "gmxPrice";
-
 export const RELATIVE_PERIOD_NAME = "prev";
 
 export const FEE_DISTRIBUTION_INITIATED = "FeeDistributionInitiated";

@@ -2,22 +2,22 @@ import { subWeeks, addWeeks } from "date-fns";
 
 export type RelativePeriodName = "prev" | "current";
 
-export function dateToSeconds(date: Date): number {
+function dateToSeconds(date: Date): number {
   return Math.floor(date.getTime() / 1000);
 }
 
 export function getPeriod(
   relativePeriodName: RelativePeriodName
-): [Date, Date] | undefined {
+): [number, number] {
   const recentWednesday = getRecentWednesdayStartOfDay();
   const prevWednesday = subWeeks(recentWednesday, 1);
   const nextWednesday = addWeeks(recentWednesday, 1);
 
   switch (relativePeriodName) {
     case "prev":
-      return [prevWednesday, recentWednesday];
+      return [dateToSeconds(prevWednesday), dateToSeconds(recentWednesday)];
     case "current":
-      return [recentWednesday, nextWednesday];
+      return [dateToSeconds(recentWednesday), dateToSeconds(nextWednesday)];
     default:
       throw new Error("Unsupported period: " + relativePeriodName);
   }

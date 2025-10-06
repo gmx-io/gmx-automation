@@ -13,13 +13,12 @@ import { ethers } from "hardhat";
 import assert from "node:assert";
 import { Web3FunctionResultCallData } from "@gelatonetwork/web3-functions-sdk";
 import {
+  RevertOverride,
   FEE_DISTRIBUTION_EVENT_TOPICS,
   flushStorage,
+  initSimulateTx,
   createEventContext,
 } from "./utils/simulateTxUtils";
-import { isSupportedChainId } from "../src/config/chains";
-import { getRpcProviderUrl } from "../src/config/providers";
-import { getContracts } from "../src/lib/contracts";
 import { wrapContext } from "../src/lib/gelato";
 import { getLogger, Logger } from "../src/lib/logger";
 import { feeDistribution } from "../src/web3-functions/feeDistribution/feeDistribution";
@@ -37,17 +36,11 @@ import {
 } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, USD_DECIMALS, GMX_DECIMALS } from "../src/lib/number";
 
-export type RevertOverride = {
-  disableRevert: boolean;
-};
-
 const logger: Logger = getLogger(false);
+
 const txHash = process.env.TX;
-
 const revertTxStr = process.env.REVERT_TX;
-
 const gelatoMsgSenderPrivateKey = process.env.GELATO_MSG_SENDER_PRIVATE_KEY;
-
 assert(txHash, "TX is not set");
 assert(revertTxStr, "REVERT_TX is not set");
 assert(gelatoMsgSenderPrivateKey, "GELATO_MSG_SENDER_PRIVATE_KEY is not set");
@@ -61,20 +54,9 @@ const bridgedGmxReceivedSimulation = async (opts?: RevertOverride) => {
   const envRevert = process.env.REVERT_TX?.toLowerCase() === "true";
   const revertTx = opts?.disableRevert ? false : envRevert;
 
-  const chainId = (await ethers.provider.getNetwork()).chainId;
+  const { chainId, provider, eventEmitter } = await initSimulateTx();
 
-  if (!isSupportedChainId(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId}`);
-  }
-
-  const provider = new ethers.providers.JsonRpcProvider(
-    getRpcProviderUrl(chainId),
-    chainId
-  );
-
-  const { eventEmitter } = getContracts(chainId, provider);
-
-  const txReceipt = await ethers.provider.getTransactionReceipt(txHash);
+  const txReceipt = await provider.getTransactionReceipt(txHash);
   const txLogs = txReceipt.logs;
   logger.log("total logs in receipt:", txLogs.length);
 

@@ -17,11 +17,9 @@ import {
   FEE_DISTRIBUTION_EVENT_TOPICS,
   TOTAL_ES_GMX_REWARDS_INCREASED_TOPICS,
   flushStorage,
+  initSimulateTx,
   createEventContext,
 } from "./utils/simulateTxUtils";
-import { isSupportedChainId } from "../src/config/chains";
-import { getRpcProviderUrl } from "../src/config/providers";
-import { getContracts } from "../src/lib/contracts";
 import { wrapContext } from "../src/lib/gelato";
 import { getLogger, Logger } from "../src/lib/logger";
 import { feeDistribution } from "../src/web3-functions/feeDistribution/feeDistribution";
@@ -45,9 +43,7 @@ const logger: Logger = getLogger(false);
 
 const revertTxStr = process.env.REVERT_TX;
 const feeSurplusStr = process.env.FEE_SURPLUS;
-
 const gelatoMsgSenderPrivateKey = process.env.GELATO_MSG_SENDER_PRIVATE_KEY;
-
 assert(revertTxStr, "REVERT_TX is not set");
 assert(feeSurplusStr, "FEE_SURPLUS is not set");
 assert(gelatoMsgSenderPrivateKey, "GELATO_MSG_SENDER_PRIVATE_KEY is not set");
@@ -61,18 +57,7 @@ const maxRewardsEsGmxAmountKey = MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY;
 const distributionId = DISTRIBUTION_ID;
 
 const distributeSimulation = async () => {
-  const chainId = (await ethers.provider.getNetwork()).chainId;
-
-  if (!isSupportedChainId(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId}`);
-  }
-
-  const provider = new ethers.providers.JsonRpcProvider(
-    getRpcProviderUrl(chainId),
-    chainId
-  );
-
-  const { eventEmitter } = getContracts(chainId, provider);
+  const { chainId, provider, eventEmitter } = await initSimulateTx();
 
   let executions: { txHash: string; snapId: string }[] | undefined;
 
@@ -104,7 +89,7 @@ const distributeSimulation = async () => {
   logger.log("first txHash:", txHash);
   logger.log("first snapId:", snapId);
 
-  const txReceipt = await ethers.provider.getTransactionReceipt(txHash);
+  const txReceipt = await provider.getTransactionReceipt(txHash);
   const txLogs = txReceipt.logs;
   logger.log("total logs in second receipt:", txLogs.length);
 
