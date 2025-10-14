@@ -29,12 +29,14 @@ export declare namespace ClaimHandler {
     token: PromiseOrValue<string>;
     distributionId: PromiseOrValue<BigNumberish>;
     termsSignature: PromiseOrValue<BytesLike>;
+    acceptedTerms: PromiseOrValue<string>;
   };
 
-  export type ClaimParamStructOutput = [string, BigNumber, string] & {
+  export type ClaimParamStructOutput = [string, BigNumber, string, string] & {
     token: string;
     distributionId: BigNumber;
     termsSignature: string;
+    acceptedTerms: string;
   };
 
   export type TransferClaimParamStruct = {
@@ -81,7 +83,7 @@ export declare namespace ClaimUtils {
 
 export interface ClaimHandlerInterface extends utils.Interface {
   functions: {
-    "claimFunds((address,uint256,bytes)[],address)": FunctionFragment;
+    "acceptTermsAndClaim((address,uint256,bytes,string)[],address)": FunctionFragment;
     "claimVault()": FunctionFragment;
     "dataStore()": FunctionFragment;
     "depositFunds(address,uint256,(address,uint256)[])": FunctionFragment;
@@ -97,7 +99,7 @@ export interface ClaimHandlerInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "claimFunds"
+      | "acceptTermsAndClaim"
       | "claimVault"
       | "dataStore"
       | "depositFunds"
@@ -112,7 +114,7 @@ export interface ClaimHandlerInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "claimFunds",
+    functionFragment: "acceptTermsAndClaim",
     values: [ClaimHandler.ClaimParamStruct[], PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -166,7 +168,10 @@ export interface ClaimHandlerInterface extends utils.Interface {
     ]
   ): string;
 
-  decodeFunctionResult(functionFragment: "claimFunds", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "acceptTermsAndClaim",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "claimVault", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "dataStore", data: BytesLike): Result;
   decodeFunctionResult(
@@ -230,7 +235,7 @@ export interface ClaimHandler extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    claimFunds(
+    acceptTermsAndClaim(
       params: ClaimHandler.ClaimParamStruct[],
       receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -288,7 +293,7 @@ export interface ClaimHandler extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  claimFunds(
+  acceptTermsAndClaim(
     params: ClaimHandler.ClaimParamStruct[],
     receiver: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -346,7 +351,7 @@ export interface ClaimHandler extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    claimFunds(
+    acceptTermsAndClaim(
       params: ClaimHandler.ClaimParamStruct[],
       receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -407,7 +412,7 @@ export interface ClaimHandler extends BaseContract {
   filters: {};
 
   estimateGas: {
-    claimFunds(
+    acceptTermsAndClaim(
       params: ClaimHandler.ClaimParamStruct[],
       receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -466,7 +471,7 @@ export interface ClaimHandler extends BaseContract {
   };
 
   populateTransaction: {
-    claimFunds(
+    acceptTermsAndClaim(
       params: ClaimHandler.ClaimParamStruct[],
       receiver: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

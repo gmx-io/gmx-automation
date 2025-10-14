@@ -70,10 +70,10 @@ export interface KeysInterface extends utils.Interface {
     "CLAIM_UI_FEES_FEATURE_DISABLED()": FunctionFragment;
     "COLLATERAL_SUM()": FunctionFragment;
     "CONTRIBUTOR_ACCOUNT_LIST()": FunctionFragment;
+    "CONTRIBUTOR_FUNDING_ACCOUNT()": FunctionFragment;
     "CONTRIBUTOR_LAST_PAYMENT_AT()": FunctionFragment;
     "CONTRIBUTOR_TOKEN_AMOUNT()": FunctionFragment;
     "CONTRIBUTOR_TOKEN_LIST()": FunctionFragment;
-    "CONTRIBUTOR_TOKEN_VAULT()": FunctionFragment;
     "CREATE_DEPOSIT_FEATURE_DISABLED()": FunctionFragment;
     "CREATE_DEPOSIT_GAS_LIMIT()": FunctionFragment;
     "CREATE_GLV_DEPOSIT_FEATURE_DISABLED()": FunctionFragment;
@@ -87,6 +87,7 @@ export interface KeysInterface extends utils.Interface {
     "CREATE_WITHDRAWAL_GAS_LIMIT()": FunctionFragment;
     "CUMULATIVE_BORROWING_FACTOR()": FunctionFragment;
     "CUMULATIVE_BORROWING_FACTOR_UPDATED_AT()": FunctionFragment;
+    "CUSTOM_CONTRIBUTOR_FUNDING_ACCOUNT()": FunctionFragment;
     "DATA_STREAM_ID()": FunctionFragment;
     "DATA_STREAM_MULTIPLIER()": FunctionFragment;
     "DATA_STREAM_SPREAD_REDUCTION_FACTOR()": FunctionFragment;
@@ -344,10 +345,10 @@ export interface KeysInterface extends utils.Interface {
       | "CLAIM_UI_FEES_FEATURE_DISABLED"
       | "COLLATERAL_SUM"
       | "CONTRIBUTOR_ACCOUNT_LIST"
+      | "CONTRIBUTOR_FUNDING_ACCOUNT"
       | "CONTRIBUTOR_LAST_PAYMENT_AT"
       | "CONTRIBUTOR_TOKEN_AMOUNT"
       | "CONTRIBUTOR_TOKEN_LIST"
-      | "CONTRIBUTOR_TOKEN_VAULT"
       | "CREATE_DEPOSIT_FEATURE_DISABLED"
       | "CREATE_DEPOSIT_GAS_LIMIT"
       | "CREATE_GLV_DEPOSIT_FEATURE_DISABLED"
@@ -361,6 +362,7 @@ export interface KeysInterface extends utils.Interface {
       | "CREATE_WITHDRAWAL_GAS_LIMIT"
       | "CUMULATIVE_BORROWING_FACTOR"
       | "CUMULATIVE_BORROWING_FACTOR_UPDATED_AT"
+      | "CUSTOM_CONTRIBUTOR_FUNDING_ACCOUNT"
       | "DATA_STREAM_ID"
       | "DATA_STREAM_MULTIPLIER"
       | "DATA_STREAM_SPREAD_REDUCTION_FACTOR"
@@ -761,6 +763,10 @@ export interface KeysInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "CONTRIBUTOR_FUNDING_ACCOUNT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "CONTRIBUTOR_LAST_PAYMENT_AT",
     values?: undefined
   ): string;
@@ -770,10 +776,6 @@ export interface KeysInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "CONTRIBUTOR_TOKEN_LIST",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "CONTRIBUTOR_TOKEN_VAULT",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -826,6 +828,10 @@ export interface KeysInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "CUMULATIVE_BORROWING_FACTOR_UPDATED_AT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "CUSTOM_CONTRIBUTOR_FUNDING_ACCOUNT",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -1833,6 +1839,10 @@ export interface KeysInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "CONTRIBUTOR_FUNDING_ACCOUNT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "CONTRIBUTOR_LAST_PAYMENT_AT",
     data: BytesLike
   ): Result;
@@ -1842,10 +1852,6 @@ export interface KeysInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "CONTRIBUTOR_TOKEN_LIST",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "CONTRIBUTOR_TOKEN_VAULT",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1898,6 +1904,10 @@ export interface KeysInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "CUMULATIVE_BORROWING_FACTOR_UPDATED_AT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "CUSTOM_CONTRIBUTOR_FUNDING_ACCOUNT",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -2855,13 +2865,13 @@ export interface Keys extends BaseContract {
 
     CONTRIBUTOR_ACCOUNT_LIST(overrides?: CallOverrides): Promise<[string]>;
 
+    CONTRIBUTOR_FUNDING_ACCOUNT(overrides?: CallOverrides): Promise<[string]>;
+
     CONTRIBUTOR_LAST_PAYMENT_AT(overrides?: CallOverrides): Promise<[string]>;
 
     CONTRIBUTOR_TOKEN_AMOUNT(overrides?: CallOverrides): Promise<[string]>;
 
     CONTRIBUTOR_TOKEN_LIST(overrides?: CallOverrides): Promise<[string]>;
-
-    CONTRIBUTOR_TOKEN_VAULT(overrides?: CallOverrides): Promise<[string]>;
 
     CREATE_DEPOSIT_FEATURE_DISABLED(
       overrides?: CallOverrides
@@ -2900,6 +2910,10 @@ export interface Keys extends BaseContract {
     CUMULATIVE_BORROWING_FACTOR(overrides?: CallOverrides): Promise<[string]>;
 
     CUMULATIVE_BORROWING_FACTOR_UPDATED_AT(
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    CUSTOM_CONTRIBUTOR_FUNDING_ACCOUNT(
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -3550,13 +3564,13 @@ export interface Keys extends BaseContract {
 
   CONTRIBUTOR_ACCOUNT_LIST(overrides?: CallOverrides): Promise<string>;
 
+  CONTRIBUTOR_FUNDING_ACCOUNT(overrides?: CallOverrides): Promise<string>;
+
   CONTRIBUTOR_LAST_PAYMENT_AT(overrides?: CallOverrides): Promise<string>;
 
   CONTRIBUTOR_TOKEN_AMOUNT(overrides?: CallOverrides): Promise<string>;
 
   CONTRIBUTOR_TOKEN_LIST(overrides?: CallOverrides): Promise<string>;
-
-  CONTRIBUTOR_TOKEN_VAULT(overrides?: CallOverrides): Promise<string>;
 
   CREATE_DEPOSIT_FEATURE_DISABLED(overrides?: CallOverrides): Promise<string>;
 
@@ -3589,6 +3603,10 @@ export interface Keys extends BaseContract {
   CUMULATIVE_BORROWING_FACTOR(overrides?: CallOverrides): Promise<string>;
 
   CUMULATIVE_BORROWING_FACTOR_UPDATED_AT(
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  CUSTOM_CONTRIBUTOR_FUNDING_ACCOUNT(
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -4185,13 +4203,13 @@ export interface Keys extends BaseContract {
 
     CONTRIBUTOR_ACCOUNT_LIST(overrides?: CallOverrides): Promise<string>;
 
+    CONTRIBUTOR_FUNDING_ACCOUNT(overrides?: CallOverrides): Promise<string>;
+
     CONTRIBUTOR_LAST_PAYMENT_AT(overrides?: CallOverrides): Promise<string>;
 
     CONTRIBUTOR_TOKEN_AMOUNT(overrides?: CallOverrides): Promise<string>;
 
     CONTRIBUTOR_TOKEN_LIST(overrides?: CallOverrides): Promise<string>;
-
-    CONTRIBUTOR_TOKEN_VAULT(overrides?: CallOverrides): Promise<string>;
 
     CREATE_DEPOSIT_FEATURE_DISABLED(overrides?: CallOverrides): Promise<string>;
 
@@ -4226,6 +4244,10 @@ export interface Keys extends BaseContract {
     CUMULATIVE_BORROWING_FACTOR(overrides?: CallOverrides): Promise<string>;
 
     CUMULATIVE_BORROWING_FACTOR_UPDATED_AT(
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    CUSTOM_CONTRIBUTOR_FUNDING_ACCOUNT(
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -4857,13 +4879,13 @@ export interface Keys extends BaseContract {
 
     CONTRIBUTOR_ACCOUNT_LIST(overrides?: CallOverrides): Promise<BigNumber>;
 
+    CONTRIBUTOR_FUNDING_ACCOUNT(overrides?: CallOverrides): Promise<BigNumber>;
+
     CONTRIBUTOR_LAST_PAYMENT_AT(overrides?: CallOverrides): Promise<BigNumber>;
 
     CONTRIBUTOR_TOKEN_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
     CONTRIBUTOR_TOKEN_LIST(overrides?: CallOverrides): Promise<BigNumber>;
-
-    CONTRIBUTOR_TOKEN_VAULT(overrides?: CallOverrides): Promise<BigNumber>;
 
     CREATE_DEPOSIT_FEATURE_DISABLED(
       overrides?: CallOverrides
@@ -4906,6 +4928,10 @@ export interface Keys extends BaseContract {
     CUMULATIVE_BORROWING_FACTOR(overrides?: CallOverrides): Promise<BigNumber>;
 
     CUMULATIVE_BORROWING_FACTOR_UPDATED_AT(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    CUSTOM_CONTRIBUTOR_FUNDING_ACCOUNT(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -5641,6 +5667,10 @@ export interface Keys extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    CONTRIBUTOR_FUNDING_ACCOUNT(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     CONTRIBUTOR_LAST_PAYMENT_AT(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -5650,10 +5680,6 @@ export interface Keys extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     CONTRIBUTOR_TOKEN_LIST(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    CONTRIBUTOR_TOKEN_VAULT(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -5706,6 +5732,10 @@ export interface Keys extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     CUMULATIVE_BORROWING_FACTOR_UPDATED_AT(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    CUSTOM_CONTRIBUTOR_FUNDING_ACCOUNT(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -54,7 +54,6 @@ export interface FeeDistributorInterface extends utils.Interface {
     "depositReferralRewards(address,uint256,(address,uint256)[])": FunctionFragment;
     "distribute(uint256,uint256,uint256,uint256)": FunctionFragment;
     "initiateDistribute()": FunctionFragment;
-    "oracle()": FunctionFragment;
     "processLzReceive(bytes32,(uint256,bytes))": FunctionFragment;
     "roleStore()": FunctionFragment;
   };
@@ -65,7 +64,6 @@ export interface FeeDistributorInterface extends utils.Interface {
       | "depositReferralRewards"
       | "distribute"
       | "initiateDistribute"
-      | "oracle"
       | "processLzReceive"
       | "roleStore"
   ): FunctionFragment;
@@ -95,7 +93,6 @@ export interface FeeDistributorInterface extends utils.Interface {
     functionFragment: "initiateDistribute",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "oracle", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "processLzReceive",
     values: [
@@ -118,7 +115,6 @@ export interface FeeDistributorInterface extends utils.Interface {
     functionFragment: "initiateDistribute",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "oracle", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "processLzReceive",
     data: BytesLike
@@ -178,8 +174,6 @@ export interface FeeDistributor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    oracle(overrides?: CallOverrides): Promise<[string]>;
-
     processLzReceive(
       arg0: PromiseOrValue<BytesLike>,
       receivedData: MultichainReaderUtils.ReceivedDataStruct,
@@ -212,8 +206,6 @@ export interface FeeDistributor extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  oracle(overrides?: CallOverrides): Promise<string>;
-
   processLzReceive(
     arg0: PromiseOrValue<BytesLike>,
     receivedData: MultichainReaderUtils.ReceivedDataStruct,
@@ -241,8 +233,6 @@ export interface FeeDistributor extends BaseContract {
     ): Promise<void>;
 
     initiateDistribute(overrides?: CallOverrides): Promise<void>;
-
-    oracle(overrides?: CallOverrides): Promise<string>;
 
     processLzReceive(
       arg0: PromiseOrValue<BytesLike>,
@@ -279,8 +269,6 @@ export interface FeeDistributor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    oracle(overrides?: CallOverrides): Promise<BigNumber>;
-
     processLzReceive(
       arg0: PromiseOrValue<BytesLike>,
       receivedData: MultichainReaderUtils.ReceivedDataStruct,
@@ -313,8 +301,6 @@ export interface FeeDistributor extends BaseContract {
     initiateDistribute(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    oracle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     processLzReceive(
       arg0: PromiseOrValue<BytesLike>,

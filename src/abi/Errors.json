@@ -79,6 +79,27 @@
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "minRequiredFeeAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "feeAmountCurrentChain",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountToBridgeOut",
+          "type": "uint256"
+        }
+      ],
+      "name": "AttemptedBridgeAmountTooHigh",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "feeToken",
           "type": "address"
@@ -111,6 +132,54 @@
         }
       ],
       "name": "BlockNumbersNotSorted",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "BridgeOutNotSupportedDuringShift",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "minRequiredFeeAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "currentChainFeeAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "BridgedAmountNotSufficient",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "balancesLength",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "targetBalancesLength",
+          "type": "uint256"
+        }
+      ],
+      "name": "BridgingBalanceArrayMismatch",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "result",
+          "type": "bytes"
+        }
+      ],
+      "name": "BridgingTransactionFailed",
       "type": "error"
     },
     {
@@ -209,6 +278,11 @@
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "DataListLengthExceeded",
+      "type": "error"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -217,6 +291,22 @@
         }
       ],
       "name": "DataStreamIdAlreadyExistsForToken",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "currentTimestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "deadline",
+          "type": "uint256"
+        }
+      ],
+      "name": "DeadlinePassed",
       "type": "error"
     },
     {
@@ -256,6 +346,17 @@
       "inputs": [
         {
           "internalType": "uint256",
+          "name": "existingDistributionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "DuplicateClaimTerms",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
           "name": "index",
           "type": "uint256"
         },
@@ -277,6 +378,17 @@
         }
       ],
       "name": "DuplicatedMarketInSwapPath",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "EdgeDataStreamIdAlreadyExistsForToken",
       "type": "error"
     },
     {
@@ -302,7 +414,7 @@
     },
     {
       "inputs": [],
-      "name": "EmptyChainlinkPaymentToken",
+      "name": "EmptyAmount",
       "type": "error"
     },
     {
@@ -340,6 +452,17 @@
           "type": "address"
         }
       ],
+      "name": "EmptyClaimableAmount",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
       "name": "EmptyDataStreamFeedId",
       "type": "error"
     },
@@ -367,6 +490,11 @@
     {
       "inputs": [],
       "name": "EmptyDepositAmountsAfterSwap",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "EmptyFundingAccount",
       "type": "error"
     },
     {
@@ -437,13 +565,61 @@
       "type": "error"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "EmptyMultichainTransferInAmount",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "EmptyMultichainTransferOutAmount",
+      "type": "error"
+    },
+    {
       "inputs": [],
       "name": "EmptyOrder",
       "type": "error"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint32",
+          "name": "eid",
+          "type": "uint32"
+        }
+      ],
+      "name": "EmptyPeer",
+      "type": "error"
+    },
+    {
       "inputs": [],
       "name": "EmptyPosition",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "EmptyPositionImpactWithdrawalAmount",
       "type": "error"
     },
     {
@@ -464,6 +640,16 @@
     },
     {
       "inputs": [],
+      "name": "EmptyReduceLentAmount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "EmptyRelayFeeAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "EmptyShift",
       "type": "error"
     },
@@ -475,6 +661,16 @@
     {
       "inputs": [],
       "name": "EmptySizeDeltaInTokens",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "EmptyTarget",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "EmptyToken",
       "type": "error"
     },
     {
@@ -511,6 +707,17 @@
     {
       "inputs": [
         {
+          "internalType": "string",
+          "name": "key",
+          "type": "string"
+        }
+      ],
+      "name": "EventItemNotFound",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "bytes",
           "name": "data",
           "type": "bytes"
@@ -528,6 +735,22 @@
         }
       ],
       "name": "FeeBatchNotFound",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "lastDistributionTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startOfCurrentWeek",
+          "type": "uint256"
+        }
+      ],
+      "name": "FeeDistributionAlreadyCompleted",
       "type": "error"
     },
     {
@@ -1112,6 +1335,33 @@
       "inputs": [
         {
           "internalType": "uint256",
+          "name": "feeProvided",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "feeRequired",
+          "type": "uint256"
+        }
+      ],
+      "name": "InsufficientFee",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "InsufficientFunds",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
           "name": "remainingCostUsd",
           "type": "uint256"
         },
@@ -1137,7 +1387,39 @@
           "type": "uint256"
         }
       ],
+      "name": "InsufficientGasForAutoCancellation",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "gas",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minHandleExecutionErrorGas",
+          "type": "uint256"
+        }
+      ],
       "name": "InsufficientGasForCancellation",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "gas",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "estimatedGasLimit",
+          "type": "uint256"
+        }
+      ],
+      "name": "InsufficientGasLeft",
       "type": "error"
     },
     {
@@ -1176,6 +1458,27 @@
       "inputs": [
         {
           "internalType": "uint256",
+          "name": "withdrawalAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "poolValue",
+          "type": "uint256"
+        },
+        {
+          "internalType": "int256",
+          "name": "totalPendingImpactAmount",
+          "type": "int256"
+        }
+      ],
+      "name": "InsufficientImpactPoolValueForWithdrawal",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
           "name": "balance",
           "type": "uint256"
         },
@@ -1186,6 +1489,43 @@
         }
       ],
       "name": "InsufficientMarketTokens",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "balance",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "InsufficientMultichainBalance",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "msgValue",
+          "type": "uint256"
+        }
+      ],
+      "name": "InsufficientMultichainNativeFee",
       "type": "error"
     },
     {
@@ -1218,6 +1558,22 @@
         }
       ],
       "name": "InsufficientPoolAmount",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "requiredRelayFee",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "availableFeeAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "InsufficientRelayFee",
       "type": "error"
     },
     {
@@ -1266,22 +1622,6 @@
         }
       ],
       "name": "InsufficientSwapOutputAmount",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "wntAmount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "executionFee",
-          "type": "uint256"
-        }
-      ],
-      "name": "InsufficientWntAmount",
       "type": "error"
     },
     {
@@ -1363,11 +1703,38 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidBridgeOutToken",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "buybackToken",
           "type": "address"
         }
       ],
       "name": "InvalidBuybackToken",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "cancellationReceiver",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "expectedCancellationReceiver",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidCancellationReceiverForSubaccountOrder",
       "type": "error"
     },
     {
@@ -1426,6 +1793,33 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "recoveredSigner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "expectedSigner",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidClaimTermsSignature",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "expectedSigner",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidClaimTermsSignatureForContract",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
           "name": "marketsLength",
           "type": "uint256"
@@ -1448,6 +1842,17 @@
         }
       ],
       "name": "InvalidClaimableFactor",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidClaimableReductionFactor",
       "type": "error"
     },
     {
@@ -1587,6 +1992,129 @@
       "inputs": [
         {
           "internalType": "uint256",
+          "name": "desChainId",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidDestinationChainId",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "distributionStateUint",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidDistributionState",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "bid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "ask",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidEdgeDataStreamBidAsk",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "int256",
+          "name": "expo",
+          "type": "int256"
+        }
+      ],
+      "name": "InvalidEdgeDataStreamExpo",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "bid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "ask",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidEdgeDataStreamPrices",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recoverError",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidEdgeSignature",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidEdgeSigner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "eid",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidEid",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "executionFee",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minExecutionFee",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxExecutionFee",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidExecutionFee",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
           "name": "totalExecutionFee",
           "type": "uint256"
         },
@@ -1624,6 +2152,22 @@
         }
       ],
       "name": "InvalidExternalCallTarget",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "sendTokensLength",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "sendAmountsLength",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidExternalCalls",
       "type": "error"
     },
     {
@@ -1802,6 +2346,22 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidHoldingAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidInitializer",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "keeper",
           "type": "address"
         }
@@ -1944,6 +2504,28 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "endpoint",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidMultichainEndpoint",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "provider",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidMultichainProvider",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "msgSender",
           "type": "address"
         }
@@ -2014,7 +2596,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "receiver",
+          "name": "signer",
           "type": "address"
         }
       ],
@@ -2066,6 +2648,33 @@
     {
       "inputs": [
         {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "InvalidParams",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "expectedSpender",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidPermitSpender",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "int256",
           "name": "poolValue",
           "type": "int256"
@@ -2083,6 +2692,22 @@
         }
       ],
       "name": "InvalidPoolValueForWithdrawal",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "distributionAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "positionImpactPoolAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidPositionImpactPoolDistributionRate",
       "type": "error"
     },
     {
@@ -2190,6 +2815,43 @@
     {
       "inputs": [
         {
+          "internalType": "string",
+          "name": "signatureType",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "recovered",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "recoveredFromMinified",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "expectedSigner",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidRecoveredSigner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidReferralRewardToken",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
           "name": "tokensLength",
           "type": "uint256"
@@ -2222,6 +2884,17 @@
     {
       "inputs": [
         {
+          "internalType": "string",
+          "name": "signatureType",
+          "type": "string"
+        }
+      ],
+      "name": "InvalidSignature",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
           "name": "sizeDeltaUsd",
           "type": "uint256"
@@ -2233,6 +2906,49 @@
         }
       ],
       "name": "InvalidSizeDeltaForAdl",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "srcChainId",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidSrcChainId",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "desChainId",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidSubaccountApprovalDesChainId",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "storedNonce",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "nonce",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidSubaccountApprovalNonce",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidSubaccountApprovalSubaccount",
       "type": "error"
     },
     {
@@ -2293,6 +3009,17 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "InvalidToken",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "tokenIn",
           "type": "address"
         },
@@ -2303,6 +3030,16 @@
         }
       ],
       "name": "InvalidTokenIn",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidTransferRequestsLength",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidTrustedSignerAddress",
       "type": "error"
     },
     {
@@ -2324,12 +3061,60 @@
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "digest",
+          "type": "bytes32"
+        }
+      ],
+      "name": "InvalidUserDigest",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
           "name": "version",
           "type": "uint256"
         }
       ],
       "name": "InvalidVersion",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "wntForKeepers",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "wntToKeepers",
+          "type": "uint256"
+        }
+      ],
+      "name": "KeeperAmountMismatch",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "keepersLength",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "keeperTargetBalancesLength",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "keeperVersionsLength",
+          "type": "uint256"
+        }
+      ],
+      "name": "KeeperArrayLengthMismatch",
       "type": "error"
     },
     {
@@ -2474,6 +3259,38 @@
       "inputs": [
         {
           "internalType": "uint256",
+          "name": "dataLength",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxDataLength",
+          "type": "uint256"
+        }
+      ],
+      "name": "MaxDataListLengthExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokensForReferralRewards",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxEsGmxReferralRewards",
+          "type": "uint256"
+        }
+      ],
+      "name": "MaxEsGmxReferralRewardsAmountExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
           "name": "maxFundingFactorPerSecond",
           "type": "uint256"
         },
@@ -2484,6 +3301,27 @@
         }
       ],
       "name": "MaxFundingFactorPerSecondLimitExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "poolUsd",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxLendableUsd",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lentUsd",
+          "type": "uint256"
+        }
+      ],
+      "name": "MaxLendableFactorForWithdrawalsExceeded",
       "type": "error"
     },
     {
@@ -2596,6 +3434,43 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "cumulativeTransferAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokensForReferralRewards",
+          "type": "uint256"
+        }
+      ],
+      "name": "MaxReferralRewardsExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "feeUsd",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxFeeUsd",
+          "type": "uint256"
+        }
+      ],
+      "name": "MaxRelayFeeSwapForSubaccountExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "account",
           "type": "address"
         },
@@ -2680,6 +3555,54 @@
         }
       ],
       "name": "MaxTotalContributorTokenAmountExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "maxWntFromTreasury",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "additionalWntFromTreasury",
+          "type": "uint256"
+        }
+      ],
+      "name": "MaxWntFromTreasuryExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "wntReferralRewardsInUsd",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxWntReferralRewardsInUsdAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "MaxWntReferralRewardsInUsdAmountExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "wntReferralRewardsInUsd",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxWntReferralRewardsInUsd",
+          "type": "uint256"
+        }
+      ],
+      "name": "MaxWntReferralRewardsInUsdExceeded",
       "type": "error"
     },
     {
@@ -2827,6 +3750,11 @@
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "NonEmptyExternalCallsForSubaccountOrder",
+      "type": "error"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -2849,7 +3777,17 @@
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "OraclePriceOutdated",
+      "type": "error"
+    },
+    {
       "inputs": [
+        {
+          "internalType": "address",
+          "name": "oracle",
+          "type": "address"
+        },
         {
           "internalType": "address",
           "name": "token",
@@ -2857,6 +3795,22 @@
         }
       ],
       "name": "OracleProviderAlreadyExistsForToken",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "provider",
+          "type": "address"
+        }
+      ],
+      "name": "OracleProviderMinChangeDelayNotYetPassed",
       "type": "error"
     },
     {
@@ -2964,6 +3918,17 @@
         }
       ],
       "name": "OrderValidFromTimeNotReached",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "OutdatedReadResponse",
       "type": "error"
     },
     {
@@ -3103,6 +4068,38 @@
       "inputs": [
         {
           "internalType": "uint256",
+          "name": "lentAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalReductionAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "ReductionExceedsLentAmount",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "calldataLength",
+          "type": "uint256"
+        }
+      ],
+      "name": "RelayCalldataTooLong",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "RelayEmptyBatch",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
           "name": "requestAge",
           "type": "uint256"
         },
@@ -3129,6 +4126,27 @@
         }
       ],
       "name": "SelfTransferNotSupported",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "keeper",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "sendAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "result",
+          "type": "bytes"
+        }
+      ],
+      "name": "SendEthToKeeperFailed",
       "type": "error"
     },
     {
@@ -3199,6 +4217,59 @@
         }
       ],
       "name": "SignalTimeNotYetPassed",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "currentTimestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "deadline",
+          "type": "uint256"
+        }
+      ],
+      "name": "SubaccountApprovalDeadlinePassed",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "subaccount",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "deadline",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "currentTimestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "SubaccountApprovalExpired",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "integrationId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "SubaccountIntegrationIdDisabled",
       "type": "error"
     },
     {
@@ -3330,6 +4401,11 @@
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "TokenPermitsNotAllowedForMultichain",
+      "type": "error"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -3404,6 +4480,16 @@
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "UnableToPayOrderFee",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "UnableToPayOrderFeeFromCollateral",
+      "type": "error"
+    },
+    {
       "inputs": [
         {
           "internalType": "int256",
@@ -3471,6 +4557,38 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "feeToken",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "expectedFeeToken",
+          "type": "address"
+        }
+      ],
+      "name": "UnexpectedRelayFeeToken",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "feeToken",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "expectedFeeToken",
+          "type": "address"
+        }
+      ],
+      "name": "UnexpectedRelayFeeTokenAfterSwap",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "token",
           "type": "address"
         },
@@ -3503,6 +4621,33 @@
         }
       ],
       "name": "UnsupportedOrderType",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "orderType",
+          "type": "uint256"
+        }
+      ],
+      "name": "UnsupportedOrderTypeForAutoCancellation",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "feeToken",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "expectedFeeToken",
+          "type": "address"
+        }
+      ],
+      "name": "UnsupportedRelayFeeToken",
       "type": "error"
     },
     {
@@ -3563,10 +4708,15 @@
       ],
       "name": "WithdrawalNotFound",
       "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ZeroTreasuryAddress",
+      "type": "error"
     }
   ],
-  "bytecode": "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220432aa671e14f2bd46304ffc7b876a19b19f3069d9bc7620e5838c7f85fdeef3964736f6c63430008120033",
-  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220432aa671e14f2bd46304ffc7b876a19b19f3069d9bc7620e5838c7f85fdeef3964736f6c63430008120033",
+  "bytecode": "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212201a6e587388641e37ddbef695c80d9af89bae9846bf8abcff269588ed25fafcb664736f6c634300081d0033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212201a6e587388641e37ddbef695c80d9af89bae9846bf8abcff269588ed25fafcb664736f6c634300081d0033",
   "linkReferences": {},
   "deployedLinkReferences": {}
 }
