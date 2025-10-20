@@ -10,6 +10,7 @@ import { EventEmitter } from "../../typechain";
 
 type FeeDistributionDataReceivedEventData = {
   eventDescription: string;
+  distributionState: BigNumber;
   feeAmountGmxCurrentChain: BigNumber;
   totalGmxBridgedOut: BigNumber;
   receivedData: string;
@@ -32,6 +33,13 @@ type FeeDistributionTotalEsGmxRewardsIncreasedEventData = {
   totalEsGmxRewards: BigNumber;
 };
 
+export enum DistributionState {
+  None,
+  Initiated,
+  ReadDataReceived,
+  BridgingCompleted,
+}
+
 export const getFeeDistributionDataReceivedEventData = (
   log: Log,
   eventEmitter: EventEmitter
@@ -41,6 +49,7 @@ export const getFeeDistributionDataReceivedEventData = (
 
   return {
     eventDescription: eventData.getString("eventDescription"),
+    distributionState: eventData.getUint("distributionState"),
     feeAmountGmxCurrentChain: eventData.getUint("feeAmountGmxCurrentChain"),
     totalGmxBridgedOut: eventData.getUint("totalGmxBridgedOut"),
     receivedData: eventData.getBytes("receivedData"),

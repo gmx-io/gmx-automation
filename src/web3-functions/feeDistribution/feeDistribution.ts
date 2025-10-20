@@ -4,8 +4,8 @@ import {
 } from "@gelatonetwork/web3-functions-sdk/*";
 import { SupportedChainId } from "../../config/chains";
 import { Context } from "../../lib/gelato";
-import { ZERO } from "../../lib/number";
 import {
+  DistributionState,
   getFeeDistributionDataReceivedEventData,
   getFeeDistributorEventDescription,
   DISTRIBUTION_DATA,
@@ -54,8 +54,10 @@ export const feeDistribution = async (
 
   if (
     (eventDescription === FEE_DISTRIBUTION_DATA_RECEIVED &&
-      getFeeDistributionDataReceivedEventData(log, contracts.eventEmitter)
-        .totalGmxBridgedOut > ZERO) ||
+      getFeeDistributionDataReceivedEventData(
+        log,
+        contracts.eventEmitter
+      ).distributionState.eq(DistributionState.BridgingCompleted)) ||
     eventDescription === FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED
   ) {
     const [gmxPrice, maxEsGmxRewards, feesV1Usd, feesV2Usd] = await Promise.all(
