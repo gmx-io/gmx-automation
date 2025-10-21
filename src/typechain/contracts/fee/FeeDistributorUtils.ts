@@ -12,7 +12,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -74,8 +78,24 @@ export interface FeeDistributorUtilsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "TokenTransferReverted(string,bytes)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "TokenTransferReverted"): EventFragment;
 }
+
+export interface TokenTransferRevertedEventObject {
+  reason: string;
+  returndata: string;
+}
+export type TokenTransferRevertedEvent = TypedEvent<
+  [string, string],
+  TokenTransferRevertedEventObject
+>;
+
+export type TokenTransferRevertedEventFilter =
+  TypedEventFilter<TokenTransferRevertedEvent>;
 
 export interface FeeDistributorUtils extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -155,7 +175,16 @@ export interface FeeDistributorUtils extends BaseContract {
     ): Promise<BigNumber[]>;
   };
 
-  filters: {};
+  filters: {
+    "TokenTransferReverted(string,bytes)"(
+      reason?: null,
+      returndata?: null
+    ): TokenTransferRevertedEventFilter;
+    TokenTransferReverted(
+      reason?: null,
+      returndata?: null
+    ): TokenTransferRevertedEventFilter;
+  };
 
   estimateGas: {
     calculateKeeperCosts(

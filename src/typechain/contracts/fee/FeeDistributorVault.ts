@@ -35,6 +35,8 @@ export interface FeeDistributorVaultInterface extends utils.Interface {
     "transferOut(address,address,uint256)": FunctionFragment;
     "transferOut(address,address,uint256,bool)": FunctionFragment;
     "transferOutNativeToken(address,uint256)": FunctionFragment;
+    "withdrawNativeToken(address,uint256)": FunctionFragment;
+    "withdrawToken(address,address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -44,6 +46,8 @@ export interface FeeDistributorVaultInterface extends utils.Interface {
       | "transferOut(address,address,uint256)"
       | "transferOut(address,address,uint256,bool)"
       | "transferOutNativeToken"
+      | "withdrawNativeToken"
+      | "withdrawToken"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "dataStore", values?: undefined): string;
@@ -69,6 +73,18 @@ export interface FeeDistributorVaultInterface extends utils.Interface {
     functionFragment: "transferOutNativeToken",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawNativeToken",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawToken",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
 
   decodeFunctionResult(functionFragment: "dataStore", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "roleStore", data: BytesLike): Result;
@@ -82,6 +98,14 @@ export interface FeeDistributorVaultInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOutNativeToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawNativeToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawToken",
     data: BytesLike
   ): Result;
 
@@ -155,6 +179,19 @@ export interface FeeDistributorVault extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    withdrawNativeToken(
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    withdrawToken(
+      token: PromiseOrValue<string>,
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   dataStore(overrides?: CallOverrides): Promise<string>;
@@ -182,6 +219,19 @@ export interface FeeDistributorVault extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  withdrawNativeToken(
+    receiver: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  withdrawToken(
+    token: PromiseOrValue<string>,
+    receiver: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     dataStore(overrides?: CallOverrides): Promise<string>;
 
@@ -203,6 +253,19 @@ export interface FeeDistributorVault extends BaseContract {
     ): Promise<void>;
 
     transferOutNativeToken(
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawNativeToken(
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawToken(
+      token: PromiseOrValue<string>,
       receiver: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -245,6 +308,19 @@ export interface FeeDistributorVault extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    withdrawNativeToken(
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    withdrawToken(
+      token: PromiseOrValue<string>,
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -268,6 +344,19 @@ export interface FeeDistributorVault extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     transferOutNativeToken(
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawNativeToken(
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawToken(
+      token: PromiseOrValue<string>,
       receiver: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
