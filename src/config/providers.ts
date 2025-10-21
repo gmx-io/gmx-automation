@@ -18,7 +18,7 @@ export const RPC_PROVIDERS: Record<SupportedChainId, string[]> = {
     // "https://rpc.ankr.com/arbitrum",
   ],
   [ARBITRUM_SEPOLIA]: ["https://sepolia-rollup.arbitrum.io/rpc"],
-  [BASE_SEPOLIA]: ["https://base-sepolia.drpc.org"],
+  [BASE_SEPOLIA]: ["https://sepolia.base.org"],
   [AVALANCHE]: [
     "https://api.avax.network/ext/bc/C/rpc",
     "https://avalanche-c-chain-rpc.publicnode.com",

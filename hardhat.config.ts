@@ -54,7 +54,7 @@ const config: HardhatUserConfig = {
     },
     baseSepolia: {
       chainId: 84532,
-      url: "https://base-sepolia.drpc.org",
+      url: "https://sepolia.base.org",
       accounts: [BASE_SEPOLIA_PRIVATE_KEY],
     },
     avalanche: {
