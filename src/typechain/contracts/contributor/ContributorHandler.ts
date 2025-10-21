@@ -36,7 +36,8 @@ export interface ContributorHandlerInterface extends utils.Interface {
     "roleStore()": FunctionFragment;
     "sendPayments()": FunctionFragment;
     "setContributorAmount(address,address[],uint256[])": FunctionFragment;
-    "setContributorTokenVault(address,address)": FunctionFragment;
+    "setContributorFundingAccount(address,address)": FunctionFragment;
+    "setCustomContributorFundingAccount(address,address,address)": FunctionFragment;
     "setMaxTotalContributorTokenAmount(address[],uint256[])": FunctionFragment;
     "setMinContributorPaymentInterval(uint256)": FunctionFragment;
   };
@@ -53,7 +54,8 @@ export interface ContributorHandlerInterface extends utils.Interface {
       | "roleStore"
       | "sendPayments"
       | "setContributorAmount"
-      | "setContributorTokenVault"
+      | "setContributorFundingAccount"
+      | "setCustomContributorFundingAccount"
       | "setMaxTotalContributorTokenAmount"
       | "setMinContributorPaymentInterval"
   ): FunctionFragment;
@@ -97,8 +99,16 @@ export interface ContributorHandlerInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "setContributorTokenVault",
+    functionFragment: "setContributorFundingAccount",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setCustomContributorFundingAccount",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "setMaxTotalContributorTokenAmount",
@@ -141,7 +151,11 @@ export interface ContributorHandlerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setContributorTokenVault",
+    functionFragment: "setContributorFundingAccount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setCustomContributorFundingAccount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -225,9 +239,16 @@ export interface ContributorHandler extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setContributorTokenVault(
+    setContributorFundingAccount(
       token: PromiseOrValue<string>,
-      vault: PromiseOrValue<string>,
+      fundingAccount: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setCustomContributorFundingAccount(
+      account: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      fundingAccount: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -285,9 +306,16 @@ export interface ContributorHandler extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setContributorTokenVault(
+  setContributorFundingAccount(
     token: PromiseOrValue<string>,
-    vault: PromiseOrValue<string>,
+    fundingAccount: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setCustomContributorFundingAccount(
+    account: PromiseOrValue<string>,
+    token: PromiseOrValue<string>,
+    fundingAccount: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -343,9 +371,16 @@ export interface ContributorHandler extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setContributorTokenVault(
+    setContributorFundingAccount(
       token: PromiseOrValue<string>,
-      vault: PromiseOrValue<string>,
+      fundingAccount: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setCustomContributorFundingAccount(
+      account: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      fundingAccount: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -406,9 +441,16 @@ export interface ContributorHandler extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setContributorTokenVault(
+    setContributorFundingAccount(
       token: PromiseOrValue<string>,
-      vault: PromiseOrValue<string>,
+      fundingAccount: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setCustomContributorFundingAccount(
+      account: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      fundingAccount: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -467,9 +509,16 @@ export interface ContributorHandler extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setContributorTokenVault(
+    setContributorFundingAccount(
       token: PromiseOrValue<string>,
-      vault: PromiseOrValue<string>,
+      fundingAccount: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setCustomContributorFundingAccount(
+      account: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      fundingAccount: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

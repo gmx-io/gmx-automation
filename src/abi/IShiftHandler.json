@@ -24,31 +24,43 @@
           "type": "address"
         },
         {
+          "internalType": "uint256",
+          "name": "srcChainId",
+          "type": "uint256"
+        },
+        {
           "components": [
             {
-              "internalType": "address",
-              "name": "receiver",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "callbackContract",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "uiFeeReceiver",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "fromMarket",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "toMarket",
-              "type": "address"
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "receiver",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "callbackContract",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "uiFeeReceiver",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "fromMarket",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "toMarket",
+                  "type": "address"
+                }
+              ],
+              "internalType": "struct IShiftUtils.CreateShiftParamsAddresses",
+              "name": "addresses",
+              "type": "tuple"
             },
             {
               "internalType": "uint256",
@@ -64,9 +76,14 @@
               "internalType": "uint256",
               "name": "callbackGasLimit",
               "type": "uint256"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "dataList",
+              "type": "bytes32[]"
             }
           ],
-          "internalType": "struct ShiftUtils.CreateShiftParams",
+          "internalType": "struct IShiftUtils.CreateShiftParams",
           "name": "params",
           "type": "tuple"
         }

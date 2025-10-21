@@ -47,6 +47,8 @@ export interface Keys2Interface extends utils.Interface {
     "FEE_DISTRIBUTOR_STATE()": FunctionFragment;
     "FEE_DISTRIBUTOR_TOTAL_FEE_AMOUNT_GMX()": FunctionFragment;
     "FEE_DISTRIBUTOR_TOTAL_STAKED_GMX()": FunctionFragment;
+    "FEE_DISTRIBUTOR_V1_FEES_WNT_FACTOR()": FunctionFragment;
+    "FEE_DISTRIBUTOR_V2_FEES_WNT_FACTOR()": FunctionFragment;
     "FEE_DISTRIBUTOR_WNT_PRICE()": FunctionFragment;
     "MULTICHAIN_AUTHORIZED_ORIGINATORS()": FunctionFragment;
     "MULTICHAIN_CONFIRMATIONS()": FunctionFragment;
@@ -82,6 +84,8 @@ export interface Keys2Interface extends utils.Interface {
       | "FEE_DISTRIBUTOR_STATE"
       | "FEE_DISTRIBUTOR_TOTAL_FEE_AMOUNT_GMX"
       | "FEE_DISTRIBUTOR_TOTAL_STAKED_GMX"
+      | "FEE_DISTRIBUTOR_V1_FEES_WNT_FACTOR"
+      | "FEE_DISTRIBUTOR_V2_FEES_WNT_FACTOR"
       | "FEE_DISTRIBUTOR_WNT_PRICE"
       | "MULTICHAIN_AUTHORIZED_ORIGINATORS"
       | "MULTICHAIN_CONFIRMATIONS"
@@ -188,6 +192,14 @@ export interface Keys2Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "FEE_DISTRIBUTOR_TOTAL_STAKED_GMX",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "FEE_DISTRIBUTOR_V1_FEES_WNT_FACTOR",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "FEE_DISTRIBUTOR_V2_FEES_WNT_FACTOR",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -313,6 +325,14 @@ export interface Keys2Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "FEE_DISTRIBUTOR_TOTAL_STAKED_GMX",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "FEE_DISTRIBUTOR_V1_FEES_WNT_FACTOR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "FEE_DISTRIBUTOR_V2_FEES_WNT_FACTOR",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -456,6 +476,14 @@ export interface Keys2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    FEE_DISTRIBUTOR_V1_FEES_WNT_FACTOR(
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    FEE_DISTRIBUTOR_V2_FEES_WNT_FACTOR(
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     FEE_DISTRIBUTOR_WNT_PRICE(overrides?: CallOverrides): Promise<[string]>;
 
     MULTICHAIN_AUTHORIZED_ORIGINATORS(
@@ -546,6 +574,14 @@ export interface Keys2 extends BaseContract {
   ): Promise<string>;
 
   FEE_DISTRIBUTOR_TOTAL_STAKED_GMX(overrides?: CallOverrides): Promise<string>;
+
+  FEE_DISTRIBUTOR_V1_FEES_WNT_FACTOR(
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  FEE_DISTRIBUTOR_V2_FEES_WNT_FACTOR(
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   FEE_DISTRIBUTOR_WNT_PRICE(overrides?: CallOverrides): Promise<string>;
 
@@ -639,6 +675,14 @@ export interface Keys2 extends BaseContract {
     ): Promise<string>;
 
     FEE_DISTRIBUTOR_TOTAL_STAKED_GMX(
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    FEE_DISTRIBUTOR_V1_FEES_WNT_FACTOR(
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    FEE_DISTRIBUTOR_V2_FEES_WNT_FACTOR(
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -743,6 +787,14 @@ export interface Keys2 extends BaseContract {
     ): Promise<BigNumber>;
 
     FEE_DISTRIBUTOR_TOTAL_STAKED_GMX(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    FEE_DISTRIBUTOR_V1_FEES_WNT_FACTOR(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    FEE_DISTRIBUTOR_V2_FEES_WNT_FACTOR(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -861,6 +913,14 @@ export interface Keys2 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     FEE_DISTRIBUTOR_TOTAL_STAKED_GMX(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    FEE_DISTRIBUTOR_V1_FEES_WNT_FACTOR(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    FEE_DISTRIBUTOR_V2_FEES_WNT_FACTOR(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

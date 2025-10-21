@@ -24,6 +24,11 @@
           "type": "address"
         },
         {
+          "internalType": "uint256",
+          "name": "srcChainId",
+          "type": "uint256"
+        },
+        {
           "components": [
             {
               "components": [
@@ -143,11 +148,21 @@
               "internalType": "bytes32",
               "name": "referralCode",
               "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "dataList",
+              "type": "bytes32[]"
             }
           ],
           "internalType": "struct IBaseOrderUtils.CreateOrderParams",
           "name": "params",
           "type": "tuple"
+        },
+        {
+          "internalType": "bool",
+          "name": "shouldCapMaxExecutionFee",
+          "type": "bool"
         }
       ],
       "name": "createOrder",
@@ -355,6 +370,11 @@
                   "internalType": "uint256",
                   "name": "validFromTime",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "srcChainId",
+                  "type": "uint256"
                 }
               ],
               "internalType": "struct Order.Numbers",
@@ -387,11 +407,21 @@
               "internalType": "struct Order.Flags",
               "name": "flags",
               "type": "tuple"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "_dataList",
+              "type": "bytes32[]"
             }
           ],
           "internalType": "struct Order.Props",
           "name": "order",
           "type": "tuple"
+        },
+        {
+          "internalType": "bool",
+          "name": "shouldCapMaxExecutionFee",
+          "type": "bool"
         }
       ],
       "name": "updateOrder",

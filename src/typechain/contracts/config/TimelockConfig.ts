@@ -64,6 +64,8 @@ export interface TimelockConfigInterface extends utils.Interface {
     "signalSetEdgeDataStream(address,bytes32,uint256,bytes32,bytes32)": FunctionFragment;
     "signalSetFeeReceiver(address,bytes32,bytes32)": FunctionFragment;
     "signalSetHoldingAddress(address,bytes32,bytes32)": FunctionFragment;
+    "signalSetMaxTotalContributorTokenAmount(address,address[],uint256[],bytes32,bytes32)": FunctionFragment;
+    "signalSetMinContributorPaymentInterval(address,uint256,bytes32,bytes32)": FunctionFragment;
     "signalSetOracleProviderEnabled(address,bool,bytes32,bytes32)": FunctionFragment;
     "signalSetOracleProviderForToken(address,address,address,bytes32,bytes32)": FunctionFragment;
     "signalSetPriceFeed(address,address,uint256,uint256,uint256,bytes32,bytes32)": FunctionFragment;
@@ -98,6 +100,8 @@ export interface TimelockConfigInterface extends utils.Interface {
       | "signalSetEdgeDataStream"
       | "signalSetFeeReceiver"
       | "signalSetHoldingAddress"
+      | "signalSetMaxTotalContributorTokenAmount"
+      | "signalSetMinContributorPaymentInterval"
       | "signalSetOracleProviderEnabled"
       | "signalSetOracleProviderForToken"
       | "signalSetPriceFeed"
@@ -279,6 +283,25 @@ export interface TimelockConfigInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "signalSetMaxTotalContributorTokenAmount",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "signalSetMinContributorPaymentInterval",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "signalSetOracleProviderEnabled",
     values: [
       PromiseOrValue<string>,
@@ -411,6 +434,14 @@ export interface TimelockConfigInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "signalSetHoldingAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "signalSetMaxTotalContributorTokenAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "signalSetMinContributorPaymentInterval",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -624,6 +655,23 @@ export interface TimelockConfig extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    signalSetMaxTotalContributorTokenAmount(
+      target: PromiseOrValue<string>,
+      tokens: PromiseOrValue<string>[],
+      amounts: PromiseOrValue<BigNumberish>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    signalSetMinContributorPaymentInterval(
+      target: PromiseOrValue<string>,
+      interval: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     signalSetOracleProviderEnabled(
       provider: PromiseOrValue<string>,
       value: PromiseOrValue<boolean>,
@@ -830,6 +878,23 @@ export interface TimelockConfig extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  signalSetMaxTotalContributorTokenAmount(
+    target: PromiseOrValue<string>,
+    tokens: PromiseOrValue<string>[],
+    amounts: PromiseOrValue<BigNumberish>[],
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  signalSetMinContributorPaymentInterval(
+    target: PromiseOrValue<string>,
+    interval: PromiseOrValue<BigNumberish>,
+    predecessor: PromiseOrValue<BytesLike>,
+    salt: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   signalSetOracleProviderEnabled(
     provider: PromiseOrValue<string>,
     value: PromiseOrValue<boolean>,
@@ -1031,6 +1096,23 @@ export interface TimelockConfig extends BaseContract {
 
     signalSetHoldingAddress(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    signalSetMaxTotalContributorTokenAmount(
+      target: PromiseOrValue<string>,
+      tokens: PromiseOrValue<string>[],
+      amounts: PromiseOrValue<BigNumberish>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    signalSetMinContributorPaymentInterval(
+      target: PromiseOrValue<string>,
+      interval: PromiseOrValue<BigNumberish>,
       predecessor: PromiseOrValue<BytesLike>,
       salt: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1245,6 +1327,23 @@ export interface TimelockConfig extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    signalSetMaxTotalContributorTokenAmount(
+      target: PromiseOrValue<string>,
+      tokens: PromiseOrValue<string>[],
+      amounts: PromiseOrValue<BigNumberish>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    signalSetMinContributorPaymentInterval(
+      target: PromiseOrValue<string>,
+      interval: PromiseOrValue<BigNumberish>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     signalSetOracleProviderEnabled(
       provider: PromiseOrValue<string>,
       value: PromiseOrValue<boolean>,
@@ -1449,6 +1548,23 @@ export interface TimelockConfig extends BaseContract {
 
     signalSetHoldingAddress(
       account: PromiseOrValue<string>,
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    signalSetMaxTotalContributorTokenAmount(
+      target: PromiseOrValue<string>,
+      tokens: PromiseOrValue<string>[],
+      amounts: PromiseOrValue<BigNumberish>[],
+      predecessor: PromiseOrValue<BytesLike>,
+      salt: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    signalSetMinContributorPaymentInterval(
+      target: PromiseOrValue<string>,
+      interval: PromiseOrValue<BigNumberish>,
       predecessor: PromiseOrValue<BytesLike>,
       salt: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

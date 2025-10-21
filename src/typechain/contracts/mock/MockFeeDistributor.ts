@@ -66,9 +66,10 @@ export interface MockFeeDistributorInterface extends utils.Interface {
     "depositReferralRewards(address,uint256,(address,uint256)[])": FunctionFragment;
     "distribute(uint256,uint256,uint256,uint256)": FunctionFragment;
     "initiateDistribute()": FunctionFragment;
-    "oracle()": FunctionFragment;
     "processLzReceive(bytes32,(uint256,bytes))": FunctionFragment;
     "roleStore()": FunctionFragment;
+    "withdrawNativeToken(address,uint256)": FunctionFragment;
+    "withdrawToken(address,address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -77,9 +78,10 @@ export interface MockFeeDistributorInterface extends utils.Interface {
       | "depositReferralRewards"
       | "distribute"
       | "initiateDistribute"
-      | "oracle"
       | "processLzReceive"
       | "roleStore"
+      | "withdrawNativeToken"
+      | "withdrawToken"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -107,7 +109,6 @@ export interface MockFeeDistributorInterface extends utils.Interface {
     functionFragment: "initiateDistribute",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "oracle", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "processLzReceive",
     values: [
@@ -116,6 +117,18 @@ export interface MockFeeDistributorInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "roleStore", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "withdrawNativeToken",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawToken",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "bridgedGmxReceived",
@@ -130,12 +143,19 @@ export interface MockFeeDistributorInterface extends utils.Interface {
     functionFragment: "initiateDistribute",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "oracle", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "processLzReceive",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "roleStore", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawNativeToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawToken",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -190,8 +210,6 @@ export interface MockFeeDistributor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    oracle(overrides?: CallOverrides): Promise<[string]>;
-
     processLzReceive(
       arg0: PromiseOrValue<BytesLike>,
       receivedData: MultichainReaderUtils.ReceivedDataStruct,
@@ -199,6 +217,19 @@ export interface MockFeeDistributor extends BaseContract {
     ): Promise<ContractTransaction>;
 
     roleStore(overrides?: CallOverrides): Promise<[string]>;
+
+    withdrawNativeToken(
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    withdrawToken(
+      token: PromiseOrValue<string>,
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   bridgedGmxReceived(
@@ -224,8 +255,6 @@ export interface MockFeeDistributor extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  oracle(overrides?: CallOverrides): Promise<string>;
-
   processLzReceive(
     arg0: PromiseOrValue<BytesLike>,
     receivedData: MultichainReaderUtils.ReceivedDataStruct,
@@ -233,6 +262,19 @@ export interface MockFeeDistributor extends BaseContract {
   ): Promise<ContractTransaction>;
 
   roleStore(overrides?: CallOverrides): Promise<string>;
+
+  withdrawNativeToken(
+    receiver: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  withdrawToken(
+    token: PromiseOrValue<string>,
+    receiver: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     bridgedGmxReceived(overrides?: CallOverrides): Promise<void>;
@@ -254,8 +296,6 @@ export interface MockFeeDistributor extends BaseContract {
 
     initiateDistribute(overrides?: CallOverrides): Promise<void>;
 
-    oracle(overrides?: CallOverrides): Promise<string>;
-
     processLzReceive(
       arg0: PromiseOrValue<BytesLike>,
       receivedData: MultichainReaderUtils.ReceivedDataStruct,
@@ -263,6 +303,19 @@ export interface MockFeeDistributor extends BaseContract {
     ): Promise<void>;
 
     roleStore(overrides?: CallOverrides): Promise<string>;
+
+    withdrawNativeToken(
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawToken(
+      token: PromiseOrValue<string>,
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
@@ -291,8 +344,6 @@ export interface MockFeeDistributor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    oracle(overrides?: CallOverrides): Promise<BigNumber>;
-
     processLzReceive(
       arg0: PromiseOrValue<BytesLike>,
       receivedData: MultichainReaderUtils.ReceivedDataStruct,
@@ -300,6 +351,19 @@ export interface MockFeeDistributor extends BaseContract {
     ): Promise<BigNumber>;
 
     roleStore(overrides?: CallOverrides): Promise<BigNumber>;
+
+    withdrawNativeToken(
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    withdrawToken(
+      token: PromiseOrValue<string>,
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -326,8 +390,6 @@ export interface MockFeeDistributor extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    oracle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     processLzReceive(
       arg0: PromiseOrValue<BytesLike>,
       receivedData: MultichainReaderUtils.ReceivedDataStruct,
@@ -335,5 +397,18 @@ export interface MockFeeDistributor extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     roleStore(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    withdrawNativeToken(
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawToken(
+      token: PromiseOrValue<string>,
+      receiver: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }
