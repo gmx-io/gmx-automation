@@ -16,7 +16,7 @@ import {
   BATCH_SIZE,
 } from "../../lib/number";
 import { SubgraphService } from "../../domain/subgraphService";
-import { dateToSeconds, getPeriod, RelativePeriodName } from "../../utils/date";
+import { RelativePeriodName, getPeriod } from "../../utils/date";
 import { Logger } from "../../lib/logger";
 import { SupportedChainId } from "../../config/chains";
 
@@ -87,16 +87,27 @@ type ReferralOutput = {
 type ReferralRewardsCallsParams = {
   logger: Logger;
   feeDistributorVault: string;
-  shouldSendTxn: boolean;
   wntPrice: BigNumber;
   feeDistributor: ethers.Contract;
   wnt: ethers.Contract;
   esGmx: ethers.Contract;
-  dataStr: string;
+  data: OutputData;
   distributionId: string;
+  useBatchSize: boolean;
 };
 
-type OutputData = {
+type PositionFeesInfoWithPeriods = {
+  totalBorrowingFeeUsd: string;
+  totalPositionFeeUsd: string;
+  totalLiquidationFeeUsd: string;
+};
+
+type SwapFeesInfoWithPeriods = {
+  totalFeeReceiverUsd: string;
+  totalFeeUsdForPool: string;
+};
+
+export type OutputData = {
   fromTimestamp: number;
   toTimestamp: number;
   chainId: SupportedChainId;
@@ -105,18 +116,7 @@ type OutputData = {
   shareDivisor: string;
   affiliates: AffiliateOutput[];
   referrals: ReferralOutput[];
-  gmxPrice: string;
   totalEsGmxRewards: string;
-};
-
-type PositionFeesInfoWithPeriods = {
-  totalBorrowingFeeUsd: string;
-  totalPositionFeeUsd: string;
-};
-
-type SwapFeesInfoWithPeriods = {
-  totalFeeReceiverUsd: string;
-  totalFeeUsdForPool: string;
 };
 
 // functions used to retrieve and calculate referral rewards
@@ -151,13 +151,13 @@ async function getAffiliatesTiers(
 export async function getDistributionData(
   logger: Logger,
   chainId: SupportedChainId,
-  fromTimestamp: number,
-  toTimestamp: number,
+  relativePeriodName: RelativePeriodName,
   gmxPrice: BigNumber,
   maxEsGmxRewards: BigNumber
 ): Promise<OutputData> {
   const affiliateCondition = "";
   const referralCondition = "";
+  const [fromTimestamp, toTimestamp] = getPeriod(relativePeriodName);
 
   const getAffiliateStatsQuery = (
     skip: number
@@ -284,19 +284,19 @@ export async function getDistributionData(
     {}
   );
 
-  if (allAffiliatesRebateUsd.eq(0)) {
+  const hasV1AffiliateRebates = allAffiliatesRebateUsd.gt(ZERO);
+
+  if (!hasV1AffiliateRebates) {
     logger.warn(
-      "No V1 rebates on %s; continuing to compute esGMX rewards (v1+v2)",
+      "No V1 affiliate rebates on %s; continuing to compute esGMX rewards (v1+v2)",
       chainId
     );
   }
 
-  const hasV1Rebates = !allAffiliatesRebateUsd.eq(0);
-
   Object.entries(affiliatesRebatesData).forEach(([account, data]) => {
     data.allAffiliatesRebateUsd = allAffiliatesRebateUsd;
     data.account = account;
-    data.share = hasV1Rebates
+    data.share = hasV1AffiliateRebates
       ? data.rebateUsd.mul(SHARE_DIVISOR).div(allAffiliatesRebateUsd)
       : ZERO;
   });
@@ -355,7 +355,6 @@ export async function getDistributionData(
     shareDivisor: SHARE_DIVISOR.toString(),
     affiliates: [],
     referrals: [],
-    gmxPrice: gmxPrice.toString(),
     totalEsGmxRewards: totalEsGmxRewards.toString(),
   };
 
@@ -465,7 +464,11 @@ export async function getDistributionData(
     {}
   );
 
-  const hasV1ReferralDiscounts = !allReferralsDiscountUsd.eq(0);
+  const hasV1ReferralDiscounts = allReferralsDiscountUsd.gt(ZERO);
+
+  if (!hasV1ReferralDiscounts) {
+    logger.warn("No V1 referral discounts on %s", chainId);
+  }
 
   Object.entries(referralDiscountData).forEach(([account, data]) => {
     data.allReferralsDiscountUsd = allReferralsDiscountUsd;
@@ -526,14 +529,9 @@ export async function processPeriodV1(
   relativePeriodName: RelativePeriodName,
   chainId: SupportedChainId
 ): Promise<BigNumber> {
-  const [start, end] = getPeriod(relativePeriodName) ?? [];
-  if (!start || !end) {
-    throw new Error(`Invalid period name: ${relativePeriodName}`);
-  }
+  const [fromTimestamp, toTimestamp] = getPeriod(relativePeriodName);
 
-  const where = `id_gte: ${dateToSeconds(start)}, id_lt: ${dateToSeconds(
-    end
-  )}, period: daily`;
+  const where = `id_gte: ${fromTimestamp}, id_lt: ${toTimestamp}, period: daily`;
   const gql = `
     {
       feeStats(where: { ${where} }) {
@@ -576,19 +574,15 @@ export async function processPeriodV2(
   relativePeriodName: RelativePeriodName,
   chainId: SupportedChainId
 ): Promise<BigNumber> {
-  const [start, end] = getPeriod(relativePeriodName) ?? [];
-  if (!start || !end) {
-    throw new Error(`Invalid period name: ${relativePeriodName}`);
-  }
+  const [fromTimestamp, toTimestamp] = getPeriod(relativePeriodName);
 
-  const where = `id_gte: ${dateToSeconds(start)}, id_lt: ${dateToSeconds(
-    end
-  )},  period: "1d"`;
+  const where = `id_gte: ${fromTimestamp}, id_lt: ${toTimestamp},  period: "1d"`;
   const gql = `
     query {
       position: positionFeesInfoWithPeriods(where: { ${where} }) {
         totalBorrowingFeeUsd
         totalPositionFeeUsd
+        totalLiquidationFeeUsd
       }
       swap: swapFeesInfoWithPeriods(where: { ${where} }) {
         totalFeeReceiverUsd
@@ -604,7 +598,10 @@ export async function processPeriodV2(
   const swapStats = data.swap as SwapFeesInfoWithPeriods[];
 
   const positionFees = positionStats.reduce((acc, stat) => {
-    return acc.add(stat.totalBorrowingFeeUsd).add(stat.totalPositionFeeUsd);
+    return acc
+      .add(stat.totalBorrowingFeeUsd)
+      .add(stat.totalPositionFeeUsd)
+      .add(stat.totalLiquidationFeeUsd);
   }, ZERO);
 
   const swapFees = swapStats.reduce((acc, stat) => {
@@ -620,6 +617,7 @@ async function processBatch(
   logger: Logger,
   accounts: string[],
   amounts: BigNumber[],
+  useBatchSize: boolean,
   handler: (batch: [string, BigNumber][]) => Promise<void>
 ): Promise<void> {
   if (accounts.length !== amounts.length) {
@@ -636,7 +634,7 @@ async function processBatch(
   for (let i = 0; i < accounts.length; i++) {
     currentBatch.push([accounts[i]!, amounts[i]!]);
 
-    if (currentBatch.length === BATCH_SIZE) {
+    if (currentBatch.length === BATCH_SIZE && useBatchSize) {
       logger.log(
         "handling current batch",
         i,
@@ -657,20 +655,15 @@ async function processBatch(
 export async function referralRewardsCalls({
   logger,
   feeDistributorVault,
-  shouldSendTxn,
   wntPrice,
   feeDistributor,
   wnt,
   esGmx,
-  dataStr,
+  data,
   distributionId,
+  useBatchSize,
 }: ReferralRewardsCallsParams): Promise<{ to: string; data: string }[]> {
   const calls: Array<{ to: string; data: string }> = [];
-
-  if (!dataStr) {
-    throw new Error("dataStr is required");
-  }
-  const data: OutputData = JSON.parse(dataStr) as OutputData;
   const affiliatesData = data.affiliates as AffiliateOutput[];
   const discountsData = data.referrals as ReferralOutput[];
 
@@ -742,10 +735,6 @@ export async function referralRewardsCalls({
     );
   }
 
-  if (!shouldSendTxn) {
-    return calls;
-  }
-
   if (affiliateAccounts.length === 0) {
     logger.log(
       "affiliateAccounts length = 0, no affiliate referral rewards sent"
@@ -755,6 +744,7 @@ export async function referralRewardsCalls({
       logger,
       affiliateAccounts,
       affiliateAmounts,
+      useBatchSize,
       async (currentBatch: [string, BigNumber][]) => {
         const params = currentBatch.map(([account, amount]) => ({
           account,
@@ -779,6 +769,7 @@ export async function referralRewardsCalls({
       logger,
       discountAccounts,
       discountAmounts,
+      useBatchSize,
       async (currentBatch: [string, BigNumber][]) => {
         const params = currentBatch.map(([account, amount]) => ({
           account,
@@ -801,6 +792,7 @@ export async function referralRewardsCalls({
       logger,
       esGmxAccounts,
       esGmxAmounts,
+      useBatchSize,
       async (currentBatch: [string, BigNumber][]) => {
         const params = currentBatch.map(([account, amount]) => ({
           account,

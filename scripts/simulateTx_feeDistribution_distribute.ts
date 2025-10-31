@@ -4,60 +4,50 @@ Example usage:
 ```
 GELATO_MSG_SENDER_PRIVATE_KEY=PRIVATE_KEY \
 TX=0x1b558201ca91fa11dbd8b5b805cb40f7ac3b3d3a34c14a86a47c1306e504c70d \
-INITIAL_FROM_TIMESTAMP=1757050463 \
-SHOULD_SEND_TXN=true \
 REVERT_TX=true \
 FEE_SURPLUS=true \
     npx hardhat run scripts/simulateTx_feeDistribution_distribute.ts --network localhost
 ```
 */
 
-import { Log } from "@ethersproject/providers";
-import { Web3FunctionEventContext } from "@gelatonetwork/web3-functions-sdk/*";
-import { Web3FunctionResultCallData } from "@gelatonetwork/web3-functions-sdk";
-import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import assert from "node:assert";
-import { isSupportedChainId, SupportedChainId } from "../src/config/chains";
-import { getRpcProviderUrl } from "../src/config/providers";
-import { getContracts } from "../src/lib/contracts";
-import { Context, wrapContext } from "../src/lib/gelato";
+import { Web3FunctionResultCallData } from "@gelatonetwork/web3-functions-sdk";
+import {
+  FEE_DISTRIBUTION_EVENT_TOPICS,
+  TOTAL_ES_GMX_REWARDS_INCREASED_TOPICS,
+  flushStorage,
+  initSimulateTx,
+  createEventContext,
+} from "./utils/simulateTxUtils";
+import { wrapContext } from "../src/lib/gelato";
 import { getLogger, Logger } from "../src/lib/logger";
 import { feeDistribution } from "../src/web3-functions/feeDistribution/feeDistribution";
-import { EVENT_LOG_TOPIC, EVENT_LOG1_TOPIC } from "../src/lib/events";
 import {
   WNT_PRICE_KEY,
   GMX_PRICE_KEY,
   MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY,
 } from "../src/lib/keys/keys";
 import {
-  FEE_DISTRIBUTION_COMPLETED_HASH,
-  TOTAL_ES_GMX_REWARDS_INCREASED_HASH,
+  FEE_DISTRIBUTION_COMPLETED,
   DISTRIBUTION_ID,
   getFeeDistributionTotalEsGmxRewardsIncreasedEventData,
   getFeeDistributorEventName,
+  getFeeDistributorEventDescription,
 } from "../src/domain/fee/feeDistributionUtils";
 import { formatAmount, GMX_DECIMALS } from "../src/lib/number";
 import { processLzReceiveSimulation } from "./simulateTx_feeDistribution_processLzReceive";
 import { bridgedGmxReceivedSimulation } from "./simulateTx_feeDistribution_bridgedGmxReceived";
-import { createSecrets, createStorage, flushStorage } from "../src/lib/storage";
 
 const logger: Logger = getLogger(false);
 
-const initialFromTimestamp = process.env.INITIAL_FROM_TIMESTAMP;
-const shouldSendTxnStr = process.env.SHOULD_SEND_TXN;
 const revertTxStr = process.env.REVERT_TX;
 const feeSurplusStr = process.env.FEE_SURPLUS;
-
 const gelatoMsgSenderPrivateKey = process.env.GELATO_MSG_SENDER_PRIVATE_KEY;
-
-assert(initialFromTimestamp, "INITIAL_FROM_TIMESTAMP is not set");
-assert(shouldSendTxnStr, "SHOULD_SEND_TXN is not set");
 assert(revertTxStr, "REVERT_TX is not set");
 assert(feeSurplusStr, "FEE_SURPLUS is not set");
 assert(gelatoMsgSenderPrivateKey, "GELATO_MSG_SENDER_PRIVATE_KEY is not set");
 
-const shouldSendTxn = shouldSendTxnStr.toLowerCase() === "true";
 const revertTx = revertTxStr.toLowerCase() === "true";
 const feeSurplus = feeSurplusStr.toLowerCase() === "true";
 
@@ -67,21 +57,7 @@ const maxRewardsEsGmxAmountKey = MAX_REFERRAL_REWARDS_ESGMX_AMOUNT_KEY;
 const distributionId = DISTRIBUTION_ID;
 
 const distributeSimulation = async () => {
-  const chainId = (await ethers.provider.getNetwork()).chainId;
-
-  const feeDistributionCompletedTopics = [
-    EVENT_LOG_TOPIC,
-    FEE_DISTRIBUTION_COMPLETED_HASH,
-  ];
-
-  const referralRewardsSentTopics = [
-    EVENT_LOG1_TOPIC,
-    TOTAL_ES_GMX_REWARDS_INCREASED_HASH,
-  ];
-
-  if (!isSupportedChainId(chainId)) {
-    throw new Error(`Unsupported chainId: ${chainId}`);
-  }
+  const { chainId, provider, eventEmitter } = await initSimulateTx();
 
   let executions: { txHash: string; snapId: string }[] | undefined;
 
@@ -113,15 +89,17 @@ const distributeSimulation = async () => {
   logger.log("first txHash:", txHash);
   logger.log("first snapId:", snapId);
 
-  const txReceipt = await ethers.provider.getTransactionReceipt(txHash);
+  const txReceipt = await provider.getTransactionReceipt(txHash);
   const txLogs = txReceipt.logs;
   logger.log("total logs in second receipt:", txLogs.length);
 
-  const relevantLogs = txLogs.filter(
-    (log) =>
-      log.topics.length >= 2 &&
-      log.topics[0] === feeDistributionCompletedTopics[0] &&
-      log.topics[1] === feeDistributionCompletedTopics[1]
+  let relevantLogs = txLogs.filter(
+    (l) =>
+      l.topics.length >= 2 &&
+      l.topics[0] === FEE_DISTRIBUTION_EVENT_TOPICS[0] &&
+      l.topics[1] === FEE_DISTRIBUTION_EVENT_TOPICS[1] &&
+      getFeeDistributorEventDescription(l, eventEmitter) ===
+        FEE_DISTRIBUTION_COMPLETED
   );
 
   logger.log(
@@ -130,22 +108,19 @@ const distributeSimulation = async () => {
     relevantLogs.map((l) => l.logIndex)
   );
 
-  for (const log of relevantLogs) {
+  for (const l of relevantLogs) {
     const gelatoContext = createEventContext(
-      log,
+      l,
       {
-        initialFromTimestamp,
         wntPriceKey,
         gmxPriceKey,
         maxRewardsEsGmxAmountKey,
         distributionId,
-        shouldSendTxn,
       },
       chainId
     );
     const context = wrapContext(false, gelatoContext);
     const result = await feeDistribution(context);
-    const provider = context.multiChainProvider.default();
     const gelatoMsgSender = new ethers.Wallet(
       gelatoMsgSenderPrivateKey,
       provider
@@ -155,8 +130,6 @@ const distributeSimulation = async () => {
       logger.log("Nothing to execute: ", result);
       return;
     }
-
-    const { eventEmitter } = getContracts(chainId, provider);
 
     for (const call of result.callData as Web3FunctionResultCallData[]) {
       const txResponse = await gelatoMsgSender.sendTransaction({
@@ -172,33 +145,32 @@ const distributeSimulation = async () => {
         receipt.logs.length
       );
 
-      const fdCompletedLogs = receipt.logs.filter(
+      relevantLogs = receipt.logs.filter(
         (l) =>
           l.topics.length >= 2 &&
-          l.topics[0] === referralRewardsSentTopics[0] &&
-          (l.topics[1] === referralRewardsSentTopics[1] ||
-            l.topics[1] === referralRewardsSentTopics[2])
+          l.topics[0] === TOTAL_ES_GMX_REWARDS_INCREASED_TOPICS[0] &&
+          l.topics[1] === TOTAL_ES_GMX_REWARDS_INCREASED_TOPICS[1]
       );
 
       logger.log(
         "matching logs:",
-        fdCompletedLogs.length,
-        fdCompletedLogs.map((l) => l.logIndex)
+        relevantLogs.length,
+        relevantLogs.map((l) => l.logIndex)
       );
 
-      for (const log of fdCompletedLogs) {
-        const eventName = getFeeDistributorEventName(log, eventEmitter);
+      for (const l of relevantLogs) {
+        const eventName = getFeeDistributorEventName(l, eventEmitter);
         if (eventName === "TotalEsGmxRewardsIncreased") {
-          const ev = getFeeDistributionTotalEsGmxRewardsIncreasedEventData(
-            log,
+          const event = getFeeDistributionTotalEsGmxRewardsIncreasedEventData(
+            l,
             eventEmitter
           );
 
           logger.log("TotalEsGmxRewardsIncreased:", {
-            account: ev.account,
-            amount: formatAmount(ev.amount, GMX_DECIMALS, 4),
+            account: event.account,
+            amount: formatAmount(event.amount, GMX_DECIMALS, 4),
             totalEsGmxRewards: formatAmount(
-              ev.totalEsGmxRewards,
+              event.totalEsGmxRewards,
               GMX_DECIMALS,
               4
             ),
@@ -214,31 +186,6 @@ const distributeSimulation = async () => {
     }
   }
 };
-
-function createEventContext(
-  log: Log,
-  userArgs: any,
-  chainId: SupportedChainId
-): Context<Web3FunctionEventContext> {
-  const provider = new ethers.providers.JsonRpcProvider(
-    getRpcProviderUrl(chainId),
-    chainId
-  );
-
-  return wrapContext(false, {
-    log,
-    userArgs,
-    gelatoArgs: {
-      chainId,
-      gasPrice: BigNumber.from(0),
-    },
-    multiChainProvider: {
-      default: () => provider,
-    } as any,
-    secrets: createSecrets(),
-    storage: createStorage(),
-  });
-}
 
 distributeSimulation()
   .then(flushStorage)

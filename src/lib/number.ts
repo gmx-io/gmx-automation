@@ -1,13 +1,5 @@
 import { BigNumber, BigNumberish, ethers } from "ethers";
 
-export type ReplaceBigNumberWithString<T> = {
-  [K in keyof T]: T[K] extends BigNumber
-    ? string
-    : T[K] extends object
-    ? ReplaceBigNumberWithString<T[K]>
-    : T[K];
-};
-
 export const MAX_UINT8 = "255"; // 2^8 - 1
 export const MAX_UINT32 = "4294967295"; // 2^32 - 1
 export const MAX_UINT64 = "18446744073709551615"; // 2^64 - 1
@@ -22,6 +14,7 @@ export const SHARE_DIVISOR = BigNumber.from("1000000000"); // 1e9
 export const BONUS_TIER = 2; // for EsGMX distributions
 export const USD_DECIMALS = 30;
 export const GMX_DECIMALS = 18;
+export const PRICE_DECIMALS = 12;
 export const REWARD_THRESHOLD = expandDecimals(1, 28); // 1 cent
 export const ESGMX_REWARDS_THRESHOLD = expandDecimals(1, 16); // 0.01 esGMX
 export const ZERO = bigNumberify(0);
@@ -31,6 +24,8 @@ export const CHUNKS_COUNT = 6; // for trader and affiliate referral rewards quer
 export const CHUNK_SIZE = 10_000; // for trader and affiliate referral rewards queries
 export const ESGMX_REWARDS_DIVISOR = 5; // for tier 3, 1/5 of the 25% total rewards or 5%
 export const BATCH_SIZE = 150; // max batch size for depositReferralRewards
+
+export const BLOCK_CONFIRMATIONS = 2; // number of block confirmations to wait after event trigger received
 
 export function formatAmount(
   amount: BigNumberish,

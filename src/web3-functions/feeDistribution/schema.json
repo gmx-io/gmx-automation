@@ -4,11 +4,9 @@
   "memory": 128,
   "timeout": 30,
   "userArgs": {
-    "initialFromTimestamp": "string",
     "wntPriceKey": "string",
     "gmxPriceKey": "string",
     "maxRewardsEsGmxAmountKey": "string",
-    "distributionId": "string",
-    "shouldSendTxn": "boolean"
+    "distributionId": "string"
   }
 }

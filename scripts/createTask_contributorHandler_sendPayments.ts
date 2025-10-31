@@ -17,7 +17,7 @@ const main = async () => {
     execAbi: contributorHandler.interface.format("json") as string,
     trigger: {
       type: TriggerType.CRON,
-      cron: "0 0 28 * *",
+      cron: "1 0 28 * *",
     },
     name: "ContributorHandler.sendPayments()",
     dedicatedMsgSender: true,

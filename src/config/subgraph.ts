@@ -1,6 +1,9 @@
 import {
   ARBITRUM,
   AVALANCHE,
+  ARBITRUM_SEPOLIA,
+  BASE_SEPOLIA,
+  LOCALHOST,
   isSupportedChainId,
   SupportedChainId,
 } from "./chains";
@@ -8,6 +11,13 @@ import {
 interface SubgraphFragments {
   [endpoint: string]: string;
 }
+
+// chainId override for localhost and testnet testing
+const effectiveChainIdMapping: { [key: number]: number } = {
+  [LOCALHOST]: ARBITRUM,
+  [ARBITRUM_SEPOLIA]: ARBITRUM,
+  [BASE_SEPOLIA]: AVALANCHE,
+};
 
 const subgraphFragments: Partial<Record<SupportedChainId, SubgraphFragments>> =
   {
@@ -27,7 +37,7 @@ export function getSubgraphUrl(
   chainId: SupportedChainId,
   endpoint: string
 ): string {
-  const effectiveChainId = chainId === 31337 ? ARBITRUM : chainId;
+  const effectiveChainId = effectiveChainIdMapping[chainId] || chainId;
 
   if (!isSupportedChainId(effectiveChainId)) {
     throw new Error(

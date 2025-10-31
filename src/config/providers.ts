@@ -1,6 +1,7 @@
 import {
   ARBITRUM,
   ARBITRUM_SEPOLIA,
+  BASE_SEPOLIA,
   AVALANCHE,
   AVALANCHE_FUJI,
   LOCALHOST,
@@ -17,6 +18,7 @@ export const RPC_PROVIDERS: Record<SupportedChainId, string[]> = {
     // "https://rpc.ankr.com/arbitrum",
   ],
   [ARBITRUM_SEPOLIA]: ["https://sepolia-rollup.arbitrum.io/rpc"],
+  [BASE_SEPOLIA]: ["https://sepolia.base.org"],
   [AVALANCHE]: [
     "https://api.avax.network/ext/bc/C/rpc",
     "https://avalanche-c-chain-rpc.publicnode.com",

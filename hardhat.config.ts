@@ -19,6 +19,8 @@ assert.ok(
   ARBITRUM_SEPOLIA_PRIVATE_KEY,
   "no ARBITRUM_SEPOLIA_PRIVATE_KEY in .env"
 );
+const BASE_SEPOLIA_PRIVATE_KEY = process.env.BASE_SEPOLIA_PRIVATE_KEY;
+assert.ok(BASE_SEPOLIA_PRIVATE_KEY, "no BASE_SEPOLIA_PRIVATE_KEY in .env");
 const AVALANCHE_PRIVATE_KEY = process.env.AVALANCHE_PRIVATE_KEY;
 assert.ok(AVALANCHE_PRIVATE_KEY, "no AVALANCHE_PRIVATE_KEY in .env");
 const AVALANCHE_FUJI_PRIVATE_KEY = process.env.AVALANCHE_FUJI_PRIVATE_KEY;
@@ -49,6 +51,11 @@ const config: HardhatUserConfig = {
       chainId: 421614,
       url: "https://sepolia-rollup.arbitrum.io/rpc",
       accounts: [ARBITRUM_SEPOLIA_PRIVATE_KEY],
+    },
+    baseSepolia: {
+      chainId: 84532,
+      url: "https://sepolia.base.org",
+      accounts: [BASE_SEPOLIA_PRIVATE_KEY],
     },
     avalanche: {
       chainId: 43114,

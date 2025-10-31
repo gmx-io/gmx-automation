@@ -1,16 +1,23 @@
 import { ethers, BigNumber } from "ethers";
-import { parseLogToEventData, parseLogToEventNameHash } from "../../lib/events";
+import {
+  parseLogToEventNameHash,
+  parseLogToEventData,
+  parseLogToTopic2,
+} from "../../lib/events";
 import { bigNumberify } from "../../lib/number";
 import { Log } from "hardhat-deploy/dist/types";
 import { EventEmitter } from "../../typechain";
 
 type FeeDistributionDataReceivedEventData = {
+  eventDescription: string;
+  distributionState: BigNumber;
   feeAmountGmxCurrentChain: BigNumber;
+  totalGmxBridgedOut: BigNumber;
   receivedData: string;
-  isBridgingCompleted: boolean;
 };
 
 type FeeDistributionCompletedEventData = {
+  eventDescription: string;
   feesV1Usd: BigNumber;
   feesV2Usd: BigNumber;
   wntForKeepers: BigNumber;
@@ -26,6 +33,13 @@ type FeeDistributionTotalEsGmxRewardsIncreasedEventData = {
   totalEsGmxRewards: BigNumber;
 };
 
+export enum DistributionState {
+  None,
+  Initiated,
+  ReadDataReceived,
+  BridgingCompleted,
+}
+
 export const getFeeDistributionDataReceivedEventData = (
   log: Log,
   eventEmitter: EventEmitter
@@ -34,9 +48,11 @@ export const getFeeDistributionDataReceivedEventData = (
   const eventData = parseLogToEventData(event);
 
   return {
+    eventDescription: eventData.getString("eventDescription"),
+    distributionState: eventData.getUint("distributionState"),
     feeAmountGmxCurrentChain: eventData.getUint("feeAmountGmxCurrentChain"),
+    totalGmxBridgedOut: eventData.getUint("totalGmxBridgedOut"),
     receivedData: eventData.getBytes("receivedData"),
-    isBridgingCompleted: eventData.getBool("isBridgingCompleted"),
   };
 };
 
@@ -48,6 +64,7 @@ export const getFeeDistributionCompletedEventData = (
   const eventData = parseLogToEventData(event);
 
   return {
+    eventDescription: eventData.getString("eventDescription"),
     feesV1Usd: eventData.getUint("feesV1Usd"),
     feesV2Usd: eventData.getUint("feesV2Usd"),
     wntForKeepers: eventData.getUint("wntForKeepers"),
@@ -66,7 +83,10 @@ export const getFeeDistributionTotalEsGmxRewardsIncreasedEventData = (
   const eventData = parseLogToEventData(event);
 
   return {
-    account: eventData.getAddress("account"),
+    account: ethers.utils.defaultAbiCoder.decode(
+      ["address"],
+      parseLogToTopic2(event)
+    )[0],
     amount: eventData.getUint("amount"),
     totalEsGmxRewards: eventData.getUint("totalEsGmxRewards"),
   };
@@ -82,16 +102,31 @@ export const getFeeDistributorEventName = (
   return eventNameHash;
 };
 
-export const FEE_DISTRIBUTION_DATA_RECEIVED_HASH = ethers.utils.id(
-  "FeeDistributionDataReceived"
-);
+export const getFeeDistributorEventDescription = (
+  log: Log,
+  eventEmitter: EventEmitter
+): string => {
+  const event = eventEmitter.interface.parseLog(log);
+  const eventData = parseLogToEventData(event);
 
-export const FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED_HASH = ethers.utils.id(
-  "FeeDistributionBridgedGmxReceived"
-);
+  return eventData.getString("eventDescription");
+};
 
-export const FEE_DISTRIBUTION_COMPLETED_HASH = ethers.utils.id(
-  "FeeDistributionCompleted"
+export const DISTRIBUTION_DATA = "distributionData";
+
+export const RELATIVE_PERIOD_NAME = "prev";
+
+export const FEE_DISTRIBUTION_INITIATED = "FeeDistributionInitiated";
+
+export const FEE_DISTRIBUTION_DATA_RECEIVED = "FeeDistributionDataReceived";
+
+export const FEE_DISTRIBUTION_BRIDGED_GMX_RECEIVED =
+  "FeeDistributionBridgedGmxReceived";
+
+export const FEE_DISTRIBUTION_COMPLETED = "FeeDistributionCompleted";
+
+export const FEE_DISTRIBUTION_EVENT_HASH = ethers.utils.id(
+  "FeeDistributionEvent"
 );
 
 export const TOTAL_ES_GMX_REWARDS_INCREASED_HASH = ethers.utils.id(

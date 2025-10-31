@@ -3,6 +3,7 @@ import { TriggerType } from "@gelatonetwork/automate-sdk";
 import { ethers } from "hardhat";
 import { initCreateTask, logTaskCreation, run } from "./utils/createTaskUtils";
 import { getContracts } from "../src/lib/contracts";
+import { BLOCK_CONFIRMATIONS } from "../src/lib/number";
 
 const main = async () => {
   const { logger, chainId, provider, automate } = await initCreateTask();
@@ -29,7 +30,7 @@ const main = async () => {
           [ethers.utils.hexZeroPad(feeDistributorVault.address, 32)],
         ],
       },
-      blockConfirmations: 0,
+      blockConfirmations: BLOCK_CONFIRMATIONS,
     },
     name: "FeeDistributor.bridgedGmxReceived()",
     dedicatedMsgSender: true,
